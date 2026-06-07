@@ -1,3 +1,8 @@
+CREATE DATABASE OficinaDR;
+GO
+USE OficinaDR;
+GO
+
 -- 1. Tabela de Utilizadores/Colaboradores 
 CREATE TABLE Colaboradores (
   ID_Colaborador INT IDENTITY(1,1) PRIMARY KEY,
