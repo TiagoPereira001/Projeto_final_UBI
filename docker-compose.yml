@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: dr_oficina_sql
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=DuarteRaposo2026! # Esta é a password mestra (SA)
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_dados:/var/opt/mssql
+
+volumes:
+  sql_dados:

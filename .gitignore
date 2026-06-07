@@ -1,0 +1,41 @@
+# ==============================
+# 1. SEGURANÇA (O Mais Importante)
+# ==============================
+.env
+.env.*
+*.pem
+
+# ==============================
+# 2. Node.js e Dependências (Para a API e PWA)
+# ==============================
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# ==============================
+# 3. Builds e Compilações
+# ==============================
+/build
+/dist
+
+# ==============================
+# 4. Ficheiros Temporários do LaTeX (Relatório)
+# ==============================
+*.aux
+*.log
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+
+# ==============================
+# 5. Editores e Sistema Operativo
+# ==============================
+.vscode/
+.DS_Store
+*~
+*.swp
