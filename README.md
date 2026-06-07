@@ -5,8 +5,8 @@
 <h1 align="center">🚐 Duarte & Raposo - Sistema de Gestão Digital</h1>
 
 <p align="center">
-  <strong>Projeto de Software Web, Móvel e na Nuvem</strong><br>
-  <em>Licenciatura em Engenharia Informática @ Universidade da Beira Interior</em>
+  <strong>Projeto de Informática Web, Móvel e na Nuvem</strong><br>
+  <em>Licenciatura em Informática Web, Móvel e na Nuvem @ Universidade da Beira Interior</em>
 </p>
 
 <p align="center">
