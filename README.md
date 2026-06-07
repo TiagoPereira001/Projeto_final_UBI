@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="Relatorio/Anexos/ubi-banner.png" alt="UBI Logo" width="300">
+  <img src="Relatorio/Anexos/ubi-banner.png" alt="UBI Logo" max-width="100%">
 </p>
 
 <h1 align="center">🚐 Duarte & Raposo - Sistema de Gestão Digital</h1>
