@@ -27,28 +27,56 @@ A solução desenvolvida é um ecossistema digital composto por uma **PWA (Progr
 
 *   **Digitalização Total:** Substituição definitiva das "folhas de obra" em papel por registos digitais persistentes.
 *   **Foco em Autocaravanas:** Gestão detalhada diferenciando a marca do *chassis* e da *célula*, permitindo um acompanhamento técnico preciso.
-*   **Agilidade Operacional:** Interface PWA que permite o registo de entradas e peças em menos de 3 cliques, otimizando o tempo dos mecânicos.
+*   **Agilidade Operacional:** Interface PWA que permite o registo de entradas e peças de forma rápida, otimizando o tempo dos mecânicos.
 *   **Gestão de Faturação:** Automatização dos cálculos de IVA e agrupamento de peças/mão de obra para facilitar a emissão de faturas.
 *   **Rastreabilidade (Auditing):** Controlo de qual colaborador realizou cada intervenção, garantindo responsabilidade e histórico claro.
+
+## ⚖️ Regras de Negócio & Lógica
+
+*   **Complexidade das Autocaravanas:** O sistema trata as autocaravanas como entidades complexas, exigindo o registo separado da marca/modelo do chassis (mecânica) e da marca da célula habitacional.
+*   **Soft Deletes:** Não ocorrem eliminações físicas de clientes, veículos ou colaboradores na base de dados para preservar o histórico fiscal e de negócio; utiliza-se uma flag booleana (`ativo`).
+*   **Manutenção Preventiva:** As folhas de obra suportam o registo de "Conselhos" (recomendações futuras geradas durante a intervenção para fidelização do cliente).
 
 ## 🛠️ Stack Tecnológica
 
 O projeto utiliza uma arquitetura moderna e robusta, focada em portabilidade e escalabilidade:
 
-*   **Frontend (PWA & Web):** [React.js](https://reactjs.org/) - Interface rápida e responsiva.
-*   **Backend (API):** [Node.js](https://nodejs.org/) com Express - Lógica de negócio e integração.
-*   **Base de Dados:** [SQL Server](https://www.microsoft.com/pt-pt/sql-server/) - Armazenamento relacional robusto com sistema de *Soft Delete*.
-*   **Contentorização:** [Docker](https://www.docker.com/) - Todo o ambiente de desenvolvimento (API + DB) é orquestrado via `docker-compose`.
+*   **Frontend (Móvel):** [React.js](https://reactjs.org/) - PWA (Progressive Web App) desenhada para uso rápido no chão da oficina.
+*   **Frontend (Gestão):** Dashboard Web para administração, cálculos de IVA e análise de histórico.
+*   **Backend (API):** [Node.js](https://nodejs.org/) com Express - API REST para lógica de negócio e integração.
+*   **Base de Dados:** [SQL Server](https://www.microsoft.com/pt-pt/sql-server/) - Armazenamento relacional robusto seguindo a 3ª Forma Normal (3NF).
+*   **Contentorização:** [Docker](https://www.docker.com/) - Todo o ambiente de desenvolvimento é orquestrado via `docker-compose`.
 
 ## 🏗️ Estrutura da Base de Dados
 
-O modelo relacional foi desenhado seguindo a **3ª Forma Normal (3NF)** e inclui as seguintes entidades:
+O modelo relacional é composto por 5 tabelas principais:
 
-1.  **Colaboradores:** Gestão de acesso e cargos (Mecânicos/Gestores).
-2.  **Clientes:** Dados fiscais e de contacto.
-3.  **Autocaravanas:** Registo técnico detalhado e associação ao proprietário.
-4.  **Folhas de Obra:** O coração do sistema, registando entradas, KMS, observações e estado da reparação.
-5.  **Linhas de Reparação:** Detalhe de cada peça, serviço ou hora de mão de obra aplicada.
+1.  **Colaboradores:** `ID_colaborador` (PK), `Nome`, `Cargo`, `Password_hash`, `ativo`.
+2.  **Clientes:** `ID_cliente` (PK), `nome`, `Contribuinte_NIF`, `Telefone`, `Morada`, `ativo`.
+3.  **Autocaravanas:** `Matricula` (PK), `Marca_chassi`, `Modelo_chassi`, `marca_celula`, `Ano`, `ativo`, `ID_cliente` (FK).
+4.  **Folhas de Obra:** `ID_folha` (PK), `Data_entrada`, `KMS_entrada`, `Estado_reparacao`, `Observacoes`, `Conselhos`, `Matricula` (FK), `ID_colaborador` (FK).
+5.  **Linhas de Reparação:** `ID_linha` (PK), `Designacao`, `Quantidade`, `valor_unitario`, `Categoria`, `ID_folha` (FK).
+
+## 📂 Estrutura do Projeto
+
+```text
+.
+├── backend/                # API REST e Lógica de Negócio
+│   ├── database/           # Scripts SQL e Schema
+│   │   └── schema.sql
+│   ├── server.js           # Ponto de entrada da API
+│   ├── package.json
+│   └── ...
+├── Relatorio/              # Documentação Académica
+│   ├── relatorio_projeto_final_55019.pdf
+│   └── Anexos/             # Diagramas e Imagens
+│       ├── Diagrama.png
+│       ├── Esquema_relacional.png
+│       └── ...
+├── docker-compose.yml      # Orquestração de Containers (API + DB)
+├── README.md               # Documentação Principal
+└── Contexto.md             # Notas de Contexto do Projeto
+```
 
 ## 🚀 Como Executar
 
