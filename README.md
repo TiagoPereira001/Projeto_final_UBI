@@ -1,58 +1,74 @@
-# 🚐 Duarte & Raposo - Camper Management System
+<p align="center">
+  <img src="Relatorio/Anexos/UBI_LOGO.jpg" alt="UBI Logo" width="300">
+</p>
 
-![Status](https://img.shields.io/badge/Status-Em_Desenvolvimento-orange)
-![Licence](https://img.shields.io/badge/Licence-MIT-blue)
-![React](https://img.shields.io/badge/Frontend-React_PWA-61DAFB?logo=react&logoColor=black)
-![Node.js](https://img.shields.io/badge/Backend-Node.js-339933?logo=nodedotjs&logoColor=white)
+<h1 align="center">🚐 Duarte & Raposo - Sistema de Gestão Digital</h1>
 
-## 📌 Sobre o Projeto
-Sistema de gestão integrada desenvolvido para a oficina **Duarte & Raposo** (Canhoso), especializada em reparações automóveis, elétricas e de autocaravanas. 
+<p align="center">
+  <strong>Projeto de Software Web, Móvel e na Nuvem</strong><br>
+  <em>Licenciatura em Engenharia Informática @ Universidade da Beira Interior</em>
+</p>
 
-Este projeto visa a digitalização completa do fluxo de trabalho da oficina, substituindo as tradicionais folhas de obra em papel por uma plataforma segmentada. O sistema permite um rastreio eficiente das reparações, gestão de material aplicado e acompanhamento do histórico de cada veículo, com especial foco na complexidade das autocaravanas.
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Em_Desenvolvimento-orange?style=for-the-badge" alt="Status">
+  <img src="https://img.shields.io/badge/Stack-React_%7C_Node.js_%7C_SQL_Server-blue?style=for-the-badge" alt="Stack">
+  <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker" alt="Docker">
+</p>
 
-Projeto desenvolvido no âmbito da unidade curricular de **Projeto de Software Web, Móvel e na Nuvem** (3º Ano) da Universidade da Beira Interior.
+---
 
-## 🚀 Funcionalidades
+## 📝 Resumo do Projeto
 
-O sistema divide-se em duas frentes principais:
+Este projeto nasce da necessidade real de digitalização da oficina **Duarte & Raposo**, localizada no Canhoso. Especializada em mecânica, eletricidade e, principalmente, **autocaravanas**, a oficina enfrenta os desafios típicos do uso de papel: perda de informação, dificuldade em consultar históricos e morosidade no cálculo de faturação.
 
-### 1. Aplicação Móvel (PWA) - Para os Mecânicos
-* **Registo Rápido:** Criação de novas folhas de obra em menos de 3 cliques.
-* **Checklist de Entrada:** Registo do estado das baterias, águas, gás e danos exteriores aquando da receção da autocaravana.
-* **Gestão de Peças:** Adição de componentes e horas de mão de obra em tempo real.
-* **Captura de Imagens:** Upload de fotografias de avarias diretamente através da câmara do smartphone para anexar à folha de obra.
+A solução desenvolvida é um ecossistema digital composto por uma **PWA (Progressive Web App)** focada na agilidade dos mecânicos e um **Dashboard Web** para a gestão administrativa, permitindo o controlo total do fluxo de trabalho, desde a entrada do veículo até à entrega final ao cliente.
 
-### 2. Dashboard Web - Para a Gestão Administrativa
-* **Visão Geral:** Monitorização do estado das reparações ativas na oficina.
-* **Base de Dados de Clientes e Veículos:** Pesquisa rápida de histórico de manutenções por matrícula.
-* **Preparação para Faturação:** Exportação organizada dos dados da folha de obra (peças e horas) para facilitar a faturação final.
+## 🎯 Objetivos Principais
+
+*   **Digitalização Total:** Substituição definitiva das "folhas de obra" em papel por registos digitais persistentes.
+*   **Foco em Autocaravanas:** Gestão detalhada diferenciando a marca do *chassis* e da *célula*, permitindo um acompanhamento técnico preciso.
+*   **Agilidade Operacional:** Interface PWA que permite o registo de entradas e peças em menos de 3 cliques, otimizando o tempo dos mecânicos.
+*   **Gestão de Faturação:** Automatização dos cálculos de IVA e agrupamento de peças/mão de obra para facilitar a emissão de faturas.
+*   **Rastreabilidade (Auditing):** Controlo de qual colaborador realizou cada intervenção, garantindo responsabilidade e histórico claro.
 
 ## 🛠️ Stack Tecnológica
 
-* **Frontend (PWA & Web):** React.js
-* **Backend (API):** Node.js, Express
-* **Base de Dados:** SQL Server
-* **Segurança:** Autenticação via JWT (JSON Web Tokens), bcrypt para encriptação de passwords.
+O projeto utiliza uma arquitetura moderna e robusta, focada em portabilidade e escalabilidade:
 
-## 📂 Estrutura do Repositório (Prevista)
+*   **Frontend (PWA & Web):** [React.js](https://reactjs.org/) - Interface rápida e responsiva.
+*   **Backend (API):** [Node.js](https://nodejs.org/) com Express - Lógica de negócio e integração.
+*   **Base de Dados:** [SQL Server](https://www.microsoft.com/pt-pt/sql-server/) - Armazenamento relacional robusto com sistema de *Soft Delete*.
+*   **Contentorização:** [Docker](https://www.docker.com/) - Todo o ambiente de desenvolvimento (API + DB) é orquestrado via `docker-compose`.
 
-\`\`\`text
-/
-├── frontend/             # Aplicação React (Dashboard Web e PWA)
-│   ├── src/
-│   │   ├── components/   # Componentes reutilizáveis (UI)
-│   │   ├── pages/        # Ecrãs da aplicação
-│   │   └── services/     # Integração com a API
-├── backend/              # API REST em Node.js
-│   ├── controllers/      # Lógica de negócio
-│   ├── routes/           # Endpoints da API
-│   ├── models/           # Estruturas da Base de Dados
-│   └── middlewares/      # Validações de Segurança e JWT
-└── docs/                 # Documentação, Diagramas ERD e Relatórios (LaTeX)
-\`\`\`
+## 🏗️ Estrutura da Base de Dados
 
-## 👨‍💻 Equipa de Desenvolvimento
-* **Tiago Pereira** (55019)
+O modelo relacional foi desenhado seguindo a **3ª Forma Normal (3NF)** e inclui as seguintes entidades:
+
+1.  **Colaboradores:** Gestão de acesso e cargos (Mecânicos/Gestores).
+2.  **Clientes:** Dados fiscais e de contacto.
+3.  **Autocaravanas:** Registo técnico detalhado e associação ao proprietário.
+4.  **Folhas de Obra:** O coração do sistema, registando entradas, KMS, observações e estado da reparação.
+5.  **Linhas de Reparação:** Detalhe de cada peça, serviço ou hora de mão de obra aplicada.
+
+## 🚀 Como Executar
+
+O projeto está totalmente contentorizado. Para levantar o ambiente de desenvolvimento:
+
+1.  Certifique-se que tem o **Docker** e **Docker Compose** instalados.
+2.  Clone o repositório.
+3.  Na raiz do projeto, execute:
+    ```bash
+    docker-compose up -d
+    ```
+4.  A base de dados SQL Server estará disponível na porta `1433`.
+
+## 👨‍💻 Autor
+
+*   **Tiago Pereira** (nº 55019)
+*   Projeto desenvolvido para a UC de **Projeto de Software Web, Móvel e na Nuvem**.
+*   **Universidade da Beira Interior (UBI)**, Covilhã, Portugal.
 
 ---
-*Este repositório tem fins académicos e representa um protótipo em evolução.*
+<p align="center">
+  <em>"Transformando o trabalho manual em eficiência digital."</em>
+</p>
