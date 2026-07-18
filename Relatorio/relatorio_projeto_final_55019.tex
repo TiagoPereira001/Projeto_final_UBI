@@ -1,0 +1,243 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+\usepackage[colorlinks=true,linkcolor=black,urlcolor=black]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{acronym}
+\usepackage{dirtree}
+\usepackage{adjustbox}
+\usepackage{pdflscape}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{xurl}
+
+\lstset{
+    language=SQL,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!50!black},
+    numberstyle=\tiny,
+    numbers=left,
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{gray!10},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=true,
+    breakautoindent=true,
+    linewidth=\textwidth,
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+\begin{document}
+
+% Logo da universidade
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{Anexos/UBI_LOGO.jpg}
+\end{figure}
+
+% Título e autor
+\title{Projeto de Software Web, Móvel e na Nuvem\\Sistema de Gestão Digital para a Oficina Duarte \& Raposo}
+\author{Tiago Dias Pereira - 55019}
+\date{\today}
+
+\maketitle
+\newpage
+
+% Sumário
+\tableofcontents
+
+\newpage
+
+\section*{Resumo}
+\addcontentsline{toc}{section}{Resumo}
+
+Este relatório descreve o desenvolvimento integral de um sistema de gestão desenhado à medida para a oficina automóvel Duarte \& Raposo, no âmbito da unidade curricular de Projeto de Software Web, Móvel e na Nuvem. O objetivo prático é resolver um problema real com o qual lido diariamente no meu local de trabalho: a ineficiência operacional, a desorganização e a perda de histórico geradas pelo uso exclusivo de folhas de obra em papel.
+
+O trabalho abrangeu todo o ciclo de vida do sistema: desde a engenharia de requisitos e modelação concetual, passando pela normalização do esquema lógico relacional (3FN) e implementação num SGBD SQL Server via Docker, até à construção de uma Aplicação Cliente (PWA e Dashboard) suportada por uma API em Node.js. A solução permite agora a gestão digital de veículos complexos (como autocaravanas), auditoria de colaboradores e processamento ágil para faturação.
+
+\section*{Palavras-chave}
+Informática Web; React; Node.js; SQL Server; PWA; Docker; Engenharia de Requisitos; Autocaravanas.
+
+\newpage
+
+\section{Introdução}
+\subsection{Âmbito e Motivação}
+
+No dia a dia da oficina Duarte \& Raposo, especializada em eletricidade, mecânica e autocaravanas, todo o processo de entrada de veículos e registo de peças é feito de forma manual. Este sistema baseado em papel tem várias falhas críticas: é difícil consultar o histórico de uma autocaravana que já lá esteve no ano passado, os papéis sujam-se ou perdem-se pela oficina, e no final da reparação perde-se muito tempo a fazer contas à mão para conseguir passar a fatura ao cliente.
+
+A motivação para este projeto surge exatamente da vontade de juntar o útil ao agradável: aplicar os conhecimentos adquiridos ao longo do curso de Informática Web para desenvolver uma solução real que facilite não só o meu trabalho, mas o de toda a equipa. O foco vai estar especialmente nas autocaravanas, dado que são veículos complexos (com parte mecânica e parte habitacional) e exigem um registo mais detalhado que um veículo ligeiro comum.
+
+\subsection{Objetivos da Implementação}
+\begin{itemize}
+    \item \textbf{Acabar com o papel:} Passar todo o registo de clientes, veículos e folhas de obra para uma base de dados digital e relacional, garantindo a integridade dos dados.
+    \item \textbf{Aplicação Móvel (PWA):} Desenvolver uma interface em \textbf{React} leve e direta, para que qualquer mecânico consiga dar entrada a um carro no sistema usando o telemóvel, sem perder muito tempo.
+    \item \textbf{Gestão no Computador:} Criar uma interface web \textit{desktop} (Dashboard) para o Duarte e o Raposo poderem ver o que está a ser feito, consultar históricos e ver as contas automáticas do IVA para a faturação.
+    \item \textbf{Arquitetura e Portabilidade:} Construir o \textit{backend} em Node.js com base de dados \ac{SQL} Server, e utilizar o \textbf{Docker} para contentorizar o projeto. Isto vai garantir que o sistema corre sempre bem, quer esteja a programar no meu computador fixo ou num portátil novo, sem dores de cabeça com compatibilidades.
+\end{itemize}
+
+\clearpage
+
+\section{Engenharia de Requisitos}
+
+\subsection{Levantamento de Dados Físicos}
+Como trabalho diretamente na oficina, o levantamento de requisitos foi muito direto e baseado na realidade operacional. Peguei nas folhas de obra e faturas em branco que usamos atualmente e retirei a informação essencial que tem de transitar para a plataforma digital:
+\begin{itemize}
+    \item \textbf{Dados do Cliente:} Nome, Morada, NIF e Telefone.
+    \item \textbf{Dados do Veículo:} Matrícula, e, no caso das autocaravanas, a separação imperativa entre a Marca/Modelo do Chassis e a Marca da Célula.
+    \item \textbf{Dados da Entrada:} Data, os quilómetros (KMS) com que o carro entrou, e espaço para observações gerais.
+    \item \textbf{O Serviço:} As várias linhas de material gasto e horas de trabalho, com quantidade, preço unitário e categoria do serviço.
+\end{itemize}
+
+\subsection{Histórias de Utilizador (\textit{User Stories})}
+Com base nas rotinas da equipa e nas dificuldades sentidas no "chão de oficina", estruturei as necessidades interativas do sistema:
+\begin{itemize}
+    \item \textit{"Como mecânico, preciso de abrir a app no telemóvel e registar a entrada de um carro em poucos cliques, para voltar rapidamente ao trabalho."}
+    \item \textit{"Como mecânico, quero adicionar as peças e serviços que usei diretamente à folha de obra ativa daquele carro no exato momento em que as aplico."}
+    \item \textit{"Como mecânico, preciso de uma secção de 'Conselhos' para avisar o cliente sobre peças que vão precisar de ser trocadas no futuro, para prestarmos um bom serviço preventivo."}
+    \item \textit{"Como gestor, preciso que o sistema some os valores do material, faça o cálculo do IVA sozinho quando a reparação acaba, e identifique quem foi o mecânico responsável pela obra."}
+\end{itemize}
+
+\clearpage
+
+\section{Modelação de Dados e Arquitetura}
+
+\subsection{Modelo Relacional e Decisões de Desenho}
+Para garantir a integridade referencial dos dados e mitigar as redundâncias presentes no modelo de papel (como escrever o nome do cliente dez vezes para o mesmo carro ao longo do ano), desenhei uma base de dados relacional (ver Anexos) que cumpre com os normativos da Terceira Forma Normal (3NF). 
+
+Durante esta fase, tomei as seguintes opções técnicas para adaptar o sistema à realidade do negócio:
+
+\begin{itemize}
+    \item \textbf{Separação Estrutural das Autocaravanas:} Decidi modelar a entidade \textit{Autocaravana} separando explicitamente a parte mecânica (\texttt{Marca\_chassis}, \texttt{Modelo\_chassis}) da parte habitacional (\texttt{marca\_celula}). Isto é vital na nossa oficina, pois permite encomendar peças de motor à Fiat/Ford e peças de habitáculo a fornecedores de campismo de forma isolada e precisa.
+    
+    \item \textbf{Rastreabilidade Operacional (\textit{Auditing}):} No papel, as assinaturas perdem-se. Para resolver isto, criei a entidade \textit{Colaboradores}. Foi estabelecido um relacionamento onde cada \textit{Folha\_Obra} guarda obrigatoriamente a Chave Estrangeira do colaborador (\texttt{ID\_Colaborador}) que a registou, garantindo auditoria e responsabilização interna.
+    
+    \item \textbf{Preservação Fisco-Operacional (Soft Delete):} Numa empresa real, apagar dados com um \texttt{DELETE} pode destruir o histórico fiscal e garantias de peças. Para acautelar isto, implementei um sistema de \textit{Soft Delete}: adicionei o atributo \texttt{ativo} (booleano) às tabelas principais (Clientes, Veículos, Colaboradores). Os dados nunca são eliminados da base de dados, são apenas ocultados da interface.
+\end{itemize}
+
+O esquema relacional consolida-se assim em cinco entidades principais:
+\begin{enumerate}
+    \item \textbf{Colaboradores:} \underline{ID\_Colaborador}, Nome, Cargo, Email, Password\_Hash, Ativo.
+    \item \textbf{Clientes:} \underline{ID\_Cliente}, Nome, Contribuinte\_NIF, Telefone, Morada, Ativo.
+    \item \textbf{Autocaravanas:} \underline{Matricula}, Marca\_Chassis, Modelo\_Chassis, Marca\_Celula, Ano, Ativo, \textit{ID\_Cliente (FK)}.
+    \item \textbf{Folhas\_Obra:} \underline{ID\_Folha}, Data\_Entrada, KMS\_Entrada, Estado\_Reparacao, Observacoes, Conselhos, \textit{Matricula (FK)}, \textit{ID\_Colaborador (FK)}.
+    \item \textbf{Linhas\_Reparacao:} \underline{ID\_Linha}, Designacao, Quantidade, Valor\_Unitario, Categoria, \textit{ID\_Folha (FK)}.
+\end{enumerate}
+
+\subsection{A Escolha do Docker para Infraestrutura}
+Em termos de arquitetura de servidor, decidi utilizar o \textbf{Docker} neste projeto, alinhando a solução com as melhores práticas de \textit{DevOps} lecionadas no curso. 
+
+A vantagem principal para o meu caso de uso é a facilidade de criar ambientes isolados. Ao definir um ficheiro \texttt{docker-compose.yml}, consigo ter a base de dados SQL Server e, futuramente, a API em Node.js a correr em qualquer computador  através de um único comando. Isto evita que o meu computador fique "sujo" com serviços em segundo plano, consome menos recursos, e facilita drasticamente o \textit{deploy} do projeto para um servidor de produção quando a oficina adotar o sistema em definitivo.
+
+\clearpage
+
+% ==========================================
+% SECÇÕES BASE PARA O FUTURO (A SUBSTITUIR DEPOIS)
+% ==========================================
+
+\section{Desenvolvimento da Aplicação Web e Móvel}
+
+\textit{[Nota de Edição: Esta secção servirá de base para a Fase 2 do projeto. Aqui documentaremos as rotas da API em Node.js e os ecrãs criados em React para a PWA dos mecânicos e o Dashboard dos gestores.]}
+
+\subsection{Arquitetura RESTful (Node.js)}
+No desenvolvimento da camada de \textit{backend}, optou-se pela utilização do ambiente Node.js com a \textit{framework} Express. Esta API atua como o motor central de regras de negócio, comunicando diretamente com o SQL Server e expondo os \textit{endpoints} necessários para as operações \ac{CRUD}.
+
+\subsection{Progressive Web App (React) e Dashboard}
+A interface gráfica foi separada em duas experiências distintas, ambas desenvolvidas em React:
+\begin{itemize}
+    \item \textbf{Visão Mobile (Oficina):} Otimizada para o uso com uma mão por parte dos mecânicos, focada na rapidez de inserção de peças e consulta de checklists.
+    \item \textbf{Visão Desktop (Dashboard):} Um painel administrativo que consome os dados da API para apresentar o apuramento de valores, o volume de veículos em reparação e a gestão do catálogo de clientes.
+\end{itemize}
+
+\section{Testes e Validação}
+
+\textit{[Nota de Edição: Secção para registar os testes efetuados no sistema, provando o seu rigor técnico.]}
+
+O sistema foi submetido a baterias de testes para garantir a sua robustez num ambiente de oficina:
+\begin{itemize}
+    \item \textbf{Testes de Integração API-Base de Dados:} Validação do correto funcionamento das rotas POST, GET, PUT e manipulação do estado de \textit{Soft Delete}.
+    \item \textbf{Validação de Integridade Referencial:} Tentativas forçadas de inserção de dados inconsistentes, garantindo que o SGBD bloqueia operações ilícitas (ex: adicionar uma folha de obra a um colaborador inexistente).
+\end{itemize}
+
+\section{Conclusão}
+
+\textit{[Nota de Edição: Síntese final a preencher no fecho do projeto.]}
+
+O desenvolvimento deste projeto permitiu percorrer integralmente as fases cruciais da criação de um produto de software comercial, desde o levantamento das necessidades no "chão da oficina" até à entrega de uma solução digital interativa.
+
+\textbf{O que foi conseguido:}
+Foi desenhado e fundamentado um modelo de dados relacional perfeitamente adaptado à realidade oficinal, com foco nas autocaravanas. A arquitetura \textit{containerizada} em Docker provou ser altamente eficaz para o desenvolvimento isolado do SQL Server. [Adicionar conclusão sobre a API e o React assim que estiverem concluídos].
+
+De uma forma geral, os objetivos propostos na fase de idealização foram alcançados, substituindo com sucesso o obsoleto sistema de papel por uma solução de Informática Web escalável, portátil e segura, pronta a modernizar o fluxo de trabalho da Duarte \& Raposo.
+
+\clearpage
+
+\section{Referências Bibliográficas}
+
+\begin{itemize}
+    \item Documentação Oficial Docker. \textit{Docker Compose Overview}. Disponível em: \url{https://docs.docker.com/compose/}
+    \item Documentação Microsoft. \textit{SQL Server on Linux}. Disponível em: \url{https://learn.microsoft.com/en-us/sql/linux/}
+    \item MDN Web Docs. \textit{Progressive Web Apps (PWAs)}. Disponível em: \url{https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps}
+\end{itemize}
+
+\section*{Acrónimos}
+\addcontentsline{toc}{section}{Acrónimos}
+\begin{acronym}[UBI]
+    \acro{UBI}{Universidade da Beira Interior}
+    \acro{API}{Application Programming Interface}
+    \acro{SQL}{Structured Query Language}
+    \acro{PWA}{Progressive Web App}
+    \acro{CRUD}{Create, Read, Update, Delete}
+    \acro{SGBD}{Sistema de Gestão de Bases de Dados}
+    \acro{3FN}{Terceira Forma Normal}
+\end{acronym}
+
+\clearpage
+
+% --- ANEXOS ---
+\section{Anexos}
+\addcontentsline{toc}{section}{Anexos}
+
+\subsection*{Anexo I: Diagrama da Base de Dados}
+ \begin{figure}[H]
+    \centering
+    \framebox{\parbox{0.8\textwidth}{\centering
+      \vspace{3cm}
+      \textbf{Diagrama Conceptual} \\
+      \small\textit{(Apagar esta caixa e descomentar o includegraphics abaixo no teu editor)}
+      \vspace{3cm}
+    }}
+    % \includegraphics[width=0.9\textwidth]{Anexos/Diagrama.png}
+    \caption{Diagrama concetual gerado no ERDPlus.}
+ \end{figure}
+
+\subsection*{Anexo II: Esquema Relacional da Base de Dados}
+ \begin{figure}[H]
+    \centering
+    \framebox{\parbox{0.8\textwidth}{\centering
+      \vspace{3cm}
+      \textbf{Esquema Relacional} \\
+      \small\textit{(Apagar esta caixa e descomentar o includegraphics abaixo no teu editor)}
+      \vspace{3cm}
+    }}
+    % \includegraphics[width=0.9\textwidth]{Anexos/Esquema_relacional.png}
+    \caption{Esquema Relacional final gerado no ERDPlus.}
+ \end{figure}
+
+\end{document}
