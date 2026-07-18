@@ -3,6 +3,7 @@ version: '3.8'
 services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64 # necessário em Macs Apple Silicon (M1/M2/M3/M4), o SQL Server não tem imagem nativa ARM
     container_name: dr_oficina_sql
     restart: always
     environment:
