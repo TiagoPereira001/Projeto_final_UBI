@@ -4,6 +4,7 @@ const cors = require('cors');
 const { getPool } = require('./db');
 
 const colaboradoresRouter = require('./routes/colaboradores');
+const autocaravanasRouter = require('./routes/autocaravanas');
 
 const app = express();
 app.use(cors());
@@ -20,6 +21,7 @@ app.get('/api/test-db', async (req, res) => {
 });
 
 app.use('/api/colaboradores', colaboradoresRouter);
+app.use('/api/autocaravanas', autocaravanasRouter);
 
 const PORT = 3000;
 app.listen(PORT, () => {
