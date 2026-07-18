@@ -5,6 +5,7 @@ const { getPool } = require('./db');
 
 const colaboradoresRouter = require('./routes/colaboradores');
 const autocaravanasRouter = require('./routes/autocaravanas');
+const clientesRouter = require('./routes/clientes');
 
 const app = express();
 app.use(cors());
@@ -22,6 +23,7 @@ app.get('/api/test-db', async (req, res) => {
 
 app.use('/api/colaboradores', colaboradoresRouter);
 app.use('/api/autocaravanas', autocaravanasRouter);
+app.use('/api/clientes', clientesRouter);
 
 const PORT = 3000;
 app.listen(PORT, () => {
