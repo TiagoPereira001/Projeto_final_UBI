@@ -1,6 +1,6 @@
 const sql = require('mssql');
 
-// Configuração da conexão ao SQL Server no Docker
+// dados de ligação ao SQL Server que corre no docker
 const dbConfig = {
     user: 'SA',
     password: process.env.DB_PASSWORD || 'DuarteRaposo2026!',
@@ -8,15 +8,14 @@ const dbConfig = {
     port: 1433,
     database: 'OficinaDR',
     options: {
-        encrypt: false, // Necessário para desenvolvimento local
+        encrypt: false, // não precisamos disto em dev local
         trustServerCertificate: true
     }
 };
 
-// Pool único e partilhado por toda a aplicação.
-// Em vez de sql.connect(dbConfig) em cada rota (que abre uma ligação nova
-// de cada vez e pode esgotar as ligações disponíveis), criamos o pool
-// uma única vez aqui e todas as rotas pedem-no através de getPool().
+// antes tínhamos um sql.connect() dentro de cada rota, o que abre uma
+// ligação nova sempre que alguém faz um pedido. isto aqui guarda a
+// ligação já feita (pool) e reutiliza-a em todo o lado
 let poolPromise = null;
 
 function getPool() {
@@ -27,7 +26,7 @@ function getPool() {
                 return pool;
             })
             .catch(err => {
-                poolPromise = null; // permite tentar de novo no próximo pedido
+                poolPromise = null; // se falhar, deixa tentar outra vez no próximo pedido
                 throw err;
             });
     }

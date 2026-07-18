@@ -5,8 +5,7 @@ const { sql, getPool } = require('../db');
 const router = express.Router();
 const SALT_ROUNDS = 10;
 
-// GET /api/colaboradores
-// Lista todos os colaboradores ativos (nunca devolve a password).
+// lista os colaboradores ativos, sem mostrar a password (nem o hash)
 router.get('/', async (req, res) => {
     try {
         const pool = await getPool();
@@ -22,7 +21,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// GET /api/colaboradores/:id
 router.get('/:id', async (req, res) => {
     try {
         const pool = await getPool();
@@ -43,9 +41,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// POST /api/colaboradores
-// Cria um novo colaborador. A password vem em texto simples no pedido
-// (ex: { "password": "123456" }) e é encriptada aqui antes de ir para a BD.
+// cria um colaborador novo. a password chega em texto normal (ex: "123456")
+// e só é encriptada aqui, nunca vai texto simples para a BD
 router.post('/', async (req, res) => {
     const { nome, cargo, email, password } = req.body;
 
@@ -72,7 +69,7 @@ router.post('/', async (req, res) => {
 
         res.status(201).json(result.recordset[0]);
     } catch (err) {
-        // Erro 2627/2601 do SQL Server = violação de UNIQUE (o Email já existe)
+        // 2627/2601 é o SQL Server a dizer que o UNIQUE do email já existe
         if (err.number === 2627 || err.number === 2601) {
             return res.status(409).json({ error: 'Já existe um colaborador com esse email.' });
         }
@@ -80,8 +77,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-// PUT /api/colaboradores/:id
-// Atualiza dados do colaborador. A password só é alterada se for enviada.
+// atualiza os dados do colaborador. a password só muda se vier no body,
+// se não vier fica a mesma
 router.put('/:id', async (req, res) => {
     const { nome, cargo, email, password } = req.body;
 
@@ -125,9 +122,9 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// DELETE /api/colaboradores/:id
-// Soft delete: nunca remove a linha da BD, só marca Ativo = 0.
-// Preserva o histórico (as Folhas de Obra continuam a referenciar este colaborador).
+// soft delete: não apaga a linha, só marca Ativo = 0.
+// tem de ser assim porque as Folhas de Obra continuam a apontar para este
+// colaborador (ID_Colaborador), um DELETE normal ia partir essa referência
 router.delete('/:id', async (req, res) => {
     try {
         const pool = await getPool();
