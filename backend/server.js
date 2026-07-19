@@ -6,6 +6,8 @@ const { getPool } = require('./db');
 const colaboradoresRouter = require('./routes/colaboradores');
 const autocaravanasRouter = require('./routes/autocaravanas');
 const clientesRouter = require('./routes/clientes');
+const folhasObraRouter = require('./routes/folhasObra');
+const authRouter = require('./routes/auth');
 
 const app = express();
 app.use(cors());
@@ -24,6 +26,8 @@ app.get('/api/test-db', async (req, res) => {
 app.use('/api/colaboradores', colaboradoresRouter);
 app.use('/api/autocaravanas', autocaravanasRouter);
 app.use('/api/clientes', clientesRouter);
+app.use('/api/folhas-obra', folhasObraRouter);
+app.use('/api/auth', authRouter);
 
 const PORT = 3000;
 app.listen(PORT, () => {
