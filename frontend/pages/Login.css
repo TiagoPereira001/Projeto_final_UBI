@@ -1,0 +1,27 @@
+.luz-indicadora {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #6b6d71;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.luz-indicadora[data-estado='a-verificar'] {
+  background: var(--amber-dim);
+  animation: pulsar 0.9s ease-in-out infinite;
+}
+
+.luz-indicadora[data-estado='sucesso'] {
+  background: var(--success);
+  box-shadow: 0 0 8px 1px rgba(91, 146, 121, 0.7);
+}
+
+.luz-indicadora[data-estado='erro'] {
+  background: var(--danger);
+  box-shadow: 0 0 8px 1px rgba(192, 57, 43, 0.6);
+}
+
+@keyframes pulsar {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
