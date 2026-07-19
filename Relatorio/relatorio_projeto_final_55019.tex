@@ -151,40 +151,131 @@ A vantagem principal para o meu caso de uso é a facilidade de criar ambientes i
 % SECÇÕES BASE PARA O FUTURO (A SUBSTITUIR DEPOIS)
 % ==========================================
 
-\section{Desenvolvimento da Aplicação Web e Móvel}
+\section{Desenvolvimento da API REST (Backend)}
 
-\textit{[Nota de Edição: Esta secção servirá de base para a Fase 2 do projeto. Aqui documentaremos as rotas da API em Node.js e os ecrãs criados em React para a PWA dos mecânicos e o Dashboard dos gestores.]}
+Esta secção documenta o estado atual da implementação do \textit{backend}, desenvolvido em Node.js. À data de escrita desta secção, encontram-se implementadas as três entidades independentes do modelo (Colaboradores, Clientes e Autocaravanas); as entidades relacionais mais complexas (Folhas de Obra e Linhas de Reparação) e a camada de interface (PWA e Dashboard) estão planeadas para a fase seguinte do projeto (ver secção~\ref{subsec:trabalho-futuro}).
 
 \subsection{Arquitetura RESTful (Node.js)}
 No desenvolvimento da camada de \textit{backend}, optou-se pela utilização do ambiente Node.js com a \textit{framework} Express. Esta API atua como o motor central de regras de negócio, comunicando diretamente com o SQL Server e expondo os \textit{endpoints} necessários para as operações \ac{CRUD}.
 
-\subsection{Progressive Web App (React) e Dashboard}
-A interface gráfica foi separada em duas experiências distintas, ambas desenvolvidas em React:
+O código foi organizado de forma modular, separando claramente três responsabilidades:
 \begin{itemize}
-    \item \textbf{Visão Mobile (Oficina):} Otimizada para o uso com uma mão por parte dos mecânicos, focada na rapidez de inserção de peças e consulta de checklists.
-    \item \textbf{Visão Desktop (Dashboard):} Um painel administrativo que consome os dados da API para apresentar o apuramento de valores, o volume de veículos em reparação e a gestão do catálogo de clientes.
+    \item \texttt{db.js} --- gestão centralizada da ligação à base de dados;
+    \item \texttt{routes/} --- um ficheiro por entidade (\texttt{colaboradores.js}, \texttt{clientes.js}, \texttt{autocaravanas.js}), cada um definindo as suas próprias rotas através do \texttt{express.Router()};
+    \item \texttt{server.js} --- ponto de entrada da aplicação, responsável apenas por montar as rotas e arrancar o servidor.
+\end{itemize}
+
+Esta separação, em vez de concentrar toda a lógica num único ficheiro, torna o código mais fácil de expandir à medida que novas entidades (como as Folhas de Obra) são adicionadas, e facilita a leitura do projeto em contexto de avaliação académica.
+
+\subsection{Rotas Implementadas}
+A Tabela~\ref{tab:rotas} resume os \textit{endpoints} atualmente disponíveis. Todas as entidades seguem o mesmo padrão \ac{CRUD}, com a particularidade de o método \texttt{DELETE} nunca remover fisicamente um registo (ver \textit{Soft Delete}, secção 3.1).
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|p{6.5cm}|}
+\hline
+\textbf{Método} & \textbf{Endpoint} & \textbf{Descrição} \\
+\hline
+GET & /api/colaboradores & Lista colaboradores ativos \\
+GET & /api/colaboradores/:id & Obtém um colaborador \\
+POST & /api/colaboradores & Cria colaborador (password encriptada com bcrypt) \\
+PUT & /api/colaboradores/:id & Atualiza colaborador \\
+DELETE & /api/colaboradores/:id & Desativa colaborador (soft delete) \\
+\hline
+GET & /api/clientes & Lista clientes ativos \\
+GET & /api/clientes/:id & Obtém um cliente \\
+POST & /api/clientes & Cria cliente \\
+PUT & /api/clientes/:id & Atualiza cliente \\
+DELETE & /api/clientes/:id & Desativa cliente (soft delete) \\
+\hline
+GET & /api/autocaravanas & Lista autocaravanas ativas (com nome do cliente) \\
+GET & /api/autocaravanas/:matricula & Obtém uma autocaravana \\
+POST & /api/autocaravanas & Cria autocaravana (valida existência do cliente) \\
+PUT & /api/autocaravanas/:matricula & Atualiza autocaravana \\
+DELETE & /api/autocaravanas/:matricula & Desativa autocaravana (soft delete) \\
+\hline
+\end{tabular}
+\caption{Rotas da API implementadas até ao momento.}
+\label{tab:rotas}
+\end{table}
+
+\subsection{Decisões Técnicas de Implementação}
+\begin{itemize}
+    \item \textbf{Pool de Ligações Único:} Em vez de abrir uma nova ligação ao SQL Server em cada pedido HTTP (\texttt{sql.connect()} por rota), foi implementado um pool de ligações único e partilhado por toda a aplicação (\texttt{db.js}), seguindo a recomendação da própria biblioteca \texttt{mssql}. Isto evita o esgotamento de ligações disponíveis sob carga.
+
+    \item \textbf{Encriptação de \textit{Passwords}:} As \textit{passwords} dos colaboradores nunca são guardadas em texto simples. Antes de qualquer escrita na base de dados, são processadas com a biblioteca \texttt{bcrypt} (\textit{salt rounds} = 10), preparando o terreno para a futura implementação de autenticação (\textit{login}) na Fase 2.
+
+    \item \textbf{Validação de Integridade Referencial ao Nível da Aplicação:} Antes de criar uma Autocaravana, a API confirma explicitamente que o \texttt{ID\_cliente} indicado existe e está ativo, devolvendo um erro \texttt{400} claro em caso negativo. Sem esta validação, um erro de chave estrangeira do SQL Server chegaria ao cliente da API de forma menos percetível.
+
+    \item \textbf{Tratamento de Duplicados:} Os códigos de erro nativos do SQL Server para violação de restrições \texttt{UNIQUE} (2627/2601) são capturados e traduzidos para respostas HTTP \texttt{409 Conflict} com mensagens em português, em vez de expor o erro técnico da base de dados diretamente.
+\end{itemize}
+
+\subsection{Ambiente de Desenvolvimento Multiplataforma (Docker)}
+Um aspeto prático relevante do desenvolvimento foi garantir que o ambiente Docker funciona de forma consistente em diferentes máquinas de desenvolvimento, nomeadamente entre um computador com processador Intel e um MacBook com Apple Silicon (M1/M2/M3/M4). A imagem oficial do SQL Server é distribuída apenas para arquitetura x86\_64, pelo que em Macs Apple Silicon a execução ocorre por emulação (Rosetta~2). Para tornar este comportamento explícito e evitar erros de arquitetura, foi adicionada a diretiva \texttt{platform: linux/amd64} ao serviço da base de dados no \texttt{docker-compose.yml}, garantindo o arranque correto do container independentemente do processador do anfitrião.
+
+\subsection{Trabalho a Realizar}
+\label{subsec:trabalho-futuro}
+Ficam planeados para a fase seguinte do projeto:
+\begin{itemize}
+    \item Implementação das rotas de \textbf{Folhas de Obra} e \textbf{Linhas de Reparação}, que exigem lógica transacional (\texttt{sql.Transaction}) para garantir que a folha de obra e as suas linhas associadas são criadas de forma atómica;
+    \item Implementação de \textbf{autenticação} (\textit{login} de colaboradores via \ac{JWT}, aproveitando o campo \texttt{Password\_Hash} já existente);
+    \item Desenvolvimento da \textbf{PWA em React} para os mecânicos (visão mobile);
+    \item Desenvolvimento do \textbf{Dashboard em React} para a gestão (visão desktop), incluindo o cálculo automático de IVA para faturação.
 \end{itemize}
 
 \section{Testes e Validação}
 
-\textit{[Nota de Edição: Secção para registar os testes efetuados no sistema, provando o seu rigor técnico.]}
+\subsection{Metodologia de Teste}
+Os testes realizados até ao momento são testes manuais de integração, executados através da ferramenta \textit{Thunder Client}\footnote{Alternativamente, poderia ser usado o Postman; a escolha não afeta os resultados.} e da linha de comandos (\texttt{curl}), validando o comportamento de cada rota diretamente contra a base de dados SQL Server a correr em Docker. A automatização de testes (por exemplo, com \textit{Jest} e \textit{Supertest}) fica identificada como possível extensão para a fase seguinte.
 
-O sistema foi submetido a baterias de testes para garantir a sua robustez num ambiente de oficina:
-\begin{itemize}
-    \item \textbf{Testes de Integração API-Base de Dados:} Validação do correto funcionamento das rotas POST, GET, PUT e manipulação do estado de \textit{Soft Delete}.
-    \item \textbf{Validação de Integridade Referencial:} Tentativas forçadas de inserção de dados inconsistentes, garantindo que o SGBD bloqueia operações ilícitas (ex: adicionar uma folha de obra a um colaborador inexistente).
-\end{itemize}
+\subsection{Casos de Teste Executados}
+A Tabela~\ref{tab:testes} resume os cenários validados manualmente para as três entidades implementadas.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|p{4.5cm}|p{7.5cm}|c|}
+\hline
+\textbf{Cenário} & \textbf{Resultado Esperado} & \textbf{OK?} \\
+\hline
+Criar cliente com todos os campos válidos & Resposta 201, registo devolvido com \texttt{ID\_cliente} & Sim \\
+\hline
+Listar clientes & Resposta 200, apenas clientes com \texttt{Ativo = 1} & Sim \\
+\hline
+Criar autocaravana com \texttt{id\_cliente} inexistente & Resposta 400, mensagem clara (sem expor erro SQL) & Sim \\
+\hline
+Criar autocaravana com matrícula já existente & Resposta 409 Conflict & Sim \\
+\hline
+Criar colaborador e confirmar que a \textit{password} não é devolvida em texto simples & Resposta 201, campo \texttt{password} ausente da resposta & Sim \\
+\hline
+Desativar (soft delete) um colaborador e tentar listá-lo & Não aparece na listagem, mas mantém-se na base de dados & Sim \\
+\hline
+\end{tabular}
+\caption{Casos de teste manuais executados sobre a API.}
+\label{tab:testes}
+\end{table}
+
+\subsection{Validação de Integridade Referencial}
+Foram realizadas tentativas propositadas de inserção de dados inconsistentes para confirmar que o sistema bloqueia operações ilícitas --- por exemplo, associar uma autocaravana a um \texttt{ID\_cliente} inexistente ou já inativo. Estas validações são feitas explicitamente ao nível da aplicação (e não apenas por rejeição da base de dados), permitindo devolver mensagens de erro percetíveis ao utilizador final da API.
+
+\textit{[Nota de Edição: inserir aqui as capturas de ecrã do Thunder Client/Postman correspondentes aos testes da Tabela~\ref{tab:testes}, uma por cada pedido relevante, por exemplo:]}
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=0.9\textwidth]{Anexos/teste_post_cliente.png}
+%   \caption{Criação de um cliente via POST /api/clientes.}
+% \end{figure}
 
 \section{Conclusão}
 
-\textit{[Nota de Edição: Síntese final a preencher no fecho do projeto.]}
+\textit{[Nota de Edição: esta é uma síntese do estado intercalar do projeto; será revista e completada no relatório final, após a conclusão das Folhas de Obra, autenticação e interfaces React.]}
 
-O desenvolvimento deste projeto permitiu percorrer integralmente as fases cruciais da criação de um produto de software comercial, desde o levantamento das necessidades no "chão da oficina" até à entrega de uma solução digital interativa.
+O desenvolvimento deste projeto, até ao momento, percorreu com sucesso as fases de levantamento de requisitos, modelação de dados e implementação inicial do \textit{backend}, tendo o modelo relacional e a infraestrutura Docker sido validados na prática.
 
-\textbf{O que foi conseguido:}
-Foi desenhado e fundamentado um modelo de dados relacional perfeitamente adaptado à realidade oficinal, com foco nas autocaravanas. A arquitetura \textit{containerizada} em Docker provou ser altamente eficaz para o desenvolvimento isolado do SQL Server. [Adicionar conclusão sobre a API e o React assim que estiverem concluídos].
+\textbf{O que foi conseguido até ao momento:}
+Foi desenhado e fundamentado um modelo de dados relacional adaptado à realidade oficinal, com foco nas autocaravanas, e implementado o \textit{backend} correspondente às três entidades independentes do modelo (Colaboradores, Clientes e Autocaravanas), com \ac{CRUD} completo, validações de integridade referencial e testes manuais documentados na secção anterior. A arquitetura \textit{containerizada} em Docker provou ser eficaz e portátil entre diferentes máquinas de desenvolvimento.
 
-De uma forma geral, os objetivos propostos na fase de idealização foram alcançados, substituindo com sucesso o obsoleto sistema de papel por uma solução de Informática Web escalável, portátil e segura, pronta a modernizar o fluxo de trabalho da Duarte \& Raposo.
+\textbf{O que falta concluir:} as rotas de Folhas de Obra e Linhas de Reparação (com lógica transacional), a autenticação de colaboradores, e a camada de interface --- a PWA em React para os mecânicos e o Dashboard para a gestão, incluindo o cálculo automático de IVA para faturação.
+
+De uma forma geral, os objetivos propostos na fase de idealização estão a ser cumpridos progressivamente, com o backend a substituir já parte do fluxo em papel. A conclusão integral do sistema, com a camada de interface funcional, permitirá validar por completo a solução junto da oficina Duarte \& Raposo.
 
 \clearpage
 
@@ -206,6 +297,7 @@ De uma forma geral, os objetivos propostos na fase de idealização foram alcan�
     \acro{CRUD}{Create, Read, Update, Delete}
     \acro{SGBD}{Sistema de Gestão de Bases de Dados}
     \acro{3FN}{Terceira Forma Normal}
+    \acro{JWT}{JSON Web Token}
 \end{acronym}
 
 \clearpage
@@ -217,26 +309,14 @@ De uma forma geral, os objetivos propostos na fase de idealização foram alcan�
 \subsection*{Anexo I: Diagrama da Base de Dados}
  \begin{figure}[H]
     \centering
-    \framebox{\parbox{0.8\textwidth}{\centering
-      \vspace{3cm}
-      \textbf{Diagrama Conceptual} \\
-      \small\textit{(Apagar esta caixa e descomentar o includegraphics abaixo no teu editor)}
-      \vspace{3cm}
-    }}
-    % \includegraphics[width=0.9\textwidth]{Anexos/Diagrama.png}
+    \includegraphics[width=0.9\textwidth]{Anexos/Diagrama.png}
     \caption{Diagrama concetual gerado no ERDPlus.}
  \end{figure}
 
 \subsection*{Anexo II: Esquema Relacional da Base de Dados}
  \begin{figure}[H]
     \centering
-    \framebox{\parbox{0.8\textwidth}{\centering
-      \vspace{3cm}
-      \textbf{Esquema Relacional} \\
-      \small\textit{(Apagar esta caixa e descomentar o includegraphics abaixo no teu editor)}
-      \vspace{3cm}
-    }}
-    % \includegraphics[width=0.9\textwidth]{Anexos/Esquema_relacional.png}
+    \includegraphics[width=0.9\textwidth]{Anexos/Esquema_relacional.png}
     \caption{Esquema Relacional final gerado no ERDPlus.}
  \end{figure}
 
