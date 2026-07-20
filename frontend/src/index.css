@@ -1,0 +1,56 @@
+:root {
+  /* cor -- baseado no ambiente de oficina: metal, luzes de tablier, aviso */
+  --graphite: #1c1d1f;
+  --panel: #26282b;
+  --panel-raised: #313339;
+  --border: #3d4046;
+
+  --amber: #e8a33d;
+  --amber-dim: #b57a2a;
+  --teal: #4a6b6f;
+  --danger: #c0392b;
+  --success: #5b9279;
+
+  --paper: #f2f0ea;
+  --paper-muted: #a3a5a8;
+
+  /* tipografia */
+  --font-display: 'Oswald', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--graphite);
+  color: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, select {
+  font-family: inherit;
+}
+
+/* foco visivel para acessibilidade -- nunca remover sem substituir */
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

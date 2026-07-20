@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
@@ -10,6 +11,7 @@ export default defineConfig({
       manifest: {
         name: 'Duarte & Raposo - Gestao de Oficina',
         short_name: 'D&R Oficina',
+        description: 'Sistema de gestao digital da oficina Duarte & Raposo',
         theme_color: '#1c1d1f',
         background_color: '#1c1d1f',
         display: 'standalone',
