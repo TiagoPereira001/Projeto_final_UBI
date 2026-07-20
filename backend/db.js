@@ -1,9 +1,19 @@
 const sql = require('mssql');
 
-// dados de ligação ao SQL Server que corre no docker
+// a password nunca fica escrita aqui -- tem de vir sempre do .env.
+// se faltar, a app para logo no arranque com um erro claro, em vez de
+// usar uma password escondida no código (foi essa a falha de segurança
+// corrigida: a password antiga esteve exposta no docker-compose.yml
+// e aqui, num repositório público)
+if (!process.env.DB_PASSWORD) {
+    throw new Error(
+        'Falta a variável DB_PASSWORD no .env. Ve o .env.example para saberes o que definir.'
+    );
+}
+
 const dbConfig = {
     user: 'SA',
-    password: process.env.DB_PASSWORD || 'DuarteRaposo2026!',
+    password: process.env.DB_PASSWORD,
     server: 'localhost',
     port: 1433,
     database: 'OficinaDR',
