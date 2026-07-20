@@ -1,7 +1,11 @@
 const express = require('express');
 const { sql, getPool } = require('../db');
+const { verificarToken } = require('../middleware/auth');
 
 const router = express.Router();
+
+// a partir daqui, todas as rotas deste ficheiro exigem login
+router.use(verificarToken);
 
 router.get('/', async (req, res) => {
     try {
@@ -14,7 +18,8 @@ router.get('/', async (req, res) => {
             `);
         res.status(200).json(result.recordset);
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao listar clientes: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao listar clientes. Tenta novamente mais tarde.' });
     }
 });
 
@@ -34,7 +39,8 @@ router.get('/:id', async (req, res) => {
         }
         res.status(200).json(result.recordset[0]);
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao obter cliente: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao obter cliente. Tenta novamente mais tarde.' });
     }
 });
 
@@ -62,7 +68,8 @@ router.post('/', async (req, res) => {
 
         res.status(201).json(result.recordset[0]);
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao criar cliente: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao criar cliente. Tenta novamente mais tarde.' });
     }
 });
 
@@ -95,7 +102,8 @@ router.put('/:id', async (req, res) => {
         }
         res.status(200).json(result.recordset[0]);
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao atualizar cliente: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao atualizar cliente. Tenta novamente mais tarde.' });
     }
 });
 
@@ -118,7 +126,8 @@ router.delete('/:id', async (req, res) => {
         }
         res.status(200).json({ message: 'Cliente desativado com sucesso.' });
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao desativar cliente: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao desativar cliente. Tenta novamente mais tarde.' });
     }
 });
 

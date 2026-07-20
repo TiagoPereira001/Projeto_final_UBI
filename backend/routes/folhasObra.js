@@ -1,7 +1,11 @@
 const express = require('express');
 const { sql, getPool } = require('../db');
+const { verificarToken } = require('../middleware/auth');
 
 const router = express.Router();
+
+// a partir daqui, todas as rotas deste ficheiro exigem login
+router.use(verificarToken);
 
 // lista as folhas de obra, já com a matricula, o nome do colaborador e o
 // valor total calculado a partir das linhas de reparação associadas
@@ -24,7 +28,8 @@ router.get('/', async (req, res) => {
             `);
         res.status(200).json(result.recordset);
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao listar folhas de obra: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao listar folhas de obra. Tenta novamente mais tarde.' });
     }
 });
 
@@ -64,7 +69,8 @@ router.get('/:id', async (req, res) => {
 
         res.status(200).json(resultado);
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao obter folha de obra: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao obter folha de obra. Tenta novamente mais tarde.' });
     }
 });
 
@@ -152,7 +158,8 @@ router.post('/', async (req, res) => {
         res.status(201).json(novaFolha);
     } catch (err) {
         await transaction.rollback();
-        res.status(500).json({ error: 'Erro ao criar folha de obra: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao criar folha de obra. Tenta novamente mais tarde.' });
     }
 });
 
@@ -191,7 +198,8 @@ router.post('/:id/linhas', async (req, res) => {
 
         res.status(201).json(result.recordset[0]);
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao adicionar linha de reparação: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao adicionar linha de reparação. Tenta novamente mais tarde.' });
     }
 });
 
@@ -227,7 +235,8 @@ router.put('/:id', async (req, res) => {
         }
         res.status(200).json(result.recordset[0]);
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao atualizar folha de obra: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao atualizar folha de obra. Tenta novamente mais tarde.' });
     }
 });
 
@@ -251,7 +260,8 @@ router.delete('/linhas/:idLinha', async (req, res) => {
         }
         res.status(200).json({ message: 'Linha de reparação removida com sucesso.' });
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao remover linha de reparação: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao remover linha de reparação. Tenta novamente mais tarde.' });
     }
 });
 

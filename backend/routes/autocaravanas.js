@@ -1,7 +1,11 @@
 const express = require('express');
 const { sql, getPool } = require('../db');
+const { verificarToken } = require('../middleware/auth');
 
 const router = express.Router();
+
+// a partir daqui, todas as rotas deste ficheiro exigem login
+router.use(verificarToken);
 
 // lista as autocaravanas ativas, já com o nome do cliente (join simples)
 router.get('/', async (req, res) => {
@@ -17,7 +21,8 @@ router.get('/', async (req, res) => {
             `);
         res.status(200).json(result.recordset);
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao listar autocaravanas: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao listar autocaravanas. Tenta novamente mais tarde.' });
     }
 });
 
@@ -40,7 +45,8 @@ router.get('/:matricula', async (req, res) => {
         }
         res.status(200).json(result.recordset[0]);
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao obter autocaravana: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao obter autocaravana. Tenta novamente mais tarde.' });
     }
 });
 
@@ -85,7 +91,8 @@ router.post('/', async (req, res) => {
         if (err.number === 2627 || err.number === 2601) {
             return res.status(409).json({ error: 'Já existe uma autocaravana com essa matrícula.' });
         }
-        res.status(500).json({ error: 'Erro ao criar autocaravana: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao criar autocaravana. Tenta novamente mais tarde.' });
     }
 });
 
@@ -130,7 +137,8 @@ router.put('/:matricula', async (req, res) => {
         }
         res.status(200).json(result.recordset[0]);
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao atualizar autocaravana: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao atualizar autocaravana. Tenta novamente mais tarde.' });
     }
 });
 
@@ -153,7 +161,8 @@ router.delete('/:matricula', async (req, res) => {
         }
         res.status(200).json({ message: 'Autocaravana desativada com sucesso.' });
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao desativar autocaravana: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao desativar autocaravana. Tenta novamente mais tarde.' });
     }
 });
 

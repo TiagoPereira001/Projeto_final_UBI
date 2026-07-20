@@ -1,9 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const { sql, getPool } = require('../db');
+const { verificarToken, autorizar } = require('../middleware/auth');
 
 const router = express.Router();
 const SALT_ROUNDS = 10;
+
+// a partir daqui, todas as rotas deste ficheiro exigem login
+router.use(verificarToken);
 
 // lista os colaboradores ativos, sem mostrar a password (nem o hash)
 router.get('/', async (req, res) => {
@@ -17,7 +21,8 @@ router.get('/', async (req, res) => {
             `);
         res.status(200).json(result.recordset);
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao listar colaboradores: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao listar colaboradores. Tenta novamente mais tarde.' });
     }
 });
 
@@ -37,13 +42,16 @@ router.get('/:id', async (req, res) => {
         }
         res.status(200).json(result.recordset[0]);
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao obter colaborador: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao obter colaborador. Tenta novamente mais tarde.' });
     }
 });
 
 // cria um colaborador novo. a password chega em texto normal (ex: "123456")
-// e só é encriptada aqui, nunca vai texto simples para a BD
-router.post('/', async (req, res) => {
+// e só é encriptada aqui, nunca vai texto simples para a BD.
+// só um Gestor pode criar contas novas -- um mecânico não devia poder
+// criar-se a si próprio (ou a outros) como Gestor
+router.post('/', autorizar('Gestor'), async (req, res) => {
     const { nome, cargo, email, password } = req.body;
 
     if (!nome || !cargo || !email || !password) {
@@ -73,13 +81,14 @@ router.post('/', async (req, res) => {
         if (err.number === 2627 || err.number === 2601) {
             return res.status(409).json({ error: 'Já existe um colaborador com esse email.' });
         }
-        res.status(500).json({ error: 'Erro ao criar colaborador: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao criar colaborador. Tenta novamente mais tarde.' });
     }
 });
 
 // atualiza os dados do colaborador. a password só muda se vier no body,
-// se não vier fica a mesma
-router.put('/:id', async (req, res) => {
+// se não vier fica a mesma. só um Gestor pode editar contas
+router.put('/:id', autorizar('Gestor'), async (req, res) => {
     const { nome, cargo, email, password } = req.body;
 
     if (!nome || !cargo || !email) {
@@ -118,14 +127,16 @@ router.put('/:id', async (req, res) => {
         if (err.number === 2627 || err.number === 2601) {
             return res.status(409).json({ error: 'Já existe um colaborador com esse email.' });
         }
-        res.status(500).json({ error: 'Erro ao atualizar colaborador: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao atualizar colaborador. Tenta novamente mais tarde.' });
     }
 });
 
 // soft delete: não apaga a linha, só marca Ativo = 0.
 // tem de ser assim porque as Folhas de Obra continuam a apontar para este
-// colaborador (ID_Colaborador), um DELETE normal ia partir essa referência
-router.delete('/:id', async (req, res) => {
+// colaborador (ID_Colaborador), um DELETE normal ia partir essa referência.
+// só um Gestor pode desativar colaboradores
+router.delete('/:id', autorizar('Gestor'), async (req, res) => {
     try {
         const pool = await getPool();
         const result = await pool.request()
@@ -142,7 +153,8 @@ router.delete('/:id', async (req, res) => {
         }
         res.status(200).json({ message: 'Colaborador desativado com sucesso.' });
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao desativar colaborador: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao desativar colaborador. Tenta novamente mais tarde.' });
     }
 });
 

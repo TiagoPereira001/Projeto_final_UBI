@@ -1,15 +1,26 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const rateLimit = require('express-rate-limit');
 const { sql, getPool } = require('../db');
 const { JWT_SECRET, verificarToken } = require('../middleware/auth');
 
 const router = express.Router();
 
+// no máximo 8 tentativas de login por IP a cada 15 minutos -- sem isto,
+// alguém podia tentar milhares de passwords por segundo (força bruta)
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 8,
+    message: { error: 'Demasiadas tentativas de login. Tenta novamente dentro de 15 minutos.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
 // POST /api/auth/login
 // recebe { email, password }, confirma a password contra o hash guardado,
 // e devolve um token que o frontend vai enviar nos pedidos seguintes
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -60,7 +71,8 @@ router.post('/login', async (req, res) => {
             }
         });
     } catch (err) {
-        res.status(500).json({ error: 'Erro ao fazer login: ' + err.message });
+        console.error(err);
+        res.status(500).json({ error: 'Erro ao fazer login. Tenta novamente mais tarde.' });
     }
 });
 
