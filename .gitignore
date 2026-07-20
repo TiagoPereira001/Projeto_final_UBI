@@ -3,7 +3,13 @@
 # ==============================
 .env
 .env.*
+!.env.example
 *.pem
+*.key
+*.crt
+*.p12
+secrets.json
+credentials.json
 
 # ==============================
 # 2. Node.js e Dependências (Para a API e PWA)
@@ -41,3 +47,4 @@ package-lock.json
 *.swp
 
 Contexto.md
+resumo.md
