@@ -169,6 +169,20 @@ test('um mecânico não gere colaboradores nem vê o resumo financeiro', async (
     assert.equal((await mecanico.put('/oficinas/atual', { nome: 'X' })).status, 403);
 });
 
+test('as respostas nunca trazem passwords, PINs nem hashes', async () => {
+    const { gestor } = await novaOficina(servidor, 'Segredos');
+    const criado = await gestor.post('/colaboradores', {
+        nome: 'Com Tudo', cargo: 'mecanico', email: `h-${unico()}@teste.test`, password: 'Password-Do-Mecanico', pin: '8024',
+    });
+    const lista = await gestor.get('/colaboradores');
+    for (const corpo of [criado.dados, ...lista.dados.itens]) {
+        const chaves = Object.keys(corpo).filter((k) => k !== 'temPin');
+        assert.ok(chaves.every((k) => !/password|hash|pin/i.test(k)), `chaves: ${chaves}`);
+        // nenhum valor com o formato de um hash bcrypt, nem o PIN em claro
+        assert.doesNotMatch(JSON.stringify(corpo), /\$2[aby]\$|8024|Password-Do-Mecanico/);
+    }
+});
+
 test('o gestor não pode retirar o próprio cargo nem desativar-se', async () => {
     const { gestor, email, colaborador } = await novaOficina(servidor, 'Proprio');
     const res = await gestor.put(`/colaboradores/${colaborador.id}`, { nome: 'G', cargo: 'mecanico', email });
