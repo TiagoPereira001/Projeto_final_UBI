@@ -17,9 +17,15 @@ export const dataHora = (valor) => (valor ? DATA_HORA.format(new Date(valor)) : 
 // as matrículas portuguesas têm três pares, cada um só de letras ou só de
 // números: AA-00-AA, 00-AA-00, 00-00-AA, AA-00-00. As estrangeiras (V432KL,
 // holandesa) ficam como estão, porque não sabemos onde levam os traços
+// três pares de letras ou algarismos: o formato das matrículas portuguesas
+// (AA-00-00 até AA-00-AA). As estrangeiras ficam como foram escritas
+export function matriculaPortuguesa(valor) {
+  return /^(?:[A-Z]{2}|\d{2}){3}$/.test(valor || '');
+}
+
 export function matricula(valor) {
   if (!valor) return '';
-  return /^(?:[A-Z]{2}|\d{2}){3}$/.test(valor) ? valor.match(/.{2}/g).join('-') : valor;
+  return matriculaPortuguesa(valor) ? valor.match(/.{2}/g).join('-') : valor;
 }
 
 // há quanto tempo o carro está na oficina: "hoje", "ontem", "há 3 dias"

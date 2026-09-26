@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { api } from '../lib/api';
+import { limparMemoriaRecursos } from '../lib/useRecurso';
 
 // quem está a trabalhar e se este dispositivo é a bancada (tablet partilhado).
 // A sessão em si está num cookie httpOnly; aqui guarda-se só o que a
@@ -11,6 +12,9 @@ const VAZIA = { colaborador: null, oficina: null, bancada: null };
 export function SessaoProvider({ children }) {
   const [sessao, setSessao] = useState(VAZIA);
   const [aCarregar, setACarregar] = useState(true);
+  // quando se "rodou a chave": a app abriu ou alguém acabou de entrar.
+  // O tablier só faz o autoteste das luzes logo a seguir a este momento
+  const [ligadoEm, setLigadoEm] = useState(() => Date.now());
 
   const atualizar = useCallback(async () => {
     try {
@@ -29,7 +33,10 @@ export function SessaoProvider({ children }) {
   // se qualquer pedido der 401 (sessão expirada ou conta desativada),
   // esquece o colaborador; as rotas protegidas mandam para a entrada
   useEffect(() => {
-    const terminou = () => setSessao((s) => ({ ...s, colaborador: null, oficina: null }));
+    const terminou = () => {
+      limparMemoriaRecursos();
+      setSessao((s) => ({ ...s, colaborador: null, oficina: null }));
+    };
     window.addEventListener('bancada:sessao-terminada', terminou);
     return () => window.removeEventListener('bancada:sessao-terminada', terminou);
   }, []);
@@ -38,27 +45,35 @@ export function SessaoProvider({ children }) {
     ...sessao,
     aCarregar,
     atualizar,
+    ligadoEm,
 
     async entrar(email, password) {
       const resposta = await api.post('/auth/entrar', { email, password });
+      limparMemoriaRecursos();
       setSessao((s) => ({ ...s, ...resposta }));
+      setLigadoEm(Date.now());
       return resposta;
     },
 
     async entrarComPin(colaboradorId, pin) {
       const resposta = await api.post('/auth/bancada/entrar', { colaboradorId, pin });
+      limparMemoriaRecursos();
       setSessao((s) => ({ ...s, ...resposta }));
+      setLigadoEm(Date.now());
       return resposta;
     },
 
     async registar(dados) {
       const resposta = await api.post('/oficinas', dados);
+      limparMemoriaRecursos();
       setSessao((s) => ({ ...s, ...resposta }));
+      setLigadoEm(Date.now());
       return resposta;
     },
 
     async sair() {
       await api.post('/auth/sair').catch(() => {});
+      limparMemoriaRecursos();
       setSessao((s) => ({ ...s, colaborador: null, oficina: null }));
     },
 
@@ -72,7 +87,7 @@ export function SessaoProvider({ children }) {
       await api.apagar('/auth/bancada');
       await atualizar();
     },
-  }), [sessao, aCarregar, atualizar]);
+  }), [sessao, aCarregar, atualizar, ligadoEm]);
 
   return <SessaoContext.Provider value={valor}>{children}</SessaoContext.Provider>;
 }

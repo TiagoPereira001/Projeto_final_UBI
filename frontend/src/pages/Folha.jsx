@@ -9,6 +9,7 @@ import {
 import { useSessao } from '../context/SessaoContext';
 import { useAvisos } from '../context/AvisosContext';
 import { Matricula } from '../components/Matricula';
+import { SimboloEstado } from '../components/Luzes';
 import { Botao, BotaoConfirmar } from '../components/Botao';
 import { AreaTexto, Segmentos, Texto } from '../components/Campo';
 import { ErroCarregar, ErroFormulario, Esqueleto, Vazio } from '../components/Situacoes';
@@ -154,6 +155,7 @@ function FolhaAberta({ folha, definir }) {
                     {!fechada && (
                       <td className="tabela__acao">
                         <BotaoConfirmar
+                          variante="fantasma"
                           tamanho="compacto"
                           icone={Trash}
                           pergunta="Remover?"
@@ -185,7 +187,8 @@ function FolhaAberta({ folha, definir }) {
   );
 }
 
-// o estado escolhe-se com um toque; cada opção tem a sua luz
+// o estado escolhe-se com um toque. Cada opção tem o pictograma do estado,
+// como no tablier: aceso no estado atual, apagado nos outros
 function SeletorEstado({ atual, aoMudar, desativado }) {
   return (
     <div className="seletor-estado" role="radiogroup" aria-label="Estado da reparação">
@@ -200,7 +203,7 @@ function SeletorEstado({ atual, aoMudar, desativado }) {
           onClick={() => aoMudar(estado.codigo)}
           title={estado.ajuda}
         >
-          <span className="estado__luz" aria-hidden="true" />
+          <SimboloEstado estado={estado.codigo} tamanho={26} className="seletor-estado__simbolo" />
           {estado.nome}
         </button>
       ))}

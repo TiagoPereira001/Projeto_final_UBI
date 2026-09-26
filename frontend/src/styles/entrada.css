@@ -24,46 +24,40 @@
 
 .entrada__luzes {
   display: flex;
-  gap: var(--e-3);
+  gap: var(--e-6);
   margin-top: auto;
 }
+/* as luzes vão direitas no grafite, sem aro: apagadas quase não se veem */
 .entrada__luz {
   --cor-luz: var(--luz-aberta);
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: var(--painel-2);
-  box-shadow: inset 0 0 0 1.5px var(--painel-aro), inset 0 -6px 12px rgb(0 0 0 / 0.35);
   color: var(--luz-apagada);
 }
 .entrada__luz.tablier__luz--em_curso { --cor-luz: var(--luz-em-curso); }
 .entrada__luz.tablier__luz--aguarda_pecas { --cor-luz: var(--luz-aguarda); }
 .entrada__luz.tablier__luz--concluida { --cor-luz: var(--luz-pronta); }
 
-/* autoteste: cada luz acende por ordem e apaga; a âmbar fica acesa */
+/* autoteste: cada luz acende por ordem e apaga; a âmbar (em curso) fica acesa */
 @media (prefers-reduced-motion: no-preference) {
-  .entrada__luz svg {
+  .entrada__luz {
     animation: autoteste 2.2s var(--curva) both;
     animation-delay: calc(var(--ordem) * 140ms + 250ms);
   }
-  .entrada__luz.tablier__luz--em_curso svg {
+  .entrada__luz.tablier__luz--em_curso {
     animation-name: autoteste-fica;
   }
 }
-.entrada__luz.tablier__luz--em_curso svg {
+.entrada__luz.tablier__luz--em_curso {
   color: var(--cor-luz);
-  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cor-luz) 65%, transparent));
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cor-luz) 55%, transparent));
 }
 @keyframes autoteste {
   0% { color: var(--luz-apagada); filter: none; }
-  12%, 55% { color: var(--cor-luz); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cor-luz) 65%, transparent)); }
+  12%, 55% { color: var(--cor-luz); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cor-luz) 55%, transparent)); }
   100% { color: var(--luz-apagada); filter: none; }
 }
 @keyframes autoteste-fica {
   0% { color: var(--luz-apagada); filter: none; }
-  12%, 100% { color: var(--cor-luz); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cor-luz) 65%, transparent)); }
+  12%, 100% { color: var(--cor-luz); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cor-luz) 55%, transparent)); }
 }
 
 .entrada__lema {
@@ -146,8 +140,10 @@
   color: var(--tinta-2);
   text-decoration: none;
 }
-.entrada__bancada:hover {
-  border-color: var(--linha-forte);
+@media (hover: hover) {
+  .entrada__bancada:hover {
+    border-color: var(--linha-forte);
+  }
 }
 .entrada__bancada strong {
   color: var(--tinta);
@@ -174,9 +170,12 @@
     order: 3;
     margin-top: 0;
   }
+  .entrada__luzes {
+    gap: var(--e-5);
+  }
   .entrada__luz {
-    width: 44px;
-    height: 44px;
+    width: 32px;
+    height: 32px;
   }
   .entrada__lema {
     max-width: none;
@@ -193,21 +192,25 @@
 }
 
 /* ============================================================
-   Bancada: o ecrã de descanso do tablet (sempre escuro)
+   Bancada: o ecrã de descanso do tablet partilhado.
+   Segue o tema do tablet (claro ao sol, escuro à noite); só a faixa de
+   cima é sempre escura, como a barra de topo da aplicação.
    ============================================================ */
 .bancada {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: var(--painel);
-  color: var(--painel-tinta);
+  background: var(--fundo);
+  color: var(--tinta);
 }
 .bancada__topo {
   display: flex;
   align-items: center;
   gap: var(--e-4);
-  padding: var(--e-5) clamp(var(--e-5), 4vw, var(--e-12));
+  padding: var(--e-4) clamp(var(--e-5), 4vw, var(--e-12));
+  background: var(--painel);
+  color: var(--painel-tinta);
   border-bottom: 1px solid var(--painel-linha);
 }
 .bancada__oficina {
@@ -220,20 +223,20 @@
   margin-left: auto;
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  padding: 0 var(--e-3);
+  min-height: var(--toque);
+  padding: 0 var(--e-4);
   color: var(--painel-tinta-2);
   font-weight: 600;
   text-decoration: none;
   border-radius: var(--r-controlo);
 }
-.bancada__ligacao:hover {
-  color: var(--painel-tinta);
-  background: var(--painel-2);
+@media (hover: hover) {
+  .bancada__ligacao:hover {
+    color: var(--painel-tinta);
+    background: var(--painel-2);
+  }
 }
-.bancada__ligacao:focus-visible,
-.bancada__voltar:focus-visible,
-.bancada__pessoa:focus-visible {
+.bancada__ligacao:focus-visible {
   outline-color: var(--ambar);
 }
 
@@ -252,7 +255,7 @@
 .bancada__aviso {
   max-width: 48ch;
   text-align: center;
-  color: var(--painel-tinta-2);
+  color: var(--tinta-2);
 }
 .bancada__pessoas {
   list-style: none;
@@ -273,19 +276,22 @@
   width: 100%;
   min-height: 104px;
   padding: var(--e-4) var(--e-5);
-  border: 1px solid var(--painel-linha);
+  border: 1px solid var(--linha);
   border-radius: var(--r-painel);
-  background: var(--painel-2);
-  color: var(--painel-tinta);
+  background: var(--superficie);
+  color: var(--tinta);
   text-align: left;
   transition: border-color var(--dur-rapida) var(--curva), background var(--dur-rapida) var(--curva), transform var(--dur-rapida) var(--curva);
+  -webkit-tap-highlight-color: transparent;
 }
-.bancada__pessoa:hover {
-  border-color: var(--painel-aro);
-  background: #202327;
+@media (hover: hover) {
+  .bancada__pessoa:hover {
+    border-color: var(--linha-forte);
+  }
 }
 .bancada__pessoa:active {
   transform: scale(0.985);
+  background: var(--realce);
 }
 .bancada__nome {
   font-family: var(--letra-estreita);
@@ -294,7 +300,7 @@
   line-height: 1.1;
 }
 .bancada__cargo {
-  color: var(--painel-tinta-2);
+  color: var(--tinta-2);
   font-size: var(--t-pequeno);
 }
 
@@ -309,20 +315,22 @@
   display: inline-flex;
   align-items: center;
   gap: var(--e-2);
-  min-height: 48px;
+  min-height: var(--toque);
   padding: 0 var(--e-4);
-  border: 1px solid var(--painel-linha);
+  border: 1px solid var(--linha);
   border-radius: var(--r-controlo);
   background: transparent;
-  color: var(--painel-tinta-2);
+  color: var(--tinta-2);
   font-weight: 600;
 }
-.bancada__voltar:hover {
-  color: var(--painel-tinta);
-  background: var(--painel-2);
+@media (hover: hover) {
+  .bancada__voltar:hover {
+    color: var(--tinta);
+    border-color: var(--linha-forte);
+  }
 }
 .bancada__instrucao {
   margin-bottom: var(--e-3);
-  color: var(--painel-tinta-2);
+  color: var(--tinta-2);
   font-size: var(--t-corpo-g);
 }

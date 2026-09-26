@@ -7,24 +7,25 @@ import { Botao } from '../components/Botao';
 import { Texto } from '../components/Campo';
 import { ErroFormulario } from '../components/Situacoes';
 import { ESTADOS_ATIVOS } from '../lib/formatar';
-import { ICONE_ESTADO } from '../components/Estado';
+import { SimboloEstado } from '../components/Luzes';
 import '../styles/entrada.css';
 
 // o painel da esquerda: as quatro luzes fazem o "autoteste" de um carro
-// quando se roda a chave (acendem todas e apagam). Fica a âmbar acesa
+// quando se roda a chave (acendem todas e apagam). Fica a âmbar acesa.
 export function PainelMarca({ children }) {
   return (
     <section className="entrada__painel" aria-label="Bancada">
       <Marca tamanho={44} />
       <div className="entrada__luzes" aria-hidden="true">
-        {ESTADOS_ATIVOS.map((estado, i) => {
-          const Icone = ICONE_ESTADO[estado.codigo];
-          return (
-            <span key={estado.codigo} className={`entrada__luz tablier__luz--${estado.codigo}`} style={{ '--ordem': i }}>
-              <Icone size={26} weight="fill" />
-            </span>
-          );
-        })}
+        {ESTADOS_ATIVOS.map((estado, i) => (
+          <SimboloEstado
+            key={estado.codigo}
+            estado={estado.codigo}
+            tamanho={40}
+            className={`entrada__luz tablier__luz--${estado.codigo}`}
+            estilo={{ '--ordem': i }}
+          />
+        ))}
       </div>
       {children}
     </section>

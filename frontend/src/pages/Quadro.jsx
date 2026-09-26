@@ -18,10 +18,10 @@ import '../styles/quadro.css';
 export default function Quadro() {
   const { colaborador } = useSessao();
   const gestor = colaborador.cargo === 'gestor';
-  const folhas = useRecurso('/folhas-obra?estado=ativas&ordem=antigas&porPagina=200', { intervalo: 20000 });
+  const folhas = useRecurso('/folhas-obra?estado=ativas&ordem=antigas&porPagina=200', { intervalo: 20000, memoria: true });
   const resumo = useRecurso(
     gestor ? `/folhas-obra/resumo?desde=${encodeURIComponent(inicioDoMes())}` : null,
-    { intervalo: 60000 }
+    { intervalo: 60000, memoria: true }
   );
   const [filtro, setFiltro] = useState(null);
   const [pesquisa, setPesquisa] = useState('');
@@ -67,7 +67,7 @@ export default function Quadro() {
             type="search"
             value={pesquisa}
             onChange={(e) => setPesquisa(e.target.value)}
-            placeholder="Procurar matrícula, cliente ou nº da folha"
+            placeholder="Matrícula, cliente ou nº da folha"
             aria-label="Procurar no quadro"
             autoComplete="off"
             spellCheck={false}

@@ -31,8 +31,10 @@
   font-weight: 600;
   text-decoration: none;
 }
-.folha__veiculo a:hover {
-  text-decoration: underline;
+@media (hover: hover) {
+  .folha__veiculo a:hover {
+    text-decoration: underline;
+  }
 }
 
 .folha__factos {
@@ -60,18 +62,20 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 40px;
+  min-height: var(--toque);
   padding: 0 var(--e-3);
   border: 1px solid var(--linha);
   border-radius: 999px;
   background: var(--superficie);
   text-decoration: none;
 }
-.folha__telefone:hover {
-  border-color: var(--linha-forte);
+@media (hover: hover) {
+  .folha__telefone:hover {
+    border-color: var(--linha-forte);
+  }
 }
 
-/* seletor de estado: cinco botões, cada um com a sua luz */
+/* seletor de estado: cinco botões, cada um com o pictograma do estado */
 .seletor-estado {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -92,9 +96,11 @@
   text-align: center;
   transition: background var(--dur-rapida) var(--curva), border-color var(--dur-rapida) var(--curva), color var(--dur-rapida) var(--curva);
 }
-.seletor-estado__opcao:hover:not(:disabled) {
-  border-color: var(--linha-forte);
-  color: var(--tinta);
+@media (hover: hover) {
+  .seletor-estado__opcao:hover:not(:disabled) {
+    border-color: var(--linha-forte);
+    color: var(--tinta);
+  }
 }
 .seletor-estado__opcao[aria-checked='true'] {
   border-color: var(--cor-estado);
@@ -102,9 +108,13 @@
   color: var(--tinta);
   box-shadow: inset 0 0 0 1px var(--cor-estado);
 }
-.seletor-estado__opcao[aria-checked='false'] .estado__luz {
-  background: transparent;
-  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--cor-estado) 70%, transparent);
+/* apagado nos estados que não são o atual; aceso, na cor do estado, no atual */
+.seletor-estado__simbolo {
+  color: color-mix(in srgb, var(--linha-forte) 60%, var(--superficie));
+  transition: color var(--dur-rapida) var(--curva);
+}
+.seletor-estado__opcao[aria-checked='true'] .seletor-estado__simbolo {
+  color: var(--cor-estado);
 }
 .seletor-estado__opcao:disabled {
   cursor: not-allowed;

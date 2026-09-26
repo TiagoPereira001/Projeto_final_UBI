@@ -33,7 +33,7 @@
   font-weight: 500;
 }
 .quadro__limpar {
-  min-height: 40px;
+  min-height: var(--toque);
   padding: 0 var(--e-3);
   border: 1px solid var(--linha);
   border-radius: var(--r-controlo);
@@ -41,9 +41,11 @@
   color: var(--tinta-2);
   font-weight: 600;
 }
-.quadro__limpar:hover {
-  color: var(--tinta);
-  border-color: var(--linha-forte);
+@media (hover: hover) {
+  .quadro__limpar:hover {
+    color: var(--tinta);
+    border-color: var(--linha-forte);
+  }
 }
 
 /* uma linha por veículo: chapa, veículo e cliente, queixa, estado */

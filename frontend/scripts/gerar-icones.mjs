@@ -25,15 +25,12 @@ const ICONES = {
   CheckCircle: ['fill'],
   ClockCounterClockwise: ['regular'],
   DeviceTablet: ['regular', 'bold'],
-  Garage: ['fill'],
   Gauge: ['regular'],
   Gear: ['regular'],
-  Key: ['fill'],
   LockKey: ['fill'],
   MagnifyingGlass: ['regular'],
   Moon: ['regular'],
   Motorcycle: ['regular', 'fill'],
-  Package: ['fill'],
   PencilSimple: ['bold'],
   Phone: ['fill'],
   Plus: ['bold'],
@@ -47,7 +44,6 @@ const ICONES = {
   UsersThree: ['regular'],
   Van: ['regular', 'fill'],
   WarningCircle: ['fill'],
-  Wrench: ['fill'],
 };
 
 const kebab = (nome) => nome.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
