@@ -1,164 +1,124 @@
 <p align="center">
-  <img src="Relatorio/Anexos/ubi-banner.png" alt="UBI Logo" max-width="100%">
+  <img src="Relatorio/Anexos/ubi-banner.png" alt="Universidade da Beira Interior" width="100%">
 </p>
 
-<h1 align="center">🚐 Duarte & Raposo - Sistema de Gestão Digital</h1>
+<h1 align="center">Bancada</h1>
 
 <p align="center">
-  <strong>Projeto de Informática Web, Móvel e na Nuvem</strong><br>
-  <em>Licenciatura em Informática Web, Móvel e na Nuvem @ Universidade da Beira Interior</em>
+  <strong>Folhas de obra digitais para oficinas.</strong><br>
+  <em>Projeto final de Informática Web, Móvel e na Nuvem · Universidade da Beira Interior</em>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Status-Em_Desenvolvimento-orange?style=for-the-badge" alt="Status">
-  <img src="https://img.shields.io/badge/Backend-Completo-success?style=for-the-badge" alt="Backend">
-  <img src="https://img.shields.io/badge/Frontend-Em_Curso-yellow?style=for-the-badge" alt="Frontend">
+  <img src="https://img.shields.io/badge/Estado-Em_desenvolvimento-orange?style=for-the-badge" alt="Estado">
+  <a href="https://github.com/TiagoPereira001/Projeto_final_UBI/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/TiagoPereira001/Projeto_final_UBI/ci.yml?style=for-the-badge&label=CI" alt="CI"></a>
   <img src="https://img.shields.io/badge/Stack-React_%7C_Node.js_%7C_SQL_Server-blue?style=for-the-badge" alt="Stack">
-  <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker" alt="Docker">
+  <img src="https://img.shields.io/badge/Docker-pronto-2496ED?style=for-the-badge&logo=docker" alt="Docker">
 </p>
 
----
+<p align="center">
+  <img src="docs/imagens/quadro-tablet.png" alt="Quadro da oficina no tablet: luzes de estado e lista de veículos" width="100%">
+</p>
 
-## 📝 Resumo do Projeto
+## O que é
 
-Este projeto nasce da necessidade real de digitalização da oficina **Duarte & Raposo**, localizada no Canhoso. Especializada em mecânica, eletricidade e, principalmente, **autocaravanas**, a oficina enfrenta os desafios típicos do uso de papel: perda de informação, dificuldade em consultar históricos e morosidade no cálculo de faturação.
+A Bancada substitui as folhas de obra em papel das oficinas. Cada entrada de um veículo passa a ser uma folha digital, onde os mecânicos registam as peças e as horas à medida que trabalham, e o gestor vê o que está na oficina, em que estado, quanto vale o trabalho e quem o fez.
 
-A solução desenvolvida é um ecossistema digital composto por uma **PWA (Progressive Web App)** focada na agilidade dos mecânicos e um **Dashboard Web** para a gestão administrativa, permitindo o controlo total do fluxo de trabalho, desde a entrada do veículo até à entrega final ao cliente.
+O projeto nasceu na oficina **Duarte & Raposo** (Canhoso, Covilhã), especializada em mecânica, eletricidade e autocaravanas, onde as folhas de papel se perdiam, sujavam e obrigavam a fazer contas à mão. Começou como um sistema só para essa oficina e passou a servir **qualquer oficina**: cada uma regista-se sozinha e só vê os seus dados. A Duarte & Raposo é o primeiro cliente.
 
-## 🎯 Objetivos Principais
+## Funcionalidades
 
-*   **Digitalização Total:** Substituição definitiva das "folhas de obra" em papel por registos digitais persistentes.
-*   **Foco em Autocaravanas:** Gestão detalhada diferenciando a marca do *chassis* e da *célula*, permitindo um acompanhamento técnico preciso.
-*   **Agilidade Operacional:** Interface PWA que permite o registo de entradas e peças de forma rápida, otimizando o tempo dos mecânicos.
-*   **Gestão de Faturação:** Automatização dos cálculos de IVA e agrupamento de peças/mão de obra para facilitar a emissão de faturas.
-*   **Rastreabilidade (Auditing):** Controlo de qual colaborador realizou cada intervenção, garantindo responsabilidade e histórico claro.
+- **Quadro da oficina** com um "tablier": uma luz por estado (abertas, em curso, a aguardar peças, prontas), acesa quando há veículos nesse estado, como as luzes do painel de um carro. Tocar numa luz filtra a lista.
+- **Tablet partilhado (modo bancada):** o tablet fica na oficina e cada mecânico entra com o seu nome e PIN. O que regista fica em nome dele, e a sessão termina sozinha se o tablet ficar parado.
+- **Nova entrada** a partir da matrícula: se o veículo já cá esteve aparece logo; se for novo, regista-se o veículo e o dono no mesmo passo.
+- **Folha de obra:** estado da reparação, peças, mão de obra (em horas) e outros custos, totais com IVA calculados ao cêntimo, observações e conselhos para o cliente (manutenção preventiva). Uma folha entregue fica fechada.
+- **Autocaravanas:** além da marca/modelo do chassis, guarda-se a marca da célula habitacional.
+- **Gestão:** histórico de folhas, clientes (incluindo estrangeiros), veículos com o histórico de visitas, equipa (PIN e/ou email) e definições da oficina (dados e taxa de IVA).
+- **Registo público** de oficinas novas.
+- **Temas claro e escuro**, pensado para tablet (alvos de toque grandes) mas também para computador e telemóvel. É uma PWA: pode ser instalada no ecrã inicial.
 
-## ⚖️ Regras de Negócio & Lógica
+A Bancada **não emite faturas**: em Portugal isso exige software certificado pela Autoridade Tributária. Calcula os totais e o IVA; a fatura é emitida no programa de faturação da oficina.
 
-*   **Complexidade das Autocaravanas:** O sistema trata as autocaravanas como entidades complexas, exigindo o registo separado da marca/modelo do chassis (mecânica) e da marca da célula habitacional.
-*   **Soft Deletes:** Não ocorrem eliminações físicas de clientes, veículos ou colaboradores na base de dados para preservar o histórico fiscal e de negócio; utiliza-se uma flag booleana (`ativo`). As Folhas de Obra e Linhas de Reparação são exceção — são registos históricos que não se desativam, só mudam de estado.
-*   **Manutenção Preventiva:** As folhas de obra suportam o registo de "Conselhos" (recomendações futuras geradas durante a intervenção para fidelização do cliente).
-*   **Entrada Rápida, Depois Detalhe:** Uma Folha de Obra pode ser criada só com os dados da entrada do veículo; as Linhas de Reparação (peças/serviços) são adicionadas depois, à medida que o mecânico trabalha.
+<p align="center">
+  <img src="docs/imagens/folha.png" alt="Folha de obra com linhas, totais com IVA e notas" width="49%">
+  <img src="docs/imagens/bancada-pin.png" alt="Tablet partilhado: o mecânico escreve o seu PIN" width="49%">
+</p>
 
-## 🛠️ Stack Tecnológica
+## Stack
 
-O projeto utiliza uma arquitetura moderna e robusta, focada em portabilidade e escalabilidade:
+| Parte | Tecnologia |
+|---|---|
+| Frontend | React 19 + Vite 8, React Router 7, PWA (vite-plugin-pwa), CSS próprio com tokens, fontes Barlow self-hosted |
+| Backend | Node.js 22, Express 5, JWT em cookies httpOnly, bcrypt, helmet, express-rate-limit |
+| Base de dados | SQL Server 2022 (Docker), modelo relacional normalizado |
+| Qualidade | Testes com `node:test` contra SQL Server real, GitHub Actions, oxlint |
+| Infraestrutura | Docker Compose; imagem única com a API a servir o frontend (mesma origem) |
 
-*   **Frontend (Móvel):** [React.js](https://reactjs.org/) - PWA (Progressive Web App) desenhada para uso rápido no chão da oficina.
-*   **Frontend (Gestão):** Dashboard Web, na mesma aplicação React, para administração, cálculos de IVA e análise de histórico.
-*   **Backend (API):** [Node.js](https://nodejs.org/) com Express - API REST para lógica de negócio e integração.
-*   **Autenticação:** [JWT](https://jwt.io/) (JSON Web Token) com passwords encriptadas via `bcrypt`.
-*   **Base de Dados:** [SQL Server](https://www.microsoft.com/pt-pt/sql-server/) - Armazenamento relacional robusto seguindo a 3ª Forma Normal (3NF).
-*   **Contentorização:** [Docker](https://www.docker.com/) - Todo o ambiente de desenvolvimento é orquestrado via `docker-compose` (compatível com Intel e Apple Silicon).
+## Segurança
 
-## 🏗️ Estrutura da Base de Dados
+- **Isolamento entre oficinas** na API (todas as consultas filtram pela oficina da sessão), na base de dados (chaves estrangeiras compostas) e nos testes automáticos.
+- Sessão em cookie `httpOnly` e `SameSite=Strict`, verificação de origem contra CSRF e `Content-Security-Policy` rigorosa.
+- A autoria das folhas e das linhas vem sempre da sessão; desativar uma conta ou mudar a password corta as sessões na hora.
+- Passwords com bcrypt (custo 12); login com tempo constante; rate limiting por conta e por IP; PIN bloqueado após 5 falhas.
+- A API usa um login da base de dados só de dados, sem permissão para apagar clientes, veículos, colaboradores ou folhas (soft delete garantido pela própria BD).
+- Segredos só no `.env` (nunca no código); SQL Server acessível apenas a partir da própria máquina.
 
-O modelo relacional é composto por 5 tabelas principais:
+A análise completa (o que foi encontrado, o risco e o que mudou) está em [`docs/analise.md`](docs/analise.md).
 
-1.  **Colaboradores:** `ID_Colaborador` (PK), `Nome`, `Cargo`, `Email`, `Password_Hash`, `Ativo`.
-2.  **Clientes:** `ID_cliente` (PK), `nome`, `Contribuinte_NIF`, `Telefone`, `Morada`, `ativo`.
-3.  **Autocaravanas:** `Matricula` (PK), `Marca_chassis`, `Modelo_chassis`, `marca_celula`, `Ano`, `ativo`, `ID_cliente` (FK).
-4.  **Folhas de Obra:** `ID_folha` (PK), `Data_entrada`, `KMS_entrada`, `Estado_reparacao`, `Observacoes`, `Conselhos`, `Matricula` (FK), `ID_Colaborador` (FK).
-5.  **Linhas de Reparação:** `ID_linha` (PK), `Designacao`, `Quantidade`, `valor_unitario`, `Categoria`, `ID_folha` (FK).
+## Base de dados
 
-## 📡 API REST — Estado Atual
+Seis tabelas: `Oficina`, `Colaborador`, `Cliente`, `Veiculo`, `Folha_Obra` e `Linha_Reparacao`. O esquema está em [`backend/database/schema.sql`](backend/database/schema.sql), com comentários a explicar cada decisão.
 
-Todas as rotas abaixo (exceto o login) exigem autenticação via JWT (`Authorization: Bearer <token>`).
+## Como executar
 
-| Recurso | Rotas | Observações |
-|---|---|---|
-| **Auth** | `POST /api/auth/login`, `GET /api/auth/me` | Login com rate limiting (8 tentativas / 15 min) |
-| **Colaboradores** | CRUD completo | Criar/editar/desativar restrito a `Cargo = Gestor` |
-| **Clientes** | CRUD completo | |
-| **Autocaravanas** | CRUD completo | Valida existência do cliente antes de criar |
-| **Folhas de Obra** | CRUD + `POST /:id/linhas` | Criação com linhas usa transação SQL (tudo ou nada) |
-| **Linhas de Reparação** | `DELETE /linhas/:id` | Delete físico (corrige enganos de registo) |
+Requisitos: Docker, Node.js 22 ou mais recente.
 
-## 🔒 Segurança
+```bash
+# 1. configuração: copiar o modelo e preencher as passwords e o JWT_SECRET
+cp .env.example .env
 
-Pontos implementados até ao momento:
+# 2. base de dados (SQL Server em Docker, só acessível em 127.0.0.1)
+docker compose up -d
 
-*   Todas as rotas de negócio protegidas por **autenticação JWT**; criação/edição de colaboradores adicionalmente restrita por **autorização baseada em Cargo**.
-*   Passwords nunca guardadas em texto simples (`bcrypt`, 10 salt rounds).
-*   Segredos (password da BD, `JWT_SECRET`) fora do código, geridos por variáveis de ambiente (`.env`, nunca commitado) — a aplicação recusa-se a arrancar se faltarem.
-*   **Rate limiting** no login, para mitigar ataques de força bruta.
-*   Mensagens de erro genéricas para o cliente; detalhes técnicos ficam só nos logs do servidor.
-*   Cabeçalhos HTTP de segurança via `helmet`; CORS restrito ao domínio do frontend.
+# 3. API: preparar a BD e carregar a Duarte & Raposo com dados de demonstração
+cd backend
+npm install
+npm run db:setup
+npm run db:seed        # mostra a password do gestor e os PINs dos mecânicos
+npm run dev            # http://localhost:3000
 
-## 📂 Estrutura do Projeto
+# 4. frontend (noutro terminal)
+cd frontend
+npm install
+npm run dev            # http://localhost:5173
+```
+
+> **Mac com Apple Silicon:** o SQL Server não tem imagem ARM; o `docker-compose.yml` já usa `platform: linux/amd64` (emulação). O primeiro arranque demora um pouco mais.
+
+**Tudo em containers** (API a servir o frontend compilado): `docker compose --profile app up -d --build` e abrir http://localhost:3000.
+
+**Testes** (precisam do SQL Server a correr): `cd backend && npm test`. Usam uma base de dados própria (`Bancada_Teste`), nunca a de desenvolvimento.
+
+Os dados criados pelo `npm run db:seed` (clientes, veículos, matrículas, folhas) são **fictícios**.
+
+## Estrutura
 
 ```text
 .
-├── backend/                 # API REST e Lógica de Negócio
-│   ├── database/            # Scripts SQL e Schema
-│   │   └── schema.sql
-│   ├── middleware/
-│   │   └── auth.js          # Verificação de JWT e autorização por Cargo
-│   ├── routes/               # Uma rota por entidade (colaboradores, clientes, ...)
-│   ├── db.js                 # Pool de ligação ao SQL Server
-│   ├── server.js              # Ponto de entrada da API
-│   ├── .env                  # Segredos locais (NUNCA commitado)
-│   └── package.json
-├── frontend/                 # PWA (mecânicos) + Dashboard (gestão), React + Vite
-│   ├── src/
-│   │   ├── context/           # AuthContext (sessão/login)
-│   │   ├── components/        # RotaProtegida, etc.
-│   │   ├── pages/              # Login, Oficina, Dashboard
-│   │   └── lib/                # Cliente da API
-│   └── package.json
-├── Relatorio/                 # Documentação Académica
-│   ├── relatorio_projeto_final_55019.tex
-│   ├── relatorio_projeto_final_55019.pdf
-│   └── Anexos/                 # Diagramas e Imagens
-├── docker-compose.yml         # Orquestração de Containers (API + DB)
-├── .env.example                # Modelo de variáveis de ambiente (sem segredos)
-├── README.md                   # Documentação Principal
-└── Contexto.md                 # Notas de Contexto do Projeto
+├── backend/            API REST (rotas, middleware, validação, scripts da BD, testes)
+├── frontend/           React + Vite (PWA): páginas, componentes, estilos
+├── docs/               análise de segurança, performance e viabilidade; imagens
+├── Relatorio/          relatório em LaTeX e anexos
+├── AI.md               mapa do projeto para agentes de IA
+├── DESIGN.md           sistema visual (cores, tipografia, componentes)
+├── PRODUCT.md          utilizadores e princípios do produto
+├── docker-compose.yml
+└── Dockerfile
 ```
 
-## 🚀 Como Executar
+Para trabalhar no código (pessoas ou agentes de IA), o [`AI.md`](AI.md) tem o mapa detalhado, as regras que não se podem partir e os comandos.
 
-### 1. Base de dados (Docker)
+## Autor
 
-1.  Certifique-se que tem o **Docker** e **Docker Compose** instalados.
-2.  Clone o repositório.
-3.  Copie o `.env.example` para `.env` (na raiz) e para `backend/.env`, preenchendo `DB_PASSWORD` e `JWT_SECRET` com valores próprios (nunca os valores de exemplo).
-4.  Na raiz do projeto, execute:
-    ```bash
-    docker-compose up -d
-    ```
-5.  Na primeira vez, é preciso correr o `schema.sql` dentro do container (ver secção seguinte).
-6.  A base de dados SQL Server estará disponível na porta `1433`.
-
-> **Nota (Mac Apple Silicon):** o SQL Server não tem imagem nativa ARM; o `docker-compose.yml` já força `platform: linux/amd64`, que corre por emulação Rosetta 2. É normal demorar um pouco mais a arrancar.
-
-### 2. Backend (API)
-
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-A API fica disponível em `http://localhost:3000`.
-
-### 3. Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-A app fica disponível em `http://localhost:5173`.
-
-## 👨‍💻 Autor
-
-*   **Tiago Pereira** (nº 55019)
-*   Projeto desenvolvido para a UC de **Projeto de Software Web, Móvel e na Nuvem**.
-*   **Universidade da Beira Interior (UBI)**, Covilhã, Portugal.
-
----
-<p align="center">
-  <em>"Transformando o trabalho manual em eficiência digital."</em>
-</p>
+**Tiago Dias Pereira** (nº 55019)
+Projeto final da licenciatura em Informática Web, Móvel e na Nuvem, **Universidade da Beira Interior**, Covilhã.
