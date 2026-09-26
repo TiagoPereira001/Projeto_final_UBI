@@ -1,0 +1,106 @@
+// Esquema relacional da Bancada (segunda versão, multi-oficina).
+// Gerado a partir de backend/database/schema.sql. Para voltar a desenhar:
+//   dot -Tpdf esquema_bancada.dot -o esquema_bancada.pdf
+// Desenhado de cima para baixo, para caber numa página A4 ao alto.
+// Notação: PK chave primária, FK chave estrangeira, UQ única.
+// Cada linha liga uma chave estrangeira à tabela referenciada
+// (um traço do lado "um", pé de galinha do lado "muitos").
+
+digraph Bancada {
+  graph [rankdir=TB, splines=spline, nodesep=0.45, ranksep=0.45, pad=0.2, bgcolor="white", newrank=true];
+  node  [shape=plain, fontname="Helvetica", fontsize=10];
+  edge  [dir=both, arrowtail=teetee, arrowhead=crow, color="#4a5058", penwidth=1.1, arrowsize=0.8];
+
+  Oficina [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" color="#4a5058">
+      <tr><td colspan="3" bgcolor="#15171a"><font color="#f0a43a"><b>Oficina</b></font></td></tr>
+      <tr><td>PK</td><td align="left"><u>ID_Oficina</u></td><td align="left" port="id"><font color="#5f6670">INT</font></td></tr>
+      <tr><td></td><td align="left">Nome</td><td align="left"><font color="#5f6670">NVARCHAR(120)</font></td></tr>
+      <tr><td>UQ</td><td align="left">NIF</td><td align="left"><font color="#5f6670">CHAR(9)</font></td></tr>
+      <tr><td></td><td align="left">Morada, Telefone, Email</td><td align="left"><font color="#5f6670">opcionais</font></td></tr>
+      <tr><td></td><td align="left">Taxa_IVA</td><td align="left"><font color="#5f6670">DECIMAL(5,2)</font></td></tr>
+      <tr><td></td><td align="left">Ultimo_Numero_Folha</td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td></td><td align="left">Versao_Bancada</td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td></td><td align="left">Ativo, Criado_Em</td><td align="left"><font color="#5f6670">BIT, DATETIME2</font></td></tr>
+    </table>>];
+
+  Colaborador [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" color="#4a5058">
+      <tr><td colspan="3" bgcolor="#15171a"><font color="#f0a43a"><b>Colaborador</b></font></td></tr>
+      <tr><td>PK</td><td align="left"><u>ID_Colaborador</u></td><td align="left" port="id"><font color="#5f6670">INT</font></td></tr>
+      <tr><td port="oficina">FK</td><td align="left">ID_Oficina</td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td></td><td align="left">Nome</td><td align="left"><font color="#5f6670">NVARCHAR(100)</font></td></tr>
+      <tr><td></td><td align="left">Cargo</td><td align="left"><font color="#5f6670">gestor | mecanico</font></td></tr>
+      <tr><td>UQ</td><td align="left">Email</td><td align="left"><font color="#5f6670">NVARCHAR(254), opc.</font></td></tr>
+      <tr><td></td><td align="left">Password_Hash, PIN_Hash</td><td align="left"><font color="#5f6670">bcrypt, opc.</font></td></tr>
+      <tr><td></td><td align="left">PIN_Falhas, PIN_Bloqueado_Ate</td><td align="left"><font color="#5f6670">TINYINT, DATETIME2</font></td></tr>
+      <tr><td></td><td align="left">Versao_Sessao</td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td></td><td align="left">Ativo, Criado_Em</td><td align="left"><font color="#5f6670">BIT, DATETIME2</font></td></tr>
+    </table>>];
+
+  Cliente [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" color="#4a5058">
+      <tr><td colspan="3" bgcolor="#15171a"><font color="#f0a43a"><b>Cliente</b></font></td></tr>
+      <tr><td>PK</td><td align="left"><u>ID_Cliente</u></td><td align="left" port="id"><font color="#5f6670">INT</font></td></tr>
+      <tr><td port="oficina">FK</td><td align="left">ID_Oficina</td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td></td><td align="left">Nome</td><td align="left"><font color="#5f6670">NVARCHAR(120)</font></td></tr>
+      <tr><td></td><td align="left">NIF</td><td align="left"><font color="#5f6670">VARCHAR(20), opc.</font></td></tr>
+      <tr><td></td><td align="left">Telefone</td><td align="left"><font color="#5f6670">VARCHAR(20)</font></td></tr>
+      <tr><td></td><td align="left">Email, Morada</td><td align="left"><font color="#5f6670">opcionais</font></td></tr>
+      <tr><td></td><td align="left">Ativo, Criado_Em</td><td align="left"><font color="#5f6670">BIT, DATETIME2</font></td></tr>
+    </table>>];
+
+  Veiculo [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" color="#4a5058">
+      <tr><td colspan="3" bgcolor="#15171a"><font color="#f0a43a"><b>Veiculo</b></font></td></tr>
+      <tr><td>PK</td><td align="left"><u>ID_Veiculo</u></td><td align="left" port="id"><font color="#5f6670">INT</font></td></tr>
+      <tr><td>FK</td><td align="left">ID_Oficina</td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td port="cliente">FK</td><td align="left">ID_Cliente</td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td></td><td align="left">Matricula</td><td align="left"><font color="#5f6670">VARCHAR(12)</font></td></tr>
+      <tr><td></td><td align="left">Tipo</td><td align="left"><font color="#5f6670">ligeiro, autocaravana...</font></td></tr>
+      <tr><td></td><td align="left">Marca, Modelo, Ano</td><td align="left"><font color="#5f6670">chassis nas autocaravanas</font></td></tr>
+      <tr><td></td><td align="left">Marca_Celula</td><td align="left"><font color="#5f6670">só autocaravanas</font></td></tr>
+      <tr><td></td><td align="left">Ativo, Criado_Em</td><td align="left"><font color="#5f6670">BIT, DATETIME2</font></td></tr>
+    </table>>];
+
+  Folha_Obra [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" color="#4a5058">
+      <tr><td colspan="3" bgcolor="#15171a"><font color="#f0a43a"><b>Folha_Obra</b></font></td></tr>
+      <tr><td>PK</td><td align="left"><u>ID_Folha</u></td><td align="left" port="id"><font color="#5f6670">INT</font></td></tr>
+      <tr><td port="oficina">FK</td><td align="left">ID_Oficina</td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td></td><td align="left">Numero</td><td align="left"><font color="#5f6670">INT, único por oficina</font></td></tr>
+      <tr><td port="veiculo">FK</td><td align="left">ID_Veiculo</td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td port="cliente">FK</td><td align="left">ID_Cliente</td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td port="colaborador">FK</td><td align="left">ID_Colaborador</td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td></td><td align="left">Data_Entrada, KMS_Entrada</td><td align="left"><font color="#5f6670">DATETIME2, INT</font></td></tr>
+      <tr><td></td><td align="left">Estado</td><td align="left"><font color="#5f6670">aberta ... entregue</font></td></tr>
+      <tr><td></td><td align="left">Observacoes, Conselhos</td><td align="left"><font color="#5f6670">NVARCHAR(2000)</font></td></tr>
+      <tr><td></td><td align="left">Taxa_IVA</td><td align="left"><font color="#5f6670">DECIMAL(5,2)</font></td></tr>
+      <tr><td></td><td align="left">Data_Conclusao, Data_Entrega</td><td align="left"><font color="#5f6670">DATETIME2</font></td></tr>
+    </table>>];
+
+  Linha_Reparacao [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="4" color="#4a5058">
+      <tr><td colspan="3" bgcolor="#15171a"><font color="#f0a43a"><b>Linha_Reparacao</b></font></td></tr>
+      <tr><td>PK</td><td align="left"><u>ID_Linha</u></td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td port="folha">FK</td><td align="left">ID_Folha</td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td port="colaborador">FK</td><td align="left">ID_Colaborador</td><td align="left"><font color="#5f6670">INT</font></td></tr>
+      <tr><td></td><td align="left">Designacao</td><td align="left"><font color="#5f6670">NVARCHAR(150)</font></td></tr>
+      <tr><td></td><td align="left">Categoria</td><td align="left"><font color="#5f6670">peca | mao_de_obra | outro</font></td></tr>
+      <tr><td></td><td align="left">Quantidade, Valor_Unitario</td><td align="left"><font color="#5f6670">DECIMAL(10,2)</font></td></tr>
+      <tr><td></td><td align="left">Criado_Em</td><td align="left"><font color="#5f6670">DATETIME2</font></td></tr>
+    </table>>];
+
+  // chaves estrangeiras (do lado "um" para o lado "muitos")
+  Oficina:id -> Colaborador:oficina;
+  Oficina:id -> Cliente:oficina;
+  Oficina:id -> Folha_Obra:oficina;
+  Cliente:id -> Veiculo:cliente;
+  Veiculo:id -> Folha_Obra:veiculo;
+  Cliente:id -> Folha_Obra:cliente;
+  Colaborador:id -> Folha_Obra:colaborador;
+  Folha_Obra:id -> Linha_Reparacao:folha;
+  Colaborador:id -> Linha_Reparacao:colaborador;
+
+  { rank=same; Colaborador; Cliente; }
+}
