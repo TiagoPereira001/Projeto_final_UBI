@@ -1,0 +1,121 @@
+/* Quadro da oficina: tablier + lista de veículos na oficina */
+
+.quadro {
+  display: grid;
+  gap: var(--e-5);
+}
+
+.quadro__contas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2) var(--e-6);
+  padding: 0 var(--e-1);
+  color: var(--tinta-2);
+}
+.quadro__contas strong {
+  color: var(--tinta);
+  font-weight: 600;
+}
+
+.quadro__barra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-3);
+  align-items: center;
+}
+.controlo--grande {
+  min-height: var(--toque-g);
+  font-size: var(--t-corpo-g);
+}
+
+.quadro__contagem {
+  color: var(--tinta-3);
+  font-weight: 500;
+}
+.quadro__limpar {
+  min-height: 40px;
+  padding: 0 var(--e-3);
+  border: 1px solid var(--linha);
+  border-radius: var(--r-controlo);
+  background: transparent;
+  color: var(--tinta-2);
+  font-weight: 600;
+}
+.quadro__limpar:hover {
+  color: var(--tinta);
+  border-color: var(--linha-forte);
+}
+
+/* uma linha por veículo: chapa, veículo e cliente, queixa, estado */
+.fila {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1.1fr) minmax(0, 1.4fr) 196px;
+  align-items: center;
+  gap: var(--e-4);
+  min-height: 80px;
+  padding: var(--e-3) var(--e-5);
+}
+.fila__veiculo {
+  display: grid;
+  min-width: 0;
+}
+.fila__titulo {
+  font-weight: 600;
+  font-size: var(--t-corpo-g);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fila__sub {
+  color: var(--tinta-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fila__queixa {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--tinta-2);
+  line-height: 1.4;
+}
+.fila__estado {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+}
+.fila__tempo {
+  font-size: var(--t-legenda);
+  color: var(--tinta-3);
+  white-space: nowrap;
+}
+
+@media (max-width: 1024px) {
+  .fila {
+    grid-template-columns: 150px minmax(0, 1fr) 176px;
+    grid-template-areas:
+      'matricula veiculo estado'
+      'matricula queixa estado';
+    row-gap: 2px;
+  }
+  .fila__matricula { grid-area: matricula; }
+  .fila__veiculo { grid-area: veiculo; }
+  .fila__queixa { grid-area: queixa; -webkit-line-clamp: 1; }
+  .fila__estado { grid-area: estado; }
+}
+
+@media (max-width: 600px) {
+  .quadro__barra .botao {
+    width: 100%;
+  }
+  .fila {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'matricula estado'
+      'veiculo veiculo'
+      'queixa queixa';
+    row-gap: var(--e-2);
+    padding: var(--e-4);
+  }
+}

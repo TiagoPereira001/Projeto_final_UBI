@@ -1,0 +1,152 @@
+/*
+  Tokens da Bancada. A fonte de verdade das cores, tipos e medidas.
+  Ver DESIGN.md para o porquê de cada escolha.
+
+  Dois temas: segue o sistema (prefers-color-scheme) ou a escolha guardada
+  no dispositivo (data-tema="claro" | "escuro" no <html>).
+  O tablier (painel de luzes) é sempre escuro, como num carro.
+*/
+
+:root {
+  /* tipografia: Barlow nasceu da sinalética e das matrículas da Califórnia */
+  --letra: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --letra-estreita: 'Barlow Condensed', 'Barlow', system-ui, sans-serif;
+
+  --t-legenda: 0.8125rem;   /* 13px */
+  --t-pequeno: 0.875rem;    /* 14px */
+  --t-corpo: 1rem;          /* 16px */
+  --t-corpo-g: 1.125rem;    /* 18px: leitura no tablet */
+  --t-titulo: 1.375rem;     /* 22px */
+  --t-titulo-g: 1.75rem;    /* 28px */
+  --t-ecra: 2.25rem;        /* 36px */
+
+  /* espaçamento (base 4px) */
+  --e-1: 4px;
+  --e-2: 8px;
+  --e-3: 12px;
+  --e-4: 16px;
+  --e-5: 20px;
+  --e-6: 24px;
+  --e-8: 32px;
+  --e-10: 40px;
+  --e-12: 48px;
+
+  /* formas: uma só escala em toda a app */
+  --r-chip: 6px;
+  --r-controlo: 10px;
+  --r-painel: 14px;
+
+  /* alvos de toque: pensados para luvas */
+  --toque: 48px;
+  --toque-g: 56px;
+
+  --largura-max: 1280px;
+
+  /* movimento: curto, para mostrar estado, nunca decorativo */
+  --dur-rapida: 120ms;
+  --dur: 200ms;
+  --curva: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* camadas */
+  --z-topo: 20;
+  --z-aviso: 40;
+
+  /* luzes do tablier (sempre sobre o painel escuro) */
+  --painel: #0f1012;
+  --painel-2: #1a1c1f;
+  --painel-linha: #2a2d31;
+  --painel-aro: #5a6068;
+  --painel-tinta: #e7e9e4;
+  --painel-tinta-2: #9aa0a6;
+  --luz-aberta: #5b9bff;
+  --luz-em-curso: #f0a43a;
+  --luz-aguarda: #ff5a55;
+  --luz-pronta: #3ecf74;
+  --luz-apagada: #3a3e44;
+
+  /* a matrícula é um objeto físico: branca nos dois temas */
+  --chapa: #f6f6f2;
+  --chapa-tinta: #101114;
+  --chapa-faixa: #1d48a8;
+
+  /* âmbar: a única cor de ação */
+  --ambar: #f0a43a;
+  --ambar-hover: #f5b457;
+  --ambar-premido: #e0922a;
+  --ambar-tinta: #1b1407;
+
+  color-scheme: light;
+  --fundo: #eceef0;
+  --superficie: #f8f9fa;
+  --superficie-2: #fcfcfd;
+  --realce: #e3e6e9;
+  --linha: #d3d7db;
+  --linha-forte: #848b93;
+  --tinta: #15171a;
+  --tinta-2: #4a5058;
+  --tinta-3: #5f6670;
+  --foco: #a35a00;
+  --erro: #b42318;
+  --erro-fundo: #fdecea;
+  --sucesso: #17773f;
+  --sucesso-fundo: #e6f4ec;
+  --estado-aberta: #2563eb;
+  --estado-em-curso: #c77a0a;
+  --estado-aguarda: #d92d20;
+  --estado-pronta: #18a04a;
+  --estado-entregue: #848b93;
+  --sombra-cor: 220 15% 20%;
+  --sombra-flutuante: 0 12px 32px -8px hsl(var(--sombra-cor) / 0.28), 0 2px 6px hsl(var(--sombra-cor) / 0.12);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema='claro']) {
+    color-scheme: dark;
+    --fundo: #16181b;
+    --superficie: #1d2024;
+    --superficie-2: #24282d;
+    --realce: #2c3036;
+    --linha: #33373e;
+    --linha-forte: #6b727b;
+    --tinta: #eef0ec;
+    --tinta-2: #b3b8be;
+    --tinta-3: #8f969e;
+    --foco: #f0a43a;
+    --erro: #ff8f85;
+    --erro-fundo: #3a1a18;
+    --sucesso: #6fdc98;
+    --sucesso-fundo: #13301f;
+    --estado-aberta: #5b9bff;
+    --estado-em-curso: #f0a43a;
+    --estado-aguarda: #ff5a55;
+    --estado-pronta: #3ecf74;
+    --estado-entregue: #6b727b;
+    --sombra-cor: 0 0% 0%;
+    --sombra-flutuante: 0 12px 32px -8px hsl(var(--sombra-cor) / 0.6), 0 2px 6px hsl(var(--sombra-cor) / 0.4);
+  }
+}
+
+:root[data-tema='escuro'] {
+  color-scheme: dark;
+  --fundo: #16181b;
+  --superficie: #1d2024;
+  --superficie-2: #24282d;
+  --realce: #2c3036;
+  --linha: #33373e;
+  --linha-forte: #6b727b;
+  --tinta: #eef0ec;
+  --tinta-2: #b3b8be;
+  --tinta-3: #8f969e;
+  --foco: #f0a43a;
+  --erro: #ff8f85;
+  --erro-fundo: #3a1a18;
+  --sucesso: #6fdc98;
+  --sucesso-fundo: #13301f;
+  --estado-aberta: #5b9bff;
+  --estado-em-curso: #f0a43a;
+  --estado-aguarda: #ff5a55;
+  --estado-pronta: #3ecf74;
+  --estado-entregue: #6b727b;
+  --sombra-cor: 0 0% 0%;
+  --sombra-flutuante: 0 12px 32px -8px hsl(var(--sombra-cor) / 0.6), 0 2px 6px hsl(var(--sombra-cor) / 0.4);
+}
