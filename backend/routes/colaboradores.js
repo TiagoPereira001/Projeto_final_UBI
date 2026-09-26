@@ -1,161 +1,199 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
 const { sql, getPool } = require('../db');
-const { verificarToken, autorizar } = require('../middleware/auth');
+const { ErroHttp, naoEncontrado, idDoUrl, violouRestricao } = require('../lib/erros');
+const { Validador } = require('../lib/validar');
+const { gerarHash } = require('../lib/credenciais');
+const sessao = require('../lib/sessao');
+const { exigirSessao, exigirCargo, exigirEntradaComPassword } = require('../middleware/auth');
+
+const CARGOS = ['gestor', 'mecanico'];
+
+// cada colaborador pode entrar de duas formas:
+//  - email + password: no seu próprio telemóvel ou computador
+//  - PIN: no tablet partilhado da oficina (modo bancada)
+// um mecânico pode ter só PIN (não precisa de email). O gestor tem sempre
+// email e password, porque é ele que administra a oficina.
 
 const router = express.Router();
-const SALT_ROUNDS = 10;
 
-// a partir daqui, todas as rotas deste ficheiro exigem login
-router.use(verificarToken);
+// tudo aqui é gestão de contas: só gestores, e só com password
+router.use(exigirSessao, exigirCargo('gestor'), exigirEntradaComPassword);
 
-// lista os colaboradores ativos, sem mostrar a password (nem o hash)
+const CAMPOS = `
+    ID_Colaborador AS id, Nome AS nome, Cargo AS cargo, Email AS email,
+    CAST(CASE WHEN PIN_Hash IS NULL THEN 0 ELSE 1 END AS BIT) AS temPin
+`;
+
+function erroEmailRepetido(err) {
+    if (violouRestricao(err, 'UX_Colaborador_Email')) {
+        return new ErroHttp(409, 'Já existe uma conta com esse email.', { email: 'Este email já tem conta.' });
+    }
+    return err;
+}
+
+// GET /api/colaboradores (nunca devolve hashes de passwords ou PINs)
 router.get('/', async (req, res) => {
+    const pool = await getPool();
+    const resultado = await pool.request()
+        .input('oficina', sql.Int, req.colaborador.oficinaId)
+        .query(`
+            SELECT ${CAMPOS}
+            FROM Colaborador
+            WHERE ID_Oficina = @oficina AND Ativo = 1
+            ORDER BY Nome
+        `);
+    res.json({ itens: resultado.recordset, total: resultado.recordset.length });
+});
+
+// POST /api/colaboradores { nome, cargo, email?, password?, pin? }
+router.post('/', async (req, res) => {
+    const v = new Validador(req.body);
+    const nome = v.texto('nome', { max: 100 });
+    const cargo = v.opcao('cargo', CARGOS);
+    const email = v.email('email', { obrigatorio: cargo === 'gestor' });
+    const password = email ? v.password('password', { email }) : null;
+    // sem email, o PIN é a única forma de entrar
+    const pin = v.pin('pin', { obrigatorio: !email });
+    v.verificar();
+
+    const [passwordHash, pinHash] = await Promise.all([
+        password ? gerarHash(password) : null,
+        pin ? gerarHash(pin) : null,
+    ]);
+
+    const pool = await getPool();
     try {
-        const pool = await getPool();
-        const result = await pool.request()
+        const resultado = await pool.request()
+            .input('oficina', sql.Int, req.colaborador.oficinaId)
+            .input('nome', sql.NVarChar(100), nome)
+            .input('cargo', sql.VarChar(20), cargo)
+            .input('email', sql.NVarChar(254), email)
+            .input('passwordHash', sql.Char(60), passwordHash)
+            .input('pinHash', sql.Char(60), pinHash)
             .query(`
-                SELECT ID_Colaborador, Nome, Cargo, Email, Ativo
-                FROM Colaboradores
-                WHERE Ativo = 1
+                INSERT INTO Colaborador (ID_Oficina, Nome, Cargo, Email, Password_Hash, PIN_Hash)
+                OUTPUT INSERTED.ID_Colaborador AS id, INSERTED.Nome AS nome, INSERTED.Cargo AS cargo,
+                       INSERTED.Email AS email,
+                       CAST(CASE WHEN INSERTED.PIN_Hash IS NULL THEN 0 ELSE 1 END AS BIT) AS temPin
+                VALUES (@oficina, @nome, @cargo, @email, @passwordHash, @pinHash)
             `);
-        res.status(200).json(result.recordset);
+        res.status(201).json(resultado.recordset[0]);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Erro ao listar colaboradores. Tenta novamente mais tarde.' });
+        throw erroEmailRepetido(err);
     }
 });
 
-router.get('/:id', async (req, res) => {
-    try {
-        const pool = await getPool();
-        const result = await pool.request()
-            .input('id', sql.Int, req.params.id)
-            .query(`
-                SELECT ID_Colaborador, Nome, Cargo, Email, Ativo
-                FROM Colaboradores
-                WHERE ID_Colaborador = @id
-            `);
+// PUT /api/colaboradores/:id { nome, cargo, email?, password?, pin?, removerPin? }
+// - email vazio: deixa de poder entrar com email (fica só com o PIN)
+// - password / pin: só mudam se vierem preenchidos
+router.put('/:id', async (req, res) => {
+    const id = idDoUrl(req.params.id, 'Colaborador');
+    const pool = await getPool();
 
-        if (result.recordset.length === 0) {
-            return res.status(404).json({ error: 'Colaborador não encontrado.' });
-        }
-        res.status(200).json(result.recordset[0]);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Erro ao obter colaborador. Tenta novamente mais tarde.' });
+    const atual = (await pool.request()
+        .input('id', sql.Int, id)
+        .input('oficina', sql.Int, req.colaborador.oficinaId)
+        .query(`
+            SELECT Email AS email, Cargo AS cargo,
+                   CAST(CASE WHEN Password_Hash IS NULL THEN 0 ELSE 1 END AS BIT) AS temPassword,
+                   CAST(CASE WHEN PIN_Hash IS NULL THEN 0 ELSE 1 END AS BIT) AS temPin
+            FROM Colaborador
+            WHERE ID_Colaborador = @id AND ID_Oficina = @oficina AND Ativo = 1
+        `)).recordset[0];
+    if (!atual) throw naoEncontrado('Colaborador');
+
+    const v = new Validador(req.body);
+    const nome = v.texto('nome', { max: 100 });
+    const cargo = v.opcao('cargo', CARGOS);
+    const email = v.email('email', { obrigatorio: cargo === 'gestor' });
+    // passar a ter email pela primeira vez (ou mudar de email) obriga a definir password
+    const precisaPassword = email && (!atual.temPassword || email !== atual.email);
+    const password = email ? v.password('password', { obrigatorio: Boolean(precisaPassword), email }) : null;
+    const removerPin = req.body?.removerPin === true;
+    const pin = removerPin ? null : v.pin('pin', { obrigatorio: false });
+
+    if (id === req.colaborador.id && cargo !== 'gestor') {
+        v.erro('cargo', 'Não podes retirar o teu próprio cargo de gestor.');
     }
+    if (!email && (removerPin || !atual.temPin) && !pin) {
+        v.erro('pin', 'Sem email, o colaborador precisa de um PIN para conseguir entrar.');
+    }
+    v.verificar();
+
+    const [passwordHash, pinHash] = await Promise.all([
+        password ? gerarHash(password) : null,
+        pin ? gerarHash(pin) : null,
+    ]);
+
+    // mudar credenciais termina as sessões abertas desse colaborador
+    const credenciaisMudaram = Boolean(passwordHash || pinHash || removerPin || (!email && atual.email));
+
+    let resultado;
+    try {
+        resultado = await pool.request()
+            .input('id', sql.Int, id)
+            .input('oficina', sql.Int, req.colaborador.oficinaId)
+            .input('nome', sql.NVarChar(100), nome)
+            .input('cargo', sql.VarChar(20), cargo)
+            .input('email', sql.NVarChar(254), email)
+            .input('passwordHash', sql.Char(60), passwordHash)
+            .input('pinHash', sql.Char(60), pinHash)
+            .input('removerPin', sql.Bit, removerPin)
+            .input('versaoSobe', sql.Bit, credenciaisMudaram)
+            .query(`
+                UPDATE Colaborador
+                SET Nome = @nome,
+                    Cargo = @cargo,
+                    Email = @email,
+                    Password_Hash = CASE WHEN @email IS NULL THEN NULL
+                                         ELSE COALESCE(@passwordHash, Password_Hash) END,
+                    PIN_Hash = CASE WHEN @removerPin = 1 THEN NULL ELSE COALESCE(@pinHash, PIN_Hash) END,
+                    PIN_Falhas = CASE WHEN @pinHash IS NULL THEN PIN_Falhas ELSE 0 END,
+                    PIN_Bloqueado_Ate = CASE WHEN @pinHash IS NULL THEN PIN_Bloqueado_Ate ELSE NULL END,
+                    Versao_Sessao = Versao_Sessao + CASE WHEN @versaoSobe = 1 THEN 1 ELSE 0 END
+                OUTPUT INSERTED.ID_Colaborador AS id, INSERTED.Nome AS nome, INSERTED.Cargo AS cargo,
+                       INSERTED.Email AS email, INSERTED.Versao_Sessao AS versaoSessao,
+                       CAST(CASE WHEN INSERTED.PIN_Hash IS NULL THEN 0 ELSE 1 END AS BIT) AS temPin
+                WHERE ID_Colaborador = @id AND ID_Oficina = @oficina AND Ativo = 1
+            `);
+    } catch (err) {
+        if (err.number === 547) {
+            throw new ErroHttp(400, 'Esta combinação de acessos não é possível: o colaborador ficava sem forma de entrar.');
+        }
+        throw erroEmailRepetido(err);
+    }
+
+    const { versaoSessao, ...colaborador } = resultado.recordset[0];
+
+    // se o gestor mudou a sua própria password, renova-lhe a sessão para
+    // não ser posto fora a meio do que está a fazer
+    if (id === req.colaborador.id && credenciaisMudaram) {
+        sessao.iniciarSessao(res, { id, oficinaId: req.colaborador.oficinaId, versaoSessao }, req.colaborador.via);
+    }
+    res.json(colaborador);
 });
 
-// cria um colaborador novo. a password chega em texto normal (ex: "123456")
-// e só é encriptada aqui, nunca vai texto simples para a BD.
-// só um Gestor pode criar contas novas -- um mecânico não devia poder
-// criar-se a si próprio (ou a outros) como Gestor
-router.post('/', autorizar('Gestor'), async (req, res) => {
-    const { nome, cargo, email, password } = req.body;
-
-    if (!nome || !cargo || !email || !password) {
-        return res.status(400).json({
-            error: 'Campos obrigatórios em falta: nome, cargo, email, password.'
-        });
+// DELETE /api/colaboradores/:id: soft delete (Ativo = 0). As folhas de obra
+// continuam a apontar para este colaborador, por isso nunca se apaga a linha
+router.delete('/:id', async (req, res) => {
+    const id = idDoUrl(req.params.id, 'Colaborador');
+    if (id === req.colaborador.id) {
+        throw new ErroHttp(400, 'Não podes desativar a tua própria conta.');
     }
 
-    try {
-        const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-        const pool = await getPool();
-
-        const result = await pool.request()
-            .input('nome', sql.VarChar(100), nome)
-            .input('cargo', sql.VarChar(50), cargo)
-            .input('email', sql.VarChar(100), email)
-            .input('passwordHash', sql.VarChar(255), passwordHash)
-            .query(`
-                INSERT INTO Colaboradores (Nome, Cargo, Email, Password_Hash, Ativo)
-                OUTPUT INSERTED.ID_Colaborador, INSERTED.Nome, INSERTED.Cargo, INSERTED.Email, INSERTED.Ativo
-                VALUES (@nome, @cargo, @email, @passwordHash, 1)
-            `);
-
-        res.status(201).json(result.recordset[0]);
-    } catch (err) {
-        // 2627/2601 é o SQL Server a dizer que o UNIQUE do email já existe
-        if (err.number === 2627 || err.number === 2601) {
-            return res.status(409).json({ error: 'Já existe um colaborador com esse email.' });
-        }
-        console.error(err);
-        res.status(500).json({ error: 'Erro ao criar colaborador. Tenta novamente mais tarde.' });
-    }
-});
-
-// atualiza os dados do colaborador. a password só muda se vier no body,
-// se não vier fica a mesma. só um Gestor pode editar contas
-router.put('/:id', autorizar('Gestor'), async (req, res) => {
-    const { nome, cargo, email, password } = req.body;
-
-    if (!nome || !cargo || !email) {
-        return res.status(400).json({
-            error: 'Campos obrigatórios em falta: nome, cargo, email.'
-        });
-    }
-
-    try {
-        const pool = await getPool();
-        const request = pool.request()
-            .input('id', sql.Int, req.params.id)
-            .input('nome', sql.VarChar(100), nome)
-            .input('cargo', sql.VarChar(50), cargo)
-            .input('email', sql.VarChar(100), email);
-
-        let setPasswordClause = '';
-        if (password) {
-            const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-            request.input('passwordHash', sql.VarChar(255), passwordHash);
-            setPasswordClause = ', Password_Hash = @passwordHash';
-        }
-
-        const result = await request.query(`
-            UPDATE Colaboradores
-            SET Nome = @nome, Cargo = @cargo, Email = @email ${setPasswordClause}
-            OUTPUT INSERTED.ID_Colaborador, INSERTED.Nome, INSERTED.Cargo, INSERTED.Email, INSERTED.Ativo
-            WHERE ID_Colaborador = @id AND Ativo = 1
+    const pool = await getPool();
+    const resultado = await pool.request()
+        .input('id', sql.Int, id)
+        .input('oficina', sql.Int, req.colaborador.oficinaId)
+        .query(`
+            UPDATE Colaborador
+            SET Ativo = 0, Versao_Sessao = Versao_Sessao + 1
+            OUTPUT INSERTED.ID_Colaborador AS id
+            WHERE ID_Colaborador = @id AND ID_Oficina = @oficina AND Ativo = 1
         `);
 
-        if (result.recordset.length === 0) {
-            return res.status(404).json({ error: 'Colaborador não encontrado.' });
-        }
-        res.status(200).json(result.recordset[0]);
-    } catch (err) {
-        if (err.number === 2627 || err.number === 2601) {
-            return res.status(409).json({ error: 'Já existe um colaborador com esse email.' });
-        }
-        console.error(err);
-        res.status(500).json({ error: 'Erro ao atualizar colaborador. Tenta novamente mais tarde.' });
-    }
-});
-
-// soft delete: não apaga a linha, só marca Ativo = 0.
-// tem de ser assim porque as Folhas de Obra continuam a apontar para este
-// colaborador (ID_Colaborador), um DELETE normal ia partir essa referência.
-// só um Gestor pode desativar colaboradores
-router.delete('/:id', autorizar('Gestor'), async (req, res) => {
-    try {
-        const pool = await getPool();
-        const result = await pool.request()
-            .input('id', sql.Int, req.params.id)
-            .query(`
-                UPDATE Colaboradores
-                SET Ativo = 0
-                OUTPUT INSERTED.ID_Colaborador
-                WHERE ID_Colaborador = @id AND Ativo = 1
-            `);
-
-        if (result.recordset.length === 0) {
-            return res.status(404).json({ error: 'Colaborador não encontrado ou já inativo.' });
-        }
-        res.status(200).json({ message: 'Colaborador desativado com sucesso.' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Erro ao desativar colaborador. Tenta novamente mais tarde.' });
-    }
+    if (resultado.recordset.length === 0) throw naoEncontrado('Colaborador');
+    res.status(204).end();
 });
 
 module.exports = router;

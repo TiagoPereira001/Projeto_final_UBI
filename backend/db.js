@@ -1,41 +1,40 @@
 const sql = require('mssql');
+const config = require('./config');
 
-// a password nunca fica escrita aqui -- tem de vir sempre do .env.
-// se faltar, a app para logo no arranque com um erro claro, em vez de
-// usar uma password escondida no código (foi essa a falha de segurança
-// corrigida: a password antiga esteve exposta no docker-compose.yml
-// e aqui, num repositório público)
-if (!process.env.DB_PASSWORD) {
-    throw new Error(
-        'Falta a variável DB_PASSWORD no .env. Ve o .env.example para saberes o que definir.'
-    );
-}
-
+// a password nunca fica escrita no código: vem sempre do .env (ver config.js).
+// a password antiga esteve exposta no docker-compose.yml e aqui, num
+// repositório público, e a API ligava-se como 'sa' (administrador de todo o
+// servidor). Agora usa o login 'bancada_app', que só lê e escreve dados.
 const dbConfig = {
-    user: 'SA',
-    password: process.env.DB_PASSWORD,
-    server: 'localhost',
-    port: 1433,
-    database: 'OficinaDR',
+    user: config.db.utilizador,
+    password: config.db.password,
+    server: config.db.servidor,
+    port: config.db.porta,
+    database: config.db.nome,
+    pool: {
+        max: 10,
+        min: 0,
+        idleTimeoutMillis: 30000,
+    },
     options: {
-        encrypt: false, // não precisamos disto em dev local
-        trustServerCertificate: true
-    }
+        encrypt: config.db.encriptar,
+        trustServerCertificate: config.db.confiarCertificado,
+    },
 };
 
-// antes tínhamos um sql.connect() dentro de cada rota, o que abre uma
-// ligação nova sempre que alguém faz um pedido. isto aqui guarda a
-// ligação já feita (pool) e reutiliza-a em todo o lado
+// um único pool de ligações partilhado por toda a API. Antes havia um
+// sql.connect() dentro de cada rota, o que abria uma ligação nova a cada pedido
 let poolPromise = null;
 
 function getPool() {
     if (!poolPromise) {
-        poolPromise = sql.connect(dbConfig)
-            .then(pool => {
-                console.log('Ligado ao SQL Server (OficinaDR).');
+        poolPromise = new sql.ConnectionPool(dbConfig)
+            .connect()
+            .then((pool) => {
+                pool.on('error', (err) => console.error('Erro no pool do SQL Server:', err.message));
                 return pool;
             })
-            .catch(err => {
+            .catch((err) => {
                 poolPromise = null; // se falhar, deixa tentar outra vez no próximo pedido
                 throw err;
             });
@@ -43,4 +42,32 @@ function getPool() {
     return poolPromise;
 }
 
-module.exports = { sql, getPool };
+// corre `trabalho` dentro de uma transação: ou fica tudo gravado, ou nada.
+// o commit/rollback fica aqui num sítio só, em vez de repetido em cada rota
+async function emTransacao(trabalho) {
+    const pool = await getPool();
+    const transacao = new sql.Transaction(pool);
+    await transacao.begin();
+    try {
+        const resultado = await trabalho(transacao);
+        await transacao.commit();
+        return resultado;
+    } catch (err) {
+        try {
+            await transacao.rollback();
+        } catch {
+            // o SQL Server já pode ter desfeito a transação sozinho
+        }
+        throw err;
+    }
+}
+
+async function fecharPool() {
+    if (poolPromise) {
+        const pool = await poolPromise.catch(() => null);
+        poolPromise = null;
+        if (pool) await pool.close();
+    }
+}
+
+module.exports = { sql, getPool, emTransacao, fecharPool };

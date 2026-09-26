@@ -14,16 +14,20 @@ credentials.json
 # ==============================
 # 2. Node.js e Dependências (Para a API e PWA)
 # ==============================
+# os package-lock.json ficam no repositório de propósito: garantem que toda
+# a gente (e o CI) instala exatamente as mesmas versões com `npm ci`
 node_modules/
-npm-debug.log
+npm-debug.log*
 yarn-error.log
-package-lock.json
 
 # ==============================
 # 3. Builds e Compilações
 # ==============================
 /build
 /dist
+frontend/dist/
+frontend/dev-dist/
+coverage/
 
 # ==============================
 # 4. Ficheiros Temporários do LaTeX (Relatório)
@@ -45,6 +49,15 @@ package-lock.json
 .DS_Store
 *~
 *.swp
+
+# ==============================
+# 6. Ferramentas de design (impeccable)
+# ==============================
+.impeccable/config.local.json
+.impeccable/review/
+.impeccable/mocks/
+.impeccable/build/
+.impeccable/live/
 
 Contexto.md
 resumo.md
