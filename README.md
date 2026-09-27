@@ -10,7 +10,13 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Estado-Em_desenvolvimento-orange?style=for-the-badge" alt="Estado">
+  <img src="docs/imagens/aviso-em-desenvolvimento.svg" alt="Em desenvolvimento: ainda não está pronto para uso real. Todos os direitos reservados, © 2026 Tiago Dias Pereira.">
+</p>
+
+> **Em desenvolvimento.** A Bancada ainda não foi testada numa oficina e não deve ser usada com dados reais.<br>
+> **Todos os direitos reservados** a Tiago Dias Pereira. O código está público só para consulta: ver [Direitos de autor](#direitos-de-autor).
+
+<p align="center">
   <a href="https://github.com/TiagoPereira001/Projeto_final_UBI/actions/workflows/ci.yml?query=branch%3Adev"><img src="https://img.shields.io/github/actions/workflow/status/TiagoPereira001/Projeto_final_UBI/ci.yml?branch=dev&style=for-the-badge&label=CI%20(dev)" alt="CI"></a>
   <img src="https://img.shields.io/badge/Testes-52-2ea44f?style=for-the-badge" alt="Testes">
   <img src="https://img.shields.io/badge/Stack-React_%7C_Node.js_%7C_SQL_Server-blue?style=for-the-badge" alt="Stack">
@@ -170,6 +176,7 @@ Os dados criados pelo `npm run db:seed` (clientes, veículos, matrículas, folha
 ├── AI.md               mapa do projeto para agentes de IA
 ├── CLAUDE.md           memória do projeto para o Claude Code
 ├── AGENTS.md           ponto de entrada para outros agentes (aponta para o AI.md)
+├── LICENSE             todos os direitos reservados
 ├── docker-compose.yml
 └── Dockerfile
 ```
@@ -178,3 +185,9 @@ Os dados criados pelo `npm run db:seed` (clientes, veículos, matrículas, folha
 
 **Tiago Dias Pereira** (nº 55019)
 Projeto da UC de Projeto de Software Web, Móvel e na Nuvem, licenciatura em Informática Web, Móvel e na Nuvem, **Universidade da Beira Interior**, Covilhã.
+
+## Direitos de autor
+
+© 2026 Tiago Dias Pereira. Todos os direitos reservados.
+
+O repositório está público para consulta e para a avaliação do projeto, mas não é código aberto. Sem autorização escrita do autor, não é permitido usar, copiar, alterar nem distribuir o código, no todo ou em parte. As bibliotecas e os ficheiros de terceiros mantêm as licenças dos seus autores. Os pormenores estão no [`LICENSE`](LICENSE).

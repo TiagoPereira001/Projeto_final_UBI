@@ -1,0 +1,26 @@
+Bancada: folhas de obra digitais para oficinas
+© 2026 Tiago Dias Pereira. Todos os direitos reservados.
+
+Este repositório é público para consulta e para a avaliação do projeto final
+da licenciatura em Informática Web, Móvel e na Nuvem da Universidade da Beira
+Interior. Não é software livre nem código aberto.
+
+Sem autorização prévia e por escrito do autor, não é permitido usar, copiar,
+modificar, distribuir, sublicenciar ou vender este software, no todo ou em
+parte, nem criar obras derivadas a partir dele.
+
+Os Termos de Serviço do GitHub permitem ver este repositório e fazer um fork
+dentro do GitHub. Isso não dá nenhum dos direitos acima.
+
+Este aviso não abrange o que é de terceiros, que mantém as licenças e os
+direitos dos respetivos titulares:
+- as bibliotecas e imagens Docker usadas, incluindo as letras Barlow e
+  Barlow Condensed (SIL Open Font License 1.1);
+- as skills em .claude/skills/ (pbakaus/impeccable e Leonxlnx/taste-skill);
+- o logótipo e as imagens da Universidade da Beira Interior;
+- o nome da oficina Duarte & Raposo.
+
+O software ainda está em desenvolvimento e é disponibilizado tal como está,
+sem garantias de qualquer tipo. Não deve ser usado com dados reais.
+
+Pedidos de autorização: https://github.com/TiagoPereira001
