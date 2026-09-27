@@ -50,9 +50,10 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 - **Playwright**: lançar o Chromium com `executablePath: '/opt/pw-browsers/chromium'`. O limite de logins (8 em 15 min por IP e email) bloqueia percursos repetidos: reiniciar a API entre percursos.
 - **Relatório (LaTeX)**:
   - Instalar: `apt-get install texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-lang-portuguese texlive-fonts-recommended lmodern latexmk texlive-plain-generic`.
-  - Compilar em `Relatorio/`: `latexmk -pdf relatorio_projeto_final_55019.tex`, depois `latexmk -c` para limpar.
-  - Os diagramas são Graphviz (`dot -Tpdf x.dot -o x.pdf`), com as fontes `.dot` em `Relatorio/Anexos/`.
-  - Para ver o PDF página a página é preciso o `poppler-utils`.
+  - Compilar em `Relatorio/`: `latexmk -pdf relatorio_projeto_final_55019.tex` (e `relatorio_ferramentas_55019.tex`), depois `latexmk -c` para limpar.
+  - Os diagramas do relatório principal são Graphviz (`dot -Tpdf x.dot -o x.pdf`), com as fontes `.dot` em `Relatorio/Anexos/`. Os do documento das ferramentas são TikZ, dentro do próprio `.tex`.
+  - Para ver o PDF página a página é preciso o `poppler-utils`. Para ver várias páginas numa só imagem (não há PIL nem ImageMagick): um `.tex` com `\includepdf[pages=-,nup=4x2]{...}` (pacote `pdfpages`) e depois `pdftoppm`.
+  - Com o babel em português, o `"` é um atalho e come o espaço seguinte: usar ``` ``...'' ``` para as aspas.
 - **Capturas de ecrã**: as do relatório estão em `Relatorio/Anexos/ecras/` (@2x) e as do README em `docs/imagens/` (@1x). Todas usam os dados fictícios do `db:seed`.
 
 ## Estado atual (27/09/2026)
@@ -70,6 +71,10 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 - Revisão de design com a impeccable até ao veredito final "ship" (só cobre as correções pontuadas na última ronda).
 - Documentação: `README.md`, `AI.md`, `DESIGN.md` (+ `.impeccable/design.json`), `PRODUCT.md` e `docs/analise.md` (segurança, desempenho e viabilidade).
 - Relatório LaTeX atualizado (32 páginas, só o que está feito) e compilado em `Relatorio/relatorio_projeto_final_55019.pdf`.
+- Documento complementar para a apresentação: `Relatorio/relatorio_ferramentas_55019.pdf` (30 páginas).
+  - Cada ferramenta numa ficha: o que é, para que serviu, porquê, onde está.
+  - Quem decidiu o quê, os erros apanhados pelas verificações e o uso do Claude Code, com números contados no registo da sessão até ao pedido do documento (510 chamadas).
+  - A secção 4.5 do relatório principal aponta para ele.
 - Todo este trabalho entrou no `dev` pelo PR #1 (ramo `claude/ecstatic-lamport-81qsk8`). O `main` continua na versão de julho: o README novo só aparece na página do GitHub quando o `dev` passar para o `main`, e isso tem de ser pedido ao autor.
 
 **Por fazer** (sugestões, nada disto existe):
@@ -92,4 +97,6 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 - **27/09/2026**:
   - CI reproduzido num clone limpo;
   - PR #1 para o `dev` (verde);
-  - este CLAUDE.md passou a ser a memória do projeto e o PRODUCT.md passou a descrição completa do produto.
+  - este CLAUDE.md passou a ser a memória do projeto e o PRODUCT.md passou a descrição completa do produto;
+  - documento das ferramentas (`relatorio_ferramentas_55019`), com todas as afirmações confirmadas no código, no git ou no registo da sessão;
+  - relatório principal corrigido: os testes manuais são de julho, e as três opções do ecrã principal foram sorteadas pela impeccable entre sete formas.

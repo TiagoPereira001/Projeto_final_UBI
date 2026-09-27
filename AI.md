@@ -31,7 +31,7 @@ Projeto final de licenciatura (Informática Web, Móvel e na Nuvem, UBI) do Tiag
 ├── .claude/skills/            skills de design (impeccable, taste-skill) para agentes
 ├── .impeccable/surfaces/      contrato de direção visual do ecrã principal
 ├── docs/                      análise de segurança, performance e viabilidade; imagens
-├── Relatorio/                 relatório em LaTeX (.tex + .pdf) e anexos
+├── Relatorio/                 relatório e documento das ferramentas em LaTeX (.tex + .pdf) e anexos
 ├── backend/                   API REST (Node.js 22 + Express 5 + SQL Server)
 │   ├── server.js              arranque do servidor e encerramento limpo
 │   ├── app.js                 monta a app Express (separado para os testes)
