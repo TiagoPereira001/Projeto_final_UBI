@@ -130,7 +130,8 @@ async function main() {
         .input('email', sql.NVarChar(254), emailGestor)
         .query('SELECT 1 AS x FROM Colaborador WHERE Email = @email');
     if (existe.recordset.length > 0) {
-        console.log(`Já existe uma conta ${emailGestor}. Para recomeçar do zero: npm run db:reset && npm run db:seed`);
+        // sem "&&": o PowerShell que vem com o Windows não o aceita
+        console.log(`Já existe uma conta ${emailGestor}. Para recomeçar do zero: npm run db:reset e depois npm run db:seed`);
         return;
     }
 
