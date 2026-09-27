@@ -30,7 +30,7 @@ Projeto final de licenciatura (Informática Web, Móvel e na Nuvem, UBI) do Tiag
 ├── .github/workflows/ci.yml   CI: testes da API contra SQL Server + lint e build do frontend
 ├── .claude/skills/            skills de design (impeccable, taste-skill) para agentes
 ├── .impeccable/surfaces/      contrato de direção visual do ecrã principal
-├── docs/                      análise de segurança, performance e viabilidade; imagens
+├── docs/                      análise de segurança, performance e viabilidade; auditoria (auditoria.md + scripts); imagens
 ├── Relatorio/                 relatório e documento das ferramentas em LaTeX (.tex + .pdf) e anexos
 ├── backend/                   API REST (Node.js 22 + Express 5 + SQL Server)
 │   ├── server.js              arranque do servidor e encerramento limpo

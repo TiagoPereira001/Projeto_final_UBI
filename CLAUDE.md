@@ -54,6 +54,7 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - Os diagramas do relatório principal são Graphviz (`dot -Tpdf x.dot -o x.pdf`), com as fontes `.dot` em `Relatorio/Anexos/`. Os do documento das ferramentas são TikZ, dentro do próprio `.tex`.
   - Para ver o PDF página a página é preciso o `poppler-utils`. Para ver várias páginas numa só imagem (não há PIL nem ImageMagick): um `.tex` com `\includepdf[pages=-,nup=4x2]{...}` (pacote `pdfpages`) e depois `pdftoppm`.
   - Com o babel em português, o `"` é um atalho e come o espaço seguinte: usar ``` ``...'' ``` para as aspas.
+- **Auditoria** (`docs/auditoria/scripts/`): precisa de `npm install --no-save playwright axe-core` na pasta dos scripts, do `seed-output.txt` do `db:seed` e de `AUDITORIA_DIR`. Reiniciar a API entre corridas (o limite de logins é por email). Para mexer em tabelas com índices filtrados pelo `sqlcmd`, usar `-I` (senão o `QUOTED_IDENTIFIER` fica desligado e o `UPDATE` falha).
 - **Capturas de ecrã**: as do relatório estão em `Relatorio/Anexos/ecras/` (@2x) e as do README em `docs/imagens/` (@1x). Todas usam os dados fictícios do `db:seed`.
 
 ## Estado atual (27/09/2026)
@@ -75,6 +76,10 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - Cada ferramenta numa ficha: o que é, para que serviu, porquê, onde está.
   - Quem decidiu o quê, os erros apanhados pelas verificações e o uso do Claude Code, com números contados no registo da sessão até ao pedido do documento (510 chamadas).
   - A secção 4.5 do relatório principal aponta para ele.
+- Auditoria de qualidade, segurança, desempenho e acessibilidade em `docs/auditoria.md` (27/09/2026), com os scripts em `docs/auditoria/scripts/`.
+  - 82 verificações: 69 passam, 9 observações, 4 problemas. Nenhum crítico nem alto.
+  - Prioridade alta: REL-001 (sem `errorElement`, erros mostram o ecrã do React Router em inglês) e REL-003 (sem rede, a app mostra "Entrar").
+  - Nenhum código mudou: os achados estão todos abertos. Cada um diz como validar a correção.
 - Todo este trabalho entrou no `dev` pelo PR #1 (ramo `claude/ecstatic-lamport-81qsk8`). O `main` continua na versão de julho: o README novo só aparece na página do GitHub quando o `dev` passar para o `main`, e isso tem de ser pedido ao autor.
 
 **Por fazer** (sugestões, nada disto existe):
@@ -85,6 +90,7 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 5. Folha imprimível para o cliente, com os conselhos.
 6. Recuperação de password por email e um registo de auditoria completo.
 7. Integração com programas de faturação certificados; política de privacidade e contratos RGPD.
+8. Corrigir os achados da auditoria pela ordem da secção 10 de `docs/auditoria.md` (primeiro REL-001 e REL-003) e passar os percursos no browser para testes E2E no CI.
 
 ## Registo
 
@@ -99,4 +105,5 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - PR #1 para o `dev` (verde);
   - este CLAUDE.md passou a ser a memória do projeto e o PRODUCT.md passou a descrição completa do produto;
   - documento das ferramentas (`relatorio_ferramentas_55019`), com todas as afirmações confirmadas no código, no git ou no registo da sessão;
-  - relatório principal corrigido: os testes manuais são de julho, e as três opções do ecrã principal foram sorteadas pela impeccable entre sete formas.
+  - relatório principal corrigido: os testes manuais são de julho, e as três opções do ecrã principal foram sorteadas pela impeccable entre sete formas;
+  - auditoria completa (`docs/auditoria.md`), a pedido do autor, com os guiões de auditoria técnica e de mentoria que ele forneceu.

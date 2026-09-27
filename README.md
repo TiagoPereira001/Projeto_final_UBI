@@ -147,6 +147,7 @@ Os dados criados pelo `npm run db:seed` (clientes, veículos, matrículas, folha
 | [`AI.md`](AI.md) | mapa do código para agentes de IA (e pessoas): regras que não se podem partir, API, comandos |
 | [`CLAUDE.md`](CLAUDE.md) | memória do projeto para o Claude Code: decisões tomadas, preferências, estado atual |
 | [`docs/analise.md`](docs/analise.md) | análise de segurança, desempenho e viabilidade |
+| [`docs/auditoria.md`](docs/auditoria.md) | auditoria de qualidade, segurança, desempenho e acessibilidade (27/09/2026), com os scripts para a repetir |
 | [`Relatorio/`](Relatorio/) | relatório do projeto e documento das ferramentas usadas (e porquê), em LaTeX, com os PDF compilados |
 
 ## Fluxo de trabalho
