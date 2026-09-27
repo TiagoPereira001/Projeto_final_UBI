@@ -40,7 +40,7 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 - **CI** (`.github/workflows/ci.yml`): testes da API contra um SQL Server num container, e lint + build do frontend. A GitGuardian (app instalada no repositório) verifica segredos nos PRs. O CI só corre em pushes para `main`/`dev` e em PRs.
 - **Antes de fazer push**: `cd backend && npm test` (precisa do SQL Server) e `cd frontend && npm run lint && npm run build`. Para mexidas no visual, confirmar num browser nos dois temas e em 390, 1180 e 1440 px.
 - **Commits** em português, a explicar o porquê. Terminam com as linhas de atribuição que o ambiente indicar.
-- **Segredos**: nunca no código nem no git (`.env` está no `.gitignore`). A password `sa` e o `JWT_SECRET` antigos estão no histórico público do git: nunca os reutilizar. A password do gestor e os PINs do `db:seed` só aparecem no terminal.
+- **Segredos**: nunca no código nem no git (`.env` está no `.gitignore`). A password `sa` e o `JWT_SECRET` antigos estão no histórico público do git: nunca os reutilizar. A password do gestor e os PINs do `db:seed` só aparecem no terminal. Nos scripts, as passwords das contas de teste geram-se ao correr (`credencialDeTeste()` em `docs/auditoria/scripts/comum.mjs`): uma password de teste escrita no código fez a GitGuardian falhar o PR #3.
 - **Design**: o sistema visual está no `DESIGN.md` (tokens em `frontend/src/styles/tokens.css`). As skills estão em `.claude/skills/` (impeccable e taste-skill). O contrato de direção do ecrã principal está em `.impeccable/surfaces/`.
 
 ## Ambiente das sessões na nuvem
@@ -80,7 +80,7 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - 82 verificações: 69 passam, 9 observações, 4 problemas. Nenhum crítico nem alto.
   - Prioridade alta: REL-001 (sem `errorElement`, erros mostram o ecrã do React Router em inglês) e REL-003 (sem rede, a app mostra "Entrar").
   - Nenhum código mudou: os achados estão todos abertos. Cada um diz como validar a correção.
-- Todo este trabalho entrou no `dev` pelo PR #1 (ramo `claude/ecstatic-lamport-81qsk8`). O `main` continua na versão de julho: o README novo só aparece na página do GitHub quando o `dev` passar para o `main`, e isso tem de ser pedido ao autor.
+- Este trabalho entrou no `dev` por três PRs do ramo `claude/ecstatic-lamport-81qsk8`: o #1 (plataforma, interface, testes e documentação), o #2 (documento das ferramentas) e o #3 (auditoria). O `main` continua na versão de julho: o README novo só aparece na página do GitHub quando o `dev` passar para o `main`, e isso tem de ser pedido ao autor.
 
 **Por fazer** (sugestões, nada disto existe):
 1. Testar com os mecânicos da Duarte & Raposo: medir o tempo de uma entrada e de uma peça no papel e no tablet.
