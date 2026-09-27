@@ -3,6 +3,7 @@
 Este ficheiro é o ponto de partida para qualquer agente de IA (Claude, Codex, Cursor, Copilot...) que abra este repositório. Diz onde está cada coisa, que regras não se podem partir e como fazer as tarefas mais comuns. Lê-o antes de mexer no código.
 
 - Produto e utilizadores: [`PRODUCT.md`](PRODUCT.md)
+- Decisões já tomadas e estado atual: [`CLAUDE.md`](CLAUDE.md)
 - Sistema visual: [`DESIGN.md`](DESIGN.md)
 - Instalação e visão geral para pessoas: [`README.md`](README.md)
 - Relatório académico (LaTeX): `Relatorio/`
@@ -18,7 +19,9 @@ Projeto final de licenciatura (Informática Web, Móvel e na Nuvem, UBI) do Tiag
 ```text
 .
 ├── AI.md                      ← estás aqui
-├── PRODUCT.md                 utilizadores, propósito, restrições (lido pela skill impeccable)
+├── CLAUDE.md                  memória do projeto: decisões, preferências do autor, estado atual
+├── AGENTS.md                  ponto de entrada para outros agentes (aponta para aqui)
+├── PRODUCT.md                 o produto: utilizadores, percurso, funcionalidades, o que não existe
 ├── DESIGN.md                  tokens e regras visuais (formato DESIGN.md do Google Stitch)
 ├── README.md                  instalação e visão geral
 ├── docker-compose.yml         SQL Server (e, com --profile app, a app completa)
@@ -113,7 +116,7 @@ cd backend && npm run dev            # API em http://localhost:3000
 cd frontend && npm install && npm run dev   # app em http://localhost:5173
 
 # verificações (as mesmas do CI)
-cd backend && npm test               # ~50 testes contra SQL Server (BD Bancada_Teste)
+cd backend && npm test               # 52 testes contra SQL Server (BD Bancada_Teste)
 cd frontend && npm run lint && npm run build
 
 # tudo em containers (produção local)
