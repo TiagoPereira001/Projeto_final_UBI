@@ -50,6 +50,7 @@ Projeto final de licenciatura (Informática Web, Móvel e na Nuvem, UBI) do Tiag
 │   │   ├── seguranca.js       verificação de origem (CSRF) e rate limiting
 │   │   └── erros.js           respostas de erro em JSON, sem detalhes internos
 │   ├── routes/                uma rota por recurso (ver tabela "API" abaixo)
+│   ├── scripts/criar-env.js   cria o .env com passwords e JWT_SECRET aleatórios (nunca substitui um que exista)
 │   ├── scripts/db-setup.js    cria a BD, as tabelas e o login da API (permissões mínimas)
 │   ├── scripts/seed.js        Duarte & Raposo com dados de demonstração FICTÍCIOS
 │   └── test/                  testes node:test contra SQL Server real
@@ -106,6 +107,9 @@ browser ──> /api/*  ──> helmet (CSP) ─> rate limit ─> JSON ─> cook
 ## Comandos
 
 ```bash
+# configuração (primeira vez): cria o .env na raiz com segredos aleatórios
+node backend/scripts/criar-env.js
+
 # base de dados (Docker) e preparação
 docker compose up -d                 # SQL Server em 127.0.0.1:1433
 cd backend && npm install
