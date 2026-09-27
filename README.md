@@ -147,7 +147,7 @@ Os dados criados pelo `npm run db:seed` (clientes, veículos, matrículas, folha
 | [`AI.md`](AI.md) | mapa do código para agentes de IA (e pessoas): regras que não se podem partir, API, comandos |
 | [`CLAUDE.md`](CLAUDE.md) | memória do projeto para o Claude Code: decisões tomadas, preferências, estado atual |
 | [`docs/analise.md`](docs/analise.md) | análise de segurança, desempenho e viabilidade |
-| [`Relatorio/`](Relatorio/) | relatório do projeto em LaTeX (PDF compilado incluído) |
+| [`Relatorio/`](Relatorio/) | relatório do projeto e documento das ferramentas usadas (e porquê), em LaTeX, com os PDF compilados |
 
 ## Fluxo de trabalho
 
@@ -162,7 +162,7 @@ Os dados criados pelo `npm run db:seed` (clientes, veículos, matrículas, folha
 ├── backend/            API REST (rotas, middleware, validação, scripts da BD, testes)
 ├── frontend/           React + Vite (PWA): páginas, componentes, estilos
 ├── docs/               análise de segurança, desempenho e viabilidade; imagens
-├── Relatorio/          relatório em LaTeX e anexos
+├── Relatorio/          relatório e documento das ferramentas, em LaTeX, e anexos
 ├── .github/workflows/  integração contínua
 ├── PRODUCT.md          o produto
 ├── DESIGN.md           sistema visual

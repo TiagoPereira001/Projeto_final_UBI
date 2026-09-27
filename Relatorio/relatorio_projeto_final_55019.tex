@@ -333,7 +333,7 @@ Um pormenor prático: a imagem do SQL Server só existe para processadores x86\_
 
 As passwords e o segredo das sessões ficam num ficheiro \texttt{.env}, que nunca vai para o repositório. O repositório tem um \texttt{.env.example} com todas as variáveis explicadas, e a \ac{API} recusa arrancar com um segredo curto ou copiado do exemplo. A password do administrador do SQL Server só é usada pelo Docker e pelo script que prepara a base de dados (\texttt{npm run db:setup}). A \ac{API} usa um login próprio, \texttt{bancada\_app}, com as permissões mínimas descritas na secção~\ref{sec:dados}.
 
-Aqui ficou uma lição. Na primeira fase, a password do utilizador \texttt{sa} e um segredo \ac{JWT} chegaram a estar no código, num repositório público. Tirei-os depois, mas continuam no histórico do git, e por isso têm de ser tratados como públicos e nunca podem ser reutilizados. Nenhum dos segredos atuais esteve alguma vez no repositório.
+Aqui ficou uma lição. Nas duas primeiras fases, a password do utilizador \texttt{sa} e um segredo \ac{JWT} chegaram a estar no código, num repositório público. Tirei-os depois, mas continuam no histórico do git, e por isso têm de ser tratados como públicos e nunca podem ser reutilizados. Nenhum dos segredos atuais esteve alguma vez no repositório.
 
 \subsection{Organização do repositório}
 
@@ -357,9 +357,9 @@ Quanto aos ramos: o \texttt{main} tem a versão estável, o ramo \texttt{dev} se
 
 \subsection{Ferramentas usadas}
 
-Usei o VS Code, o Git e o GitHub, o Docker, o Thunder Client (nos testes manuais da primeira fase), o ERDPlus (para os diagramas da primeira versão) e o Graphviz (para os diagramas deste relatório). Para verificar a interface num browser a sério usei o Playwright.
+Nas duas primeiras fases usei o VS Code, o Git e o GitHub, o Docker, o Thunder Client (nos testes manuais de julho) e o ERDPlus (para os diagramas da primeira versão). Na terceira fase, através do Claude Code (descrito a seguir), entraram também o Graphviz, para os diagramas deste relatório, e o Playwright, para verificar a interface num browser a sério. O documento complementar \textit{As ferramentas do projeto e porque foram usadas} (\texttt{relatorio\_ferramentas\_55019.pdf}, na mesma pasta deste relatório) descreve cada ferramenta e a razão da escolha.
 
-Na terceira fase usei também o Claude Code, um assistente de programação com inteligência artificial que trabalha diretamente no repositório. Usei-o para rever o projeto (segurança, desempenho e viabilidade) e para escrever boa parte do código novo dessa fase: a passagem a multi-oficina, os testes automáticos e a interface. As decisões de produto foram minhas: o nome, manter e elevar a identidade que já tinha (grafite, âmbar e a luz indicadora), o registo público de oficinas, o tablet partilhado como dispositivo principal e o tablier como ecrã principal. Na interface, o assistente seguiu duas \textit{skills} de design para agentes de IA, a impeccable e a taste-skill. A impeccable inclui uma revisão de design feita por um segundo agente, que avalia capturas dos ecrãs e devolve correções. Houve várias rondas de revisão e correção, até o revisor dar as correções pedidas por resolvidas.
+O Claude Code é um assistente de programação com inteligência artificial que trabalha diretamente no repositório. Usei-o na terceira fase para rever o projeto (segurança, desempenho e viabilidade) e para escrever boa parte do código novo dessa fase: a passagem a multi-oficina, os testes automáticos e a interface. As decisões de produto foram minhas: o nome, manter e elevar a identidade que já tinha (grafite, âmbar e a luz indicadora), o registo público de oficinas, o tablet partilhado como dispositivo principal e o tablier como ecrã principal. Na interface, o assistente seguiu duas \textit{skills} de design para agentes de IA, a impeccable e a taste-skill. A impeccable inclui uma revisão de design feita por um segundo agente, que avalia capturas dos ecrãs e devolve correções. Houve várias rondas de revisão e correção, até o revisor dar as correções pedidas por resolvidas.
 
 % ------------------------------------------------------------------
 \section{A API REST}
@@ -541,7 +541,7 @@ Todas estas regras estão escritas no \texttt{DESIGN.md}, com os valores exatos,
 
 \subsection{O ecrã principal: o tablier}
 
-Considerei várias formas para o ecrã principal: um quadro kanban com uma coluna por estado, um quadro de chaves como o que há em muitas oficinas, começar sempre pela matrícula, ou a lista e a folha lado a lado. Escolhi o tablier (Figura~\ref{fig:quadro}): uma faixa escura com quatro luzes (abertas, em curso, a aguardar peças e prontas), cada uma acesa quando há carros nesse estado e com o número por baixo. Por baixo fica a pesquisa, o botão ``Nova entrada'' e a lista dos carros na oficina, dos que estão há mais tempo para os mais recentes. Cada linha mostra a chapa, o veículo e o cliente, o que o cliente pediu e o estado.
+Para o ecrã principal, o processo de design da impeccable fez uma lista de sete formas possíveis, entre elas um quadro com uma coluna por estado, um quadro de chaves como o que há em muitas oficinas e começar sempre pela matrícula. Três foram-me apresentadas como opções: o tablier de luzes, uma calha com as folhas penduradas lado a lado (como as de papel na parede da oficina) e a lista e a folha lado a lado. Escolhi o tablier (Figura~\ref{fig:quadro}): uma faixa escura com quatro luzes (abertas, em curso, a aguardar peças e prontas), cada uma acesa quando há carros nesse estado e com o número por baixo. Por baixo fica a pesquisa, o botão ``Nova entrada'' e a lista dos carros na oficina, dos que estão há mais tempo para os mais recentes. Cada linha mostra a chapa, o veículo e o cliente, o que o cliente pediu e o estado.
 
 \begin{figure}[htbp]
   \centering
@@ -626,9 +626,9 @@ No computador, o gestor tem os mesmos ecrãs e mais três coisas: os valores do 
 \section{Testes e validação}
 \label{sec:testes}
 
-\subsection{Testes manuais da primeira fase}
+\subsection{Testes manuais de julho}
 
-Na primeira fase testei a \ac{API} à mão, com o Thunder Client e com \texttt{curl}, contra o SQL Server a correr em Docker. A Tabela~\ref{tab:testes-manuais} mostra os cenários dessa altura. As rotas das autocaravanas deram lugar às dos veículos, e estes cenários estão agora cobertos pelos testes automáticos.
+Em julho, para o relatório intercalar, testei a \ac{API} à mão, com o Thunder Client e com \texttt{curl}, contra o SQL Server a correr em Docker. A Tabela~\ref{tab:testes-manuais} mostra os cenários dessa altura. As rotas das autocaravanas deram lugar às dos veículos, e estes cenários estão agora cobertos pelos testes automáticos.
 
 \begin{table}[htbp]
 \centering
@@ -645,7 +645,7 @@ Criar um colaborador & 201, sem a password na resposta \\
 Desativar um colaborador e listar & Não aparece na lista, mas continua na base de dados \\
 \bottomrule
 \end{tabularx}
-\caption{Testes manuais da primeira fase.}
+\caption{Testes manuais de julho.}
 \label{tab:testes-manuais}
 \end{table}
 
