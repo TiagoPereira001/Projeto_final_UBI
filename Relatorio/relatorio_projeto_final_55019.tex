@@ -1,43 +1,67 @@
 \documentclass[a4paper,12pt]{article}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \usepackage[portuguese]{babel}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{microtype}
 \usepackage{graphicx}
-\usepackage{amsmath}
 \usepackage{enumitem}
 \usepackage{indentfirst}
-\usepackage[colorlinks=true,linkcolor=black,urlcolor=black]{hyperref}
+\usepackage[colorlinks=true,linkcolor=black,urlcolor=black,citecolor=black]{hyperref}
 \usepackage{fancyhdr}
 \usepackage{listings}
 \usepackage{xcolor}
-\usepackage{acronym}
+\usepackage[printonlyused]{acronym}
 \usepackage{dirtree}
-\usepackage{adjustbox}
-\usepackage{pdflscape}
 \usepackage{float}
 \usepackage{caption}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
 \usepackage{xurl}
+
+\graphicspath{{Anexos/}}
+\setlist{itemsep=2pt,topsep=4pt}
+\captionsetup{font=small,labelfont=bf}
+\renewcommand{\arraystretch}{1.25}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+% tabelas e figuras grandes podem ficar no topo de uma página com texto por baixo
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.75}
 
 \lstset{
     language=SQL,
     basicstyle=\ttfamily\small,
-    keywordstyle=\color{blue},
-    stringstyle=\color{red},
-    commentstyle=\color{green!50!black},
-    numberstyle=\tiny,
+    keywordstyle=\color{blue!60!black}\bfseries,
+    stringstyle=\color{red!60!black},
+    commentstyle=\color{green!40!black},
+    numberstyle=\tiny\color{gray},
     numbers=left,
-    stepnumber=1,
-    numbersep=5pt,
-    backgroundcolor=\color{gray!10},
-    showspaces=false,
+    numbersep=6pt,
+    backgroundcolor=\color{gray!8},
+    frame=single,
+    rulecolor=\color{gray!30},
     showstringspaces=false,
-    showtabs=false,
     tabsize=2,
     captionpos=b,
     breaklines=true,
     breakatwhitespace=true,
-    breakautoindent=true,
-    linewidth=\textwidth,
+    columns=fullflexible,
+    keepspaces=true,
+    literate=
+      {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+      {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+      {à}{{\`a}}1 {À}{{\`A}}1
+      {â}{{\^a}}1 {ê}{{\^e}}1 {ô}{{\^o}}1 {Â}{{\^A}}1 {Ê}{{\^E}}1 {Ô}{{\^O}}1
+      {ã}{{\~a}}1 {õ}{{\~o}}1 {Ã}{{\~A}}1 {Õ}{{\~O}}1
+      {ç}{{\c c}}1 {Ç}{{\c C}}1
+      {º}{{\textordmasculine}}1 {ª}{{\textordfeminine}}1,
 }
+\renewcommand{\lstlistingname}{Excerto}
+\renewcommand{\lstlistlistingname}{Lista de Excertos}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -46,278 +70,731 @@
 
 \begin{document}
 
-% Logo da universidade
-\begin{figure}[H]
+% ------------------------------------------------------------------
+% Capa
+% ------------------------------------------------------------------
+\begin{titlepage}
   \centering
-  \includegraphics[width=0.5\textwidth]{Anexos/UBI_LOGO.jpg}
-\end{figure}
+  \includegraphics[width=0.45\textwidth]{UBI_LOGO.jpg}\par
+  \vspace{2cm}
+  {\large Projeto de Software Web, Móvel e na Nuvem\par}
+  \vspace{1.6cm}
+  {\Huge\bfseries Bancada\par}
+  \vspace{0.4cm}
+  {\Large Gestão digital de folhas de obra para oficinas\par}
+  \vspace{0.3cm}
+  {\large Primeiro cliente: oficina Duarte \& Raposo\par}
+  \vfill
+  {\large Tiago Dias Pereira, n.º 55019\par}
+  \vspace{0.3cm}
+  {\large Universidade da Beira Interior\par}
+  \vspace{0.3cm}
+  {\large \today\par}
+\end{titlepage}
 
-% Título e autor
-\title{Projeto de Software Web, Móvel e na Nuvem\\Sistema de Gestão Digital para a Oficina Duarte \& Raposo}
-\author{Tiago Dias Pereira - 55019}
-\date{\today}
-
-\maketitle
-\newpage
-
-% Sumário
 \tableofcontents
+\clearpage
+\listoffigures
+\listoftables
+\lstlistoflistings
+\clearpage
 
-\newpage
-
+% ------------------------------------------------------------------
 \section*{Resumo}
 \addcontentsline{toc}{section}{Resumo}
 
-Este relatório descreve o desenvolvimento integral de um sistema de gestão desenhado à medida para a oficina automóvel Duarte \& Raposo, no âmbito da unidade curricular de Projeto de Software Web, Móvel e na Nuvem. O objetivo prático é resolver um problema real com o qual lido diariamente no meu local de trabalho: a ineficiência operacional, a desorganização e a perda de histórico geradas pelo uso exclusivo de folhas de obra em papel.
+A Bancada é uma aplicação web que substitui as folhas de obra em papel das oficinas. Nasceu na Duarte \& Raposo, a oficina de mecânica, eletricidade e autocaravanas onde trabalho, e começou por ser um sistema só para ela. A meio do projeto passou a ser uma plataforma para qualquer oficina: cada oficina regista-se sozinha e só vê os seus próprios dados. A Duarte \& Raposo ficou como primeiro cliente.
 
-O trabalho abrangeu todo o ciclo de vida do sistema: desde a engenharia de requisitos e modelação concetual, passando pela normalização do esquema lógico relacional (3FN) e implementação num SGBD SQL Server via Docker, até à construção de uma Aplicação Cliente (PWA e Dashboard) suportada por uma API em Node.js. A solução permite agora a gestão digital de veículos complexos (como autocaravanas), auditoria de colaboradores e processamento ágil para faturação.
+Neste momento o sistema tem um modelo de dados em SQL Server (na segunda versão, já preparada para várias oficinas), uma \ac{API} REST em Node.js com Express e uma interface em React pensada para um tablet partilhado na oficina, onde cada mecânico entra com o seu nome e um PIN. O ecrã principal imita as luzes do tablier de um carro: uma luz por estado da reparação, acesa quando há carros nesse estado. A \ac{API} tem 52 testes automáticos que correm contra uma base de dados SQL Server real, incluindo testes que tentam ler e alterar dados de outra oficina, e o repositório tem integração contínua no GitHub.
+
+Também fica dito o que ainda não foi feito: a aplicação ainda não está instalada na oficina, não foi testada pelos mecânicos e não está publicada na Internet com HTTPS.
 
 \section*{Palavras-chave}
-Informática Web; React; Node.js; SQL Server; PWA; Docker; Engenharia de Requisitos; Autocaravanas.
+Folhas de obra; Oficinas automóveis; Aplicação web multi-oficina; React; Node.js; SQL Server; Segurança web; Docker.
 
-\newpage
+\clearpage
 
+% ------------------------------------------------------------------
 \section{Introdução}
-\subsection{Âmbito e Motivação}
 
-No dia a dia da oficina Duarte \& Raposo, especializada em eletricidade, mecânica e autocaravanas, todo o processo de entrada de veículos e registo de peças é feito de forma manual. Este sistema baseado em papel tem várias falhas críticas: é difícil consultar o histórico de uma autocaravana que já lá esteve no ano passado, os papéis sujam-se ou perdem-se pela oficina, e no final da reparação perde-se muito tempo a fazer contas à mão para conseguir passar a fatura ao cliente.
+\subsection{Motivação}
 
-A motivação para este projeto surge exatamente da vontade de juntar o útil ao agradável: aplicar os conhecimentos adquiridos ao longo do curso de Informática Web para desenvolver uma solução real que facilite não só o meu trabalho, mas o de toda a equipa. O foco vai estar especialmente nas autocaravanas, dado que são veículos complexos (com parte mecânica e parte habitacional) e exigem um registo mais detalhado que um veículo ligeiro comum.
+No dia a dia da Duarte \& Raposo, uma oficina no Canhoso, na Covilhã, especializada em mecânica, eletricidade e autocaravanas, a entrada dos veículos e o registo das peças são feitos em papel. Cada carro que entra tem uma folha de obra, onde se escreve o que o cliente pediu, as peças que se aplicaram e as horas de trabalho. Funciona, mas tem problemas que se sentem todos os dias: é difícil saber o que se fez a uma autocaravana que cá esteve no ano passado, as folhas sujam-se e perdem-se pela oficina, no fim da reparação perde-se tempo a fazer contas à mão para passar a fatura e nem sempre se sabe quem fez o quê.
 
-\subsection{Objetivos da Implementação}
+Como trabalho lá, conheço estes problemas por dentro. Este projeto foi a forma de juntar o útil ao agradável: usar o que aprendi no curso para resolver um problema real, que me facilita o trabalho a mim e ao resto da equipa. As autocaravanas tiveram atenção especial desde o início, porque são veículos com duas partes (a mecânica do chassis e a célula habitacional) e precisam de um registo mais detalhado do que um ligeiro comum.
+
+\subsection{De uma oficina para qualquer oficina}
+
+O projeto começou como um sistema só para a Duarte \& Raposo. Quando o revi, antes desta entrega, percebi que quase nada nele era específico desta oficina: as folhas em papel, as contas à mão e o histórico perdido são problemas de muitas oficinas pequenas. Decidi por isso transformá-lo numa plataforma para várias oficinas, com a Duarte \& Raposo como primeiro cliente, e dei-lhe um nome: Bancada, que é o sítio onde se trabalha numa oficina.
+
+A mudança mexeu com quase tudo. A base de dados passou a ter uma tabela de oficinas e as outras tabelas passaram a indicar a que oficina pertence cada registo. A \ac{API} passou a filtrar todas as consultas pela oficina de quem tem a sessão. Uma oficina nova pode registar-se sozinha. E apareceu um risco que não existia antes e que passou a ser o mais grave de todos: uma oficina conseguir ver ou alterar os dados de outra. A secção~\ref{sec:seguranca} explica como isso foi tratado.
+
+\subsection{Objetivos}
+
+Os objetivos, tal como estão agora, são estes:
 \begin{itemize}
-    \item \textbf{Acabar com o papel:} Passar todo o registo de clientes, veículos e folhas de obra para uma base de dados digital e relacional, garantindo a integridade dos dados.
-    \item \textbf{Aplicação Móvel (PWA):} Desenvolver uma interface em \textbf{React} leve e direta, para que qualquer mecânico consiga dar entrada a um carro no sistema usando o telemóvel, sem perder muito tempo.
-    \item \textbf{Gestão no Computador:} Criar uma interface web \textit{desktop} (Dashboard) para o Duarte e o Raposo poderem ver o que está a ser feito, consultar históricos e ver as contas automáticas do IVA para a faturação.
-    \item \textbf{Arquitetura e Portabilidade:} Construir o \textit{backend} em Node.js com base de dados \ac{SQL} Server, e utilizar o \textbf{Docker} para contentorizar o projeto. Isto vai garantir que o sistema corre sempre bem, quer esteja a programar no meu computador fixo ou num portátil novo, sem dores de cabeça com compatibilidades.
+    \item substituir a folha de obra em papel por uma folha digital, com as peças, a mão de obra e os totais com \ac{IVA} calculados sem erros de arredondamento;
+    \item pensar a aplicação para o sítio onde vai ser usada: um tablet partilhado na oficina, por mecânicos com as mãos sujas, com barulho e luz forte;
+    \item dar ao gestor uma visão do que está na oficina e acesso ao histórico de clientes e veículos;
+    \item servir várias oficinas, cada uma só com acesso ao que é seu;
+    \item ter uma base segura e testada, que se põe a correr com poucos comandos (Docker).
 \end{itemize}
 
-\clearpage
+Na primeira versão dos objetivos eu falava numa aplicação para o telemóvel dos mecânicos e num \textit{dashboard} para o computador dos gestores. Com o tempo percebi que o dispositivo certo para os mecânicos é um tablet fixo na oficina, partilhado por todos. A interface foi desenhada a pensar nele, sem deixar de funcionar no computador e no telemóvel.
 
-\section{Engenharia de Requisitos}
+\subsection{Como o projeto evoluiu}
 
-\subsection{Levantamento de Dados Físicos}
-Como trabalho diretamente na oficina, o levantamento de requisitos foi muito direto e baseado na realidade operacional. Peguei nas folhas de obra e faturas em branco que usamos atualmente e retirei a informação essencial que tem de transitar para a plataforma digital:
-\begin{itemize}
-    \item \textbf{Dados do Cliente:} Nome, Morada, NIF e Telefone.
-    \item \textbf{Dados do Veículo:} Matrícula, e, no caso das autocaravanas, a separação imperativa entre a Marca/Modelo do Chassis e a Marca da Célula.
-    \item \textbf{Dados da Entrada:} Data, os quilómetros (KMS) com que o carro entrou, e espaço para observações gerais.
-    \item \textbf{O Serviço:} As várias linhas de material gasto e horas de trabalho, com quantidade, preço unitário e categoria do serviço.
-\end{itemize}
+O trabalho foi feito em três fases, resumidas na Tabela~\ref{tab:fases}. O repositório tem o histórico completo, commit a commit.
 
-\subsection{Histórias de Utilizador (\textit{User Stories})}
-Com base nas rotinas da equipa e nas dificuldades sentidas no "chão de oficina", estruturei as necessidades interativas do sistema:
-\begin{itemize}
-    \item \textit{"Como mecânico, preciso de abrir a app no telemóvel e registar a entrada de um carro em poucos cliques, para voltar rapidamente ao trabalho."}
-    \item \textit{"Como mecânico, quero adicionar as peças e serviços que usei diretamente à folha de obra ativa daquele carro no exato momento em que as aplico."}
-    \item \textit{"Como mecânico, preciso de uma secção de 'Conselhos' para avisar o cliente sobre peças que vão precisar de ser trocadas no futuro, para prestarmos um bom serviço preventivo."}
-    \item \textit{"Como gestor, preciso que o sistema some os valores do material, faça o cálculo do IVA sozinho quando a reparação acaba, e identifique quem foi o mecânico responsável pela obra."}
-\end{itemize}
-
-\clearpage
-
-\section{Modelação de Dados e Arquitetura}
-
-\subsection{Modelo Relacional e Decisões de Desenho}
-Para garantir a integridade referencial dos dados e mitigar as redundâncias presentes no modelo de papel (como escrever o nome do cliente dez vezes para o mesmo carro ao longo do ano), desenhei uma base de dados relacional (ver Anexos) que cumpre com os normativos da Terceira Forma Normal (3NF). 
-
-Durante esta fase, tomei as seguintes opções técnicas para adaptar o sistema à realidade do negócio:
-
-\begin{itemize}
-    \item \textbf{Separação Estrutural das Autocaravanas:} Decidi modelar a entidade \textit{Autocaravana} separando explicitamente a parte mecânica (\texttt{Marca\_chassis}, \texttt{Modelo\_chassis}) da parte habitacional (\texttt{marca\_celula}). Isto é vital na nossa oficina, pois permite encomendar peças de motor à Fiat/Ford e peças de habitáculo a fornecedores de campismo de forma isolada e precisa.
-    
-    \item \textbf{Rastreabilidade Operacional (\textit{Auditing}):} No papel, as assinaturas perdem-se. Para resolver isto, criei a entidade \textit{Colaboradores}. Foi estabelecido um relacionamento onde cada \textit{Folha\_Obra} guarda obrigatoriamente a Chave Estrangeira do colaborador (\texttt{ID\_Colaborador}) que a registou, garantindo auditoria e responsabilização interna.
-    
-    \item \textbf{Preservação Fisco-Operacional (Soft Delete):} Numa empresa real, apagar dados com um \texttt{DELETE} pode destruir o histórico fiscal e garantias de peças. Para acautelar isto, implementei um sistema de \textit{Soft Delete}: adicionei o atributo \texttt{ativo} (booleano) às tabelas principais (Clientes, Veículos, Colaboradores). Os dados nunca são eliminados da base de dados, são apenas ocultados da interface.
-\end{itemize}
-
-O esquema relacional consolida-se assim em cinco entidades principais:
-\begin{enumerate}
-    \item \textbf{Colaboradores:} \underline{ID\_Colaborador}, Nome, Cargo, Email, Password\_Hash, Ativo.
-    \item \textbf{Clientes:} \underline{ID\_Cliente}, Nome, Contribuinte\_NIF, Telefone, Morada, Ativo.
-    \item \textbf{Autocaravanas:} \underline{Matricula}, Marca\_Chassis, Modelo\_Chassis, Marca\_Celula, Ano, Ativo, \textit{ID\_Cliente (FK)}.
-    \item \textbf{Folhas\_Obra:} \underline{ID\_Folha}, Data\_Entrada, KMS\_Entrada, Estado\_Reparacao, Observacoes, Conselhos, \textit{Matricula (FK)}, \textit{ID\_Colaborador (FK)}.
-    \item \textbf{Linhas\_Reparacao:} \underline{ID\_Linha}, Designacao, Quantidade, Valor\_Unitario, Categoria, \textit{ID\_Folha (FK)}.
-\end{enumerate}
-
-\subsection{A Escolha do Docker para Infraestrutura}
-Em termos de arquitetura de servidor, decidi utilizar o \textbf{Docker} neste projeto, alinhando a solução com as melhores práticas de \textit{DevOps} lecionadas no curso. 
-
-A vantagem principal para o meu caso de uso é a facilidade de criar ambientes isolados. Ao definir um ficheiro \texttt{docker-compose.yml}, consigo ter a base de dados SQL Server e, futuramente, a API em Node.js a correr em qualquer computador  através de um único comando. Isto evita que o meu computador fique "sujo" com serviços em segundo plano, consome menos recursos, e facilita drasticamente o \textit{deploy} do projeto para um servidor de produção quando a oficina adotar o sistema em definitivo.
-
-\clearpage
-
-% ==========================================
-% SECÇÕES BASE PARA O FUTURO (A SUBSTITUIR DEPOIS)
-% ==========================================
-
-\section{Desenvolvimento da API REST (Backend)}
-
-Esta secção documenta o estado atual da implementação do \textit{backend}, desenvolvido em Node.js. À data de escrita desta secção, encontram-se implementadas as três entidades independentes do modelo (Colaboradores, Clientes e Autocaravanas); as entidades relacionais mais complexas (Folhas de Obra e Linhas de Reparação) e a camada de interface (PWA e Dashboard) estão planeadas para a fase seguinte do projeto (ver secção~\ref{subsec:trabalho-futuro}).
-
-\subsection{Arquitetura RESTful (Node.js)}
-No desenvolvimento da camada de \textit{backend}, optou-se pela utilização do ambiente Node.js com a \textit{framework} Express. Esta API atua como o motor central de regras de negócio, comunicando diretamente com o SQL Server e expondo os \textit{endpoints} necessários para as operações \ac{CRUD}.
-
-O código foi organizado de forma modular, separando claramente três responsabilidades:
-\begin{itemize}
-    \item \texttt{db.js} --- gestão centralizada da ligação à base de dados;
-    \item \texttt{routes/} --- um ficheiro por entidade (\texttt{colaboradores.js}, \texttt{clientes.js}, \texttt{autocaravanas.js}), cada um definindo as suas próprias rotas através do \texttt{express.Router()};
-    \item \texttt{server.js} --- ponto de entrada da aplicação, responsável apenas por montar as rotas e arrancar o servidor.
-\end{itemize}
-
-Esta separação, em vez de concentrar toda a lógica num único ficheiro, torna o código mais fácil de expandir à medida que novas entidades (como as Folhas de Obra) são adicionadas, e facilita a leitura do projeto em contexto de avaliação académica.
-
-\subsection{Rotas Implementadas}
-A Tabela~\ref{tab:rotas} resume os \textit{endpoints} atualmente disponíveis. Todas as entidades seguem o mesmo padrão \ac{CRUD}, com a particularidade de o método \texttt{DELETE} nunca remover fisicamente um registo (ver \textit{Soft Delete}, secção 3.1).
-
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
-\begin{tabular}{|l|l|p{6.5cm}|}
-\hline
-\textbf{Método} & \textbf{Endpoint} & \textbf{Descrição} \\
-\hline
-GET & /api/colaboradores & Lista colaboradores ativos \\
-GET & /api/colaboradores/:id & Obtém um colaborador \\
-POST & /api/colaboradores & Cria colaborador (password encriptada com bcrypt) \\
-PUT & /api/colaboradores/:id & Atualiza colaborador \\
-DELETE & /api/colaboradores/:id & Desativa colaborador (soft delete) \\
-\hline
-GET & /api/clientes & Lista clientes ativos \\
-GET & /api/clientes/:id & Obtém um cliente \\
-POST & /api/clientes & Cria cliente \\
-PUT & /api/clientes/:id & Atualiza cliente \\
-DELETE & /api/clientes/:id & Desativa cliente (soft delete) \\
-\hline
-GET & /api/autocaravanas & Lista autocaravanas ativas (com nome do cliente) \\
-GET & /api/autocaravanas/:matricula & Obtém uma autocaravana \\
-POST & /api/autocaravanas & Cria autocaravana (valida existência do cliente) \\
-PUT & /api/autocaravanas/:matricula & Atualiza autocaravana \\
-DELETE & /api/autocaravanas/:matricula & Desativa autocaravana (soft delete) \\
-\hline
-\end{tabular}
-\caption{Rotas da API implementadas até ao momento.}
+\begin{tabularx}{\textwidth}{@{}p{3cm}L@{}}
+\toprule
+\textbf{Quando} & \textbf{O que foi feito} \\
+\midrule
+junho de 2026 & Levantamento de requisitos a partir das folhas de papel, modelo de dados (primeira versão) e base de dados em SQL Server com Docker. \\
+julho de 2026 & \ac{API} para colaboradores, clientes e autocaravanas, com testes manuais (relatório intercalar). Depois: rotas das folhas de obra, login com \acs{JWT}, primeiras proteções (helmet, limite de tentativas de login, bcrypt) e início da interface em React. \\
+setembro de 2026 & Revisão completa de segurança, desempenho e viabilidade. Passagem a multi-oficina (Bancada), segunda versão da base de dados, modo bancada para o tablet partilhado, 52 testes automáticos, integração contínua, interface nova e documentação do projeto. \\
+\bottomrule
+\end{tabularx}
+\caption{As três fases do projeto.}
+\label{tab:fases}
+\end{table}
+
+\subsection{Organização do relatório}
+
+A secção~\ref{sec:requisitos} descreve os requisitos e quem usa a aplicação. A secção~\ref{sec:dados} apresenta as duas versões do modelo de dados. A secção~\ref{sec:arquitetura} mostra a arquitetura, a infraestrutura e as ferramentas usadas, e a secção~\ref{sec:api} a \ac{API}. A secção~\ref{sec:seguranca} trata da segurança e a secção~\ref{sec:interface} da interface. A secção~\ref{sec:testes} descreve os testes e a secção~\ref{sec:conclusao} fecha com o que está feito, o que falta e o que aprendi.
+
+% ------------------------------------------------------------------
+\section{Engenharia de requisitos}
+\label{sec:requisitos}
+
+\subsection{Levantamento a partir das folhas de papel}
+
+Como trabalho na oficina, o levantamento foi direto: peguei nas folhas de obra e nas faturas em branco que usamos e tirei delas a informação que tem de passar para o sistema.
+
+\begin{itemize}
+    \item \textbf{Cliente:} nome, telefone, \ac{NIF}, morada e email. Na primeira versão o \ac{NIF} e a morada eram obrigatórios. Deixaram de ser, porque muitos clientes de autocaravanas são turistas estrangeiros, com contribuintes de outros países ou sem morada em Portugal. O telefone ficou obrigatório, porque é por ele que se avisa que o carro está pronto.
+    \item \textbf{Veículo:} matrícula, tipo, marca, modelo e ano. Nas autocaravanas guarda-se também a marca da célula, separada da marca e do modelo do chassis.
+    \item \textbf{Entrada:} data, quilómetros, o que o cliente pediu (observações) e conselhos para uma próxima visita.
+    \item \textbf{Serviço:} as linhas de peças, mão de obra e outros custos, cada uma com quantidade, preço unitário e categoria.
+\end{itemize}
+
+\subsection{Quem usa a aplicação}
+
+\begin{itemize}
+    \item \textbf{Mecânicos}, no chão da oficina, num tablet partilhado fixo na bancada ou na parede. Vários mecânicos usam o mesmo tablet ao longo do dia, muitas vezes com as mãos sujas ou de luvas.
+    \item \textbf{Gestores} (donos ou responsáveis da oficina), sobretudo no computador, para ver o que se está a fazer, consultar o histórico, gerir a equipa e acompanhar os valores.
+    \item \textbf{Oficinas novas}, que se registam sozinhas na plataforma (a oficina e o primeiro gestor).
+\end{itemize}
+
+\subsection{Histórias de utilizador}
+
+Com base nas rotinas da equipa e nas dificuldades do dia a dia na oficina, escrevi as necessidades como histórias de utilizador:
+
+\begin{itemize}
+    \item \textit{``Como mecânico, quero entrar no tablet da oficina com o meu nome e um PIN, sem escrever emails nem passwords, para começar a trabalhar logo.''}
+    \item \textit{``Como mecânico, quero ver num relance que carros estão na oficina e em que estado.''}
+    \item \textit{``Como mecânico, quero dar entrada a um carro a partir da matrícula: se já cá esteve, aparece logo; se é novo, registo o carro e o dono no mesmo passo.''}
+    \item \textit{``Como mecânico, quero acrescentar as peças e as horas à folha do carro no momento em que as aplico.''}
+    \item \textit{``Como mecânico, preciso de um espaço para conselhos, para avisar o cliente de peças que vão precisar de ser trocadas no futuro.''}
+    \item \textit{``Como gestor, preciso que o sistema some os valores e calcule o IVA sozinho, e que fique registado quem fez cada coisa.''}
+    \item \textit{``Como gestor, quero gerir a equipa (PINs e acessos) e conseguir desligar o tablet se ele se perder.''}
+    \item \textit{``Como responsável de uma oficina nova, quero registar a minha oficina sem ter de falar com ninguém.''}
+\end{itemize}
+
+\subsection{Requisitos não funcionais}
+
+\begin{itemize}
+    \item \textbf{Tablet partilhado e mãos sujas:} alvos de toque grandes (48 píxeis ou mais), poucos passos, pouco para escrever, letra legível a um ou dois metros. Tema claro para a luz forte e tema escuro para o fim do dia.
+    \item \textbf{Quem fez fica registado:} a autoria de cada folha e de cada linha vem da sessão, nunca de um campo que se possa escolher.
+    \item \textbf{Contas certas ao cêntimo:} totais e \ac{IVA} calculados no servidor, com números decimais exatos.
+    \item \textbf{Isolamento entre oficinas:} uma oficina nunca vê nem altera os dados de outra.
+    \item \textbf{Segurança:} passwords guardadas com hash, sessões que não possam ser roubadas por um script da página, proteção contra pedidos forjados e contra tentativas repetidas de login.
+    \item \textbf{Histórico:} clientes, veículos e colaboradores são arquivados e nunca apagados.
+    \item \textbf{Língua:} português de Portugal.
+    \item \textbf{Sem faturação:} em Portugal, as faturas têm de ser emitidas por programas certificados pela \ac{AT} (Portaria n.º 363/2010). A Bancada calcula os totais e o \ac{IVA}, e a fatura é emitida no programa de faturação da oficina. A própria interface diz isto ao lado dos totais.
+    \item \textbf{Portabilidade:} o sistema tem de correr da mesma forma em qualquer computador (Docker).
+\end{itemize}
+
+% ------------------------------------------------------------------
+\section{Modelo de dados}
+\label{sec:dados}
+
+\subsection{Primeira versão}
+
+\begin{sloppypar}
+Na primeira fase desenhei uma base de dados relacional com cinco tabelas: \texttt{Colaboradores}, \texttt{Cliente}, \texttt{Autocaravana}, \texttt{Folha\_Obra} e \texttt{Linha\_reparacao}. Nessa altura o sistema era só para a Duarte \& Raposo e os veículos eram só autocaravanas, com a matrícula como chave primária. Já nessa versão tomei três decisões que se mantiveram:
+\end{sloppypar}
+
+\begin{itemize}
+    \item \textbf{Separar o chassis da célula:} as autocaravanas guardam a marca e o modelo do chassis (a parte mecânica) e, à parte, a marca da célula habitacional. Na oficina isto importa, porque as peças de motor e as peças da célula vêm de fornecedores diferentes.
+    \item \textbf{Saber quem registou:} cada folha de obra guarda o colaborador que a registou. No papel, as assinaturas perdem-se.
+    \item \textbf{Soft delete:} clientes, veículos e colaboradores têm um campo \texttt{Ativo}. Nunca se apagam, só se arquivam, para não se perder o histórico nem os dados de garantias.
+\end{itemize}
+
+Os diagramas dessa versão, feitos no ERDPlus, estão nos Anexos~II e~III. Ao revê-los encontrei dois erros. No esquema relacional, a chave estrangeira entre a folha e as linhas está do lado errado: aparece um \texttt{ID\_linha} na \texttt{Folha\_Obra}, o que só permitiria uma linha por folha. No script SQL estava certo (\texttt{ID\_folha} na \texttt{Linha\_reparacao}), mas o diagrama não correspondia ao que tinha implementado. E no diagrama concetual a cardinalidade entre colaboradores e folhas ficou invertida: um colaborador regista muitas folhas, e não o contrário. Os dois erros ficaram corrigidos na segunda versão.
+
+\subsection{Segunda versão: uma base de dados para várias oficinas}
+
+Com a passagem a multi-oficina o esquema foi reescrito. Tem agora seis tabelas, resumidas na Tabela~\ref{tab:tabelas}. O diagrama completo está no Anexo~I e o script, com um comentário a explicar cada decisão, está em \texttt{backend/database/schema.sql}.
+
+\begin{table}[htbp]
+\centering
+\begin{tabularx}{\textwidth}{@{}p{3.4cm}L@{}}
+\toprule
+\textbf{Tabela} & \textbf{O que guarda} \\
+\midrule
+\texttt{Oficina} & Cada oficina da plataforma: nome, \ac{NIF} (único e validado pelo dígito de controlo), contactos, taxa de \ac{IVA}, o contador de folhas e a versão da bancada (para desligar os tablets). \\
+\texttt{Colaborador} & Gestores e mecânicos. Entram com email e password, com um PIN no tablet, ou das duas formas. Guarda também as falhas de PIN e a versão da sessão. \\
+\texttt{Cliente} & Os clientes de cada oficina. O telefone é obrigatório; o \ac{NIF} é opcional e aceita contribuintes estrangeiros. \\
+\texttt{Veiculo} & Qualquer tipo de veículo (ligeiro, comercial, autocaravana, motociclo, pesado, outro). Nas autocaravanas, a marca e o modelo são os do chassis e há a marca da célula. \\
+\texttt{Folha\_Obra} & Uma por cada entrada de um veículo: número dentro da oficina, estado, quilómetros, observações, conselhos, taxa de \ac{IVA} do dia e datas de conclusão e entrega. \\
+\texttt{Linha\_Reparacao} & As peças, a mão de obra e os outros custos de cada folha, com quem registou cada linha. \\
+\bottomrule
+\end{tabularx}
+\caption{As seis tabelas da segunda versão.}
+\label{tab:tabelas}
+\end{table}
+
+As decisões mais importantes foram estas:
+
+\begin{itemize}
+    \item \textbf{A oficina em todas as tabelas principais.} \texttt{Colaborador}, \texttt{Cliente}, \texttt{Veiculo} e \texttt{Folha\_Obra} têm a coluna \texttt{ID\_Oficina}. As chaves estrangeiras entre elas são compostas, isto é, incluem sempre a oficina (Excerto~\ref{lst:fk}). Assim é a própria base de dados que impede uma folha da oficina A de apontar para um veículo, um cliente ou um colaborador da oficina B, mesmo que a \ac{API} tenha um erro. As linhas não têm a coluna: pertencem a uma folha, e a folha já é de uma oficina.
+    \item \textbf{Veículos de qualquer tipo.} A tabela \texttt{Autocaravana} passou a \texttt{Veiculo}, com um campo \texttt{Tipo}. A marca da célula continua a existir, e uma restrição \texttt{CHECK} só a deixa preencher nas autocaravanas.
+    \item \textbf{Chave artificial nos veículos.} A matrícula deixou de ser a chave primária. As matrículas estrangeiras têm formatos diferentes, e a mesma matrícula pode existir em duas oficinas. A matrícula é guardada normalizada (só letras e números, em maiúsculas), para \texttt{AA-00-AA}, \texttt{aa 00 aa} e \texttt{AA00AA} serem o mesmo carro.
+    \item \textbf{Numeração por oficina.} Cada oficina tem a sua sequência de folhas (a folha n.º~1 da Duarte \& Raposo e a folha n.º~1 de outra oficina). O número vem de um contador na tabela \texttt{Oficina}, atualizado na mesma transação em que a folha é criada.
+    \item \textbf{A folha guarda o que era verdade no dia da entrada.} Guarda o cliente (se o carro mudar de dono, o histórico não muda) e uma cópia da taxa de \ac{IVA} (se a oficina mudar a taxa, as folhas antigas não mudam).
+    \item \textbf{Tipos certos.} \texttt{NVARCHAR} para texto com acentos, \texttt{DECIMAL} para dinheiro e quantidades, datas em \texttt{DATETIME2} e em UTC.
+    \item \textbf{Índices para as consultas reais.} O SQL Server não cria índices nas chaves estrangeiras sozinho, por isso há índices compostos para o quadro da oficina (folhas por estado), para o histórico de um veículo e para as linhas de uma folha.
+\end{itemize}
+
+\begin{lstlisting}[caption={Chaves estrangeiras compostas da tabela \texttt{Folha\_Obra}.},label={lst:fk}]
+CONSTRAINT FK_Folha_Veiculo FOREIGN KEY (ID_Oficina, ID_Veiculo)
+  REFERENCES Veiculo (ID_Oficina, ID_Veiculo),
+CONSTRAINT FK_Folha_Cliente FOREIGN KEY (ID_Oficina, ID_Cliente)
+  REFERENCES Cliente (ID_Oficina, ID_Cliente),
+CONSTRAINT FK_Folha_Colaborador FOREIGN KEY (ID_Oficina, ID_Colaborador)
+  REFERENCES Colaborador (ID_Oficina, ID_Colaborador),
+-- o número da folha é único dentro de cada oficina
+CONSTRAINT UQ_Folha_Oficina_Numero UNIQUE (ID_Oficina, Numero),
+\end{lstlisting}
+
+\subsection{Normalização e exceções conscientes}
+
+O modelo está na \ac{3FN}, com três exceções que deixei de propósito:
+\begin{itemize}
+    \item o \texttt{ID\_Oficina} na \texttt{Folha\_Obra} podia ser obtido através do veículo, mas é ele que permite as chaves estrangeiras compostas e que as consultas do quadro filtrem pela oficina sem juntar tabelas;
+    \item o \texttt{ID\_Cliente} na \texttt{Folha\_Obra} não é redundante, porque guarda o dono no dia da entrada, que pode não ser o dono de hoje;
+    \item a \texttt{Taxa\_IVA} na \texttt{Folha\_Obra} é o valor histórico, e não uma cópia que tenha de acompanhar a da oficina.
+\end{itemize}
+
+\subsection{Regras garantidas pela própria base de dados}
+
+Algumas regras não ficam só na \ac{API}, porque é mais seguro que seja a base de dados a garanti-las:
+\begin{itemize}
+    \item restrições \texttt{CHECK} para os valores permitidos (estados da folha, cargos, categorias das linhas, tipos de veículo), para quantidades positivas e preços não negativos, e para regras como ``um gestor tem de ter email e password'';
+    \item índices únicos filtrados: a mesma matrícula só existe uma vez entre os veículos ativos de uma oficina, e o mesmo acontece com o \ac{NIF} dos clientes;
+    \item o login que a \ac{API} usa na base de dados não tem permissão para apagar oficinas, colaboradores, clientes, veículos nem folhas. O soft delete deixou de depender só do código e passou a ser garantido pelo SQL Server. As linhas podem ser apagadas, porque remover uma linha de uma folha aberta é uma operação normal.
+\end{itemize}
+
+Depois de criada a base de dados, o SQL Server conta 6 tabelas, 21 índices, 14 restrições \texttt{CHECK} e 9 chaves estrangeiras.
+
+% ------------------------------------------------------------------
+\section{Arquitetura e infraestrutura}
+\label{sec:arquitetura}
+
+\subsection{Visão geral}
+
+A Figura~\ref{fig:arquitetura} mostra as três peças do sistema: o frontend em React, que corre no browser do tablet, do computador ou do telemóvel; a \ac{API} em Node.js com Express; e a base de dados em SQL Server.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.95\textwidth]{arquitetura.pdf}
+  \caption[Arquitetura da Bancada.]{Arquitetura da Bancada, tal como está implementada. Com \texttt{docker compose -{}-profile app}, os dois containers correm na mesma máquina. Em desenvolvimento, a API e o frontend correm diretamente com Node.}
+  \label{fig:arquitetura}
+\end{figure}
+
+Em produção, a própria \ac{API} serve o frontend já compilado, e por isso a interface e a \ac{API} têm a mesma origem. Isto simplifica muito a segurança: as sessões ficam em cookies com \texttt{SameSite=Strict}, não é preciso abrir a \ac{API} a outros domínios (CORS) e a \ac{CSP} pode ser rigorosa, só com recursos do próprio site. Em desenvolvimento, o servidor do Vite reencaminha os pedidos \texttt{/api} para a \ac{API}, para o browser ver na mesma uma só origem.
+
+A interface é uma \ac{PWA}: pode ser instalada no ecrã inicial do tablet e o service worker guarda a aplicação no dispositivo, para abrir logo. As respostas da \ac{API} nunca ficam em cache.
+
+\subsection{Docker}
+
+Uso Docker desde a primeira fase. O ficheiro \texttt{docker-compose.yml} tem dois serviços:
+\begin{itemize}
+    \item \texttt{db}: o SQL Server 2022, com os dados num volume e uma verificação de saúde (\textit{healthcheck}) para os outros serviços saberem quando está pronto. A porta só é publicada em \texttt{127.0.0.1}. Com \texttt{1433:1433}, como estava no início, o SQL Server ficava aberto a toda a rede onde o computador estivesse (a da faculdade, a de um café), e o Docker contorna a firewall do sistema.
+    \item \texttt{app}: a \ac{API} a servir o frontend, construída por um Dockerfile em várias etapas (compila o frontend e instala só as dependências de produção) e a correr com um utilizador sem privilégios. Está num perfil à parte: \texttt{docker compose up -d} arranca só a base de dados, para desenvolver, e \texttt{docker compose -{}-profile app up -d -{}-build} arranca tudo.
+\end{itemize}
+
+Um pormenor prático: a imagem do SQL Server só existe para processadores x86\_64, e em Macs com Apple Silicon corre por emulação. A diretiva \texttt{platform: linux/amd64} no \texttt{docker-compose.yml} torna isso explícito e evita erros de arquitetura. O primeiro arranque demora um pouco mais, mas funciona da mesma forma no meu computador e num portátil com processador M.
+
+\subsection{Configuração e segredos}
+
+As passwords e o segredo das sessões ficam num ficheiro \texttt{.env}, que nunca vai para o repositório. O repositório tem um \texttt{.env.example} com todas as variáveis explicadas, e a \ac{API} recusa arrancar com um segredo curto ou copiado do exemplo. A password do administrador do SQL Server só é usada pelo Docker e pelo script que prepara a base de dados (\texttt{npm run db:setup}). A \ac{API} usa um login próprio, \texttt{bancada\_app}, com as permissões mínimas descritas na secção~\ref{sec:dados}.
+
+Aqui ficou uma lição. Nas duas primeiras fases, a password do utilizador \texttt{sa} e um segredo \ac{JWT} chegaram a estar no código, num repositório público. Tirei-os depois, mas continuam no histórico do git, e por isso têm de ser tratados como públicos e nunca podem ser reutilizados. Nenhum dos segredos atuais esteve alguma vez no repositório.
+
+\subsection{Organização do repositório}
+
+\dirtree{%
+.1 Projeto\_final\_UBI/.
+.2 backend/\DTcomment{API: rotas, middleware, validação, scripts da BD, testes}.
+.2 frontend/\DTcomment{React + Vite (PWA): páginas, componentes, estilos}.
+.2 docs/\DTcomment{análise de segurança, desempenho e viabilidade; imagens}.
+.2 Relatorio/\DTcomment{este relatório e os anexos}.
+.2 .github/workflows/\DTcomment{integração contínua}.
+.2 AI.md\DTcomment{mapa do projeto para agentes de IA}.
+.2 DESIGN.md\DTcomment{sistema visual: cores, tipografia, componentes}.
+.2 PRODUCT.md\DTcomment{utilizadores e princípios do produto}.
+.2 docker-compose.yml, Dockerfile, .env.example.
+}
+
+\vspace{0.5em}
+Além do README, o repositório tem três documentos pensados para quem vier trabalhar no código a seguir, pessoas ou agentes de IA. O \texttt{AI.md} é um mapa do projeto: onde está cada coisa, as regras que não se podem partir (o isolamento entre oficinas, a autoria pela sessão, as contas no SQL, o soft delete) e os comandos. O \texttt{PRODUCT.md} descreve os utilizadores e os princípios do produto. O \texttt{DESIGN.md} descreve o sistema visual no formato DESIGN.md (tokens de cor, tipografia e componentes, com as regras de uso).
+
+Quanto aos ramos: o \texttt{main} tem a versão estável, o ramo \texttt{dev} serve para integrar o trabalho antes de passar para o \texttt{main}, e o trabalho de cada tarefa é feito num ramo próprio. A integração contínua (secção~\ref{sec:testes}) corre em cada \textit{push} para o \texttt{main} e o \texttt{dev} e em cada \textit{pull request}.
+
+\subsection{Ferramentas usadas}
+
+Nas duas primeiras fases usei o VS Code, o Git e o GitHub, o Docker, o Thunder Client (nos testes manuais de julho) e o ERDPlus (para os diagramas da primeira versão). Na terceira fase, através do Claude Code (descrito a seguir), entraram também o Graphviz, para os diagramas deste relatório, e o Playwright, para verificar a interface num browser a sério. O documento complementar \textit{As ferramentas do projeto e porque foram usadas} (\texttt{relatorio\_ferramentas\_55019.pdf}, na mesma pasta deste relatório) descreve cada ferramenta e a razão da escolha.
+
+O Claude Code é um assistente de programação com inteligência artificial que trabalha diretamente no repositório. Usei-o na terceira fase para rever o projeto (segurança, desempenho e viabilidade) e para escrever boa parte do código novo dessa fase: a passagem a multi-oficina, os testes automáticos e a interface. As decisões de produto foram minhas: o nome, manter e elevar a identidade que já tinha (grafite, âmbar e a luz indicadora), o registo público de oficinas, o tablet partilhado como dispositivo principal e o tablier como ecrã principal. Na interface, o assistente seguiu duas \textit{skills} de design para agentes de IA, a impeccable e a taste-skill. A impeccable inclui uma revisão de design feita por um segundo agente, que avalia capturas dos ecrãs e devolve correções. Houve várias rondas de revisão e correção, até o revisor dar as correções pedidas por resolvidas.
+
+% ------------------------------------------------------------------
+\section{A API REST}
+\label{sec:api}
+
+\subsection{Organização}
+
+A \ac{API} está em \texttt{backend/} e separa as responsabilidades por pastas:
+\begin{itemize}
+    \item \texttt{routes/}: um ficheiro por recurso (autenticação, oficinas, colaboradores, clientes, veículos e folhas de obra);
+    \item \texttt{middleware/}: autenticação, permissões por cargo, verificação de origem, limites de pedidos e tratamento de erros;
+    \item \texttt{lib/}: validação dos dados, sessões, passwords e erros;
+    \item \texttt{db.js}: um único \textit{pool} de ligações ao SQL Server, partilhado por toda a aplicação, e uma função para correr várias operações numa transação;
+    \item \texttt{scripts/}: preparar a base de dados (\texttt{db:setup}) e carregar a Duarte \& Raposo com dados de demonstração fictícios (\texttt{db:seed}).
+\end{itemize}
+
+A \ac{API} usa o Express 5, que passa sozinho para o tratamento de erros as exceções das rotas assíncronas. Assim, um erro inesperado responde sempre com uma mensagem em JSON e nunca deixa um pedido pendurado.
+
+\subsection{Rotas}
+
+A Tabela~\ref{tab:rotas} resume as rotas. Todas estão debaixo de \texttt{/api}.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}lp{5.4cm}L@{}}
+\toprule
+\textbf{Método} & \textbf{Rota} & \textbf{Para quê} \\
+\midrule
+POST & /auth/entrar & Entrar com email e password \\
+POST & /auth/sair & Terminar a sessão \\
+GET & /auth/sessao & Quem está a trabalhar e se o dispositivo é a bancada \\
+POST, DELETE & /auth/bancada & Ativar ou desligar este tablet como bancada (gestor) \\
+GET & /auth/bancada & Nomes de quem pode entrar com PIN neste tablet \\
+POST & /auth/bancada/entrar & Entrar com o PIN \\
+\midrule
+POST & /oficinas & Registo público de uma oficina e do primeiro gestor \\
+GET, PUT & /oficinas/atual & Dados e taxa de IVA da oficina (alterar: gestor) \\
+POST & /oficinas/atual/desligar-tablets & Invalidar todos os tablets da oficina (gestor) \\
+\midrule
+GET, POST & /colaboradores & Equipa (gestor) \\
+PUT, DELETE & /colaboradores/:id & Alterar ou tirar o acesso (gestor) \\
+GET, POST & /clientes & Lista com pesquisa e paginação; criar \\
+GET, PUT, DELETE & /clientes/:id & Ver, alterar, arquivar \\
+GET, POST & /veiculos & Lista com pesquisa por matrícula; criar \\
+GET, PUT, DELETE & /veiculos/:id & Ver (com o histórico), alterar, arquivar \\
+\midrule
+GET & /folhas-obra & Lista com filtros (estado, veículo, pesquisa) \\
+GET & /folhas-obra/resumo & Valores do mês (gestor) \\
+POST & /folhas-obra & Nova entrada (folha, e se preciso o veículo e o cliente) \\
+GET, PATCH & /folhas-obra/:id & Ver a folha com as linhas e os totais; mudar estado e notas \\
+POST & /folhas-obra/:id/linhas & Acrescentar uma linha \\
+DELETE & /folhas-obra/:id/linhas/:linhaId & Remover uma linha \\
+\bottomrule
+\end{tabularx}
+\caption{Rotas da API.}
 \label{tab:rotas}
 \end{table}
 
-\subsection{Decisões Técnicas de Implementação}
+\subsection{Regras de negócio}
+
 \begin{itemize}
-    \item \textbf{Pool de Ligações Único:} Em vez de abrir uma nova ligação ao SQL Server em cada pedido HTTP (\texttt{sql.connect()} por rota), foi implementado um pool de ligações único e partilhado por toda a aplicação (\texttt{db.js}), seguindo a recomendação da própria biblioteca \texttt{mssql}. Isto evita o esgotamento de ligações disponíveis sob carga.
-
-    \item \textbf{Encriptação de \textit{Passwords}:} As \textit{passwords} dos colaboradores nunca são guardadas em texto simples. Antes de qualquer escrita na base de dados, são processadas com a biblioteca \texttt{bcrypt} (\textit{salt rounds} = 10), preparando o terreno para a futura implementação de autenticação (\textit{login}) na Fase 2.
-
-    \item \textbf{Validação de Integridade Referencial ao Nível da Aplicação:} Antes de criar uma Autocaravana, a API confirma explicitamente que o \texttt{ID\_cliente} indicado existe e está ativo, devolvendo um erro \texttt{400} claro em caso negativo. Sem esta validação, um erro de chave estrangeira do SQL Server chegaria ao cliente da API de forma menos percetível.
-
-    \item \textbf{Tratamento de Duplicados:} Os códigos de erro nativos do SQL Server para violação de restrições \texttt{UNIQUE} (2627/2601) são capturados e traduzidos para respostas HTTP \texttt{409 Conflict} com mensagens em português, em vez de expor o erro técnico da base de dados diretamente.
+    \item \textbf{Estados da folha:} aberta, em curso, a aguardar peças, pronta e entregue. Quando passa a pronta, guarda-se a data de conclusão; quando passa a entregue, a data de entrega.
+    \item \textbf{Uma folha entregue fica fechada:} já não aceita linhas nem alterações. Só um gestor a pode reabrir.
+    \item \textbf{Um veículo só tem uma folha aberta de cada vez.} Se já está na oficina, a nova entrada mostra a folha que existe.
+    \item \textbf{Autoria:} quem abre a folha e quem regista cada linha vem sempre da sessão. Na versão de julho, o colaborador responsável vinha no corpo do pedido, e qualquer pessoa podia registar obra em nome de outra.
+    \item \textbf{Arquivar:} um cliente com veículos ativos ou um veículo que está na oficina não se arquivam.
+    \item \textbf{Permissões:} os mecânicos não gerem a equipa, não alteram as definições da oficina e não veem o resumo financeiro.
 \end{itemize}
 
-\subsection{Ambiente de Desenvolvimento Multiplataforma (Docker)}
-Um aspeto prático relevante do desenvolvimento foi garantir que o ambiente Docker funciona de forma consistente em diferentes máquinas de desenvolvimento, nomeadamente entre um computador com processador Intel e um MacBook com Apple Silicon (M1/M2/M3/M4). A imagem oficial do SQL Server é distribuída apenas para arquitetura x86\_64, pelo que em Macs Apple Silicon a execução ocorre por emulação (Rosetta~2). Para tornar este comportamento explícito e evitar erros de arquitetura, foi adicionada a diretiva \texttt{platform: linux/amd64} ao serviço da base de dados no \texttt{docker-compose.yml}, garantindo o arranque correto do container independentemente do processador do anfitrião.
+\subsection{Validação}
 
-\subsection{Trabalho a Realizar}
-\label{subsec:trabalho-futuro}
-Ficam planeados para a fase seguinte do projeto:
-\begin{itemize}
-    \item Implementação das rotas de \textbf{Folhas de Obra} e \textbf{Linhas de Reparação}, que exigem lógica transacional (\texttt{sql.Transaction}) para garantir que a folha de obra e as suas linhas associadas são criadas de forma atómica;
-    \item Implementação de \textbf{autenticação} (\textit{login} de colaboradores via \ac{JWT}, aproveitando o campo \texttt{Password\_Hash} já existente);
-    \item Desenvolvimento da \textbf{PWA em React} para os mecânicos (visão mobile);
-    \item Desenvolvimento do \textbf{Dashboard em React} para a gestão (visão desktop), incluindo o cálculo automático de IVA para faturação.
-\end{itemize}
+Todos os dados que chegam à \ac{API} passam por um validador próprio (\texttt{lib/validar.js}), que devolve os erros campo a campo, em português, para a interface os mostrar ao lado de cada campo. Alguns exemplos: o \ac{NIF} das oficinas é validado pelo dígito de controlo; o dos clientes aceita contribuintes estrangeiros com o código do país; as matrículas são normalizadas; os valores aceitam a vírgula portuguesa (\texttt{12,50}) e recusam mais de duas casas decimais; os textos são limpos de espaços a mais e de caracteres de controlo e têm um tamanho máximo. Antes desta fase, um ano com letras dava um erro 500, e o cargo era texto livre (dava para inventar cargos).
 
-\section{Testes e Validação}
+\subsection{Transações}
 
-\subsection{Metodologia de Teste}
-Os testes realizados até ao momento são testes manuais de integração, executados através da ferramenta \textit{Thunder Client}\footnote{Alternativamente, poderia ser usado o Postman; a escolha não afeta os resultados.} e da linha de comandos (\texttt{curl}), validando o comportamento de cada rota diretamente contra a base de dados SQL Server a correr em Docker. A automatização de testes (por exemplo, com \textit{Jest} e \textit{Supertest}) fica identificada como possível extensão para a fase seguinte.
+Uma nova entrada pode criar, de uma só vez, o cliente, o veículo, a folha e as primeiras linhas. Tudo isso corre numa transação: ou fica tudo gravado, ou nada. O número da folha também é tirado dentro da transação, e por isso uma entrada que falha não gasta número (há um teste para isto). Acrescentar uma linha é uma única instrução \texttt{INSERT ... SELECT} que só insere se a folha for da oficina da sessão e não estiver entregue, sem janela entre a verificação e a escrita.
 
-\subsection{Casos de Teste Executados}
-A Tabela~\ref{tab:testes} resume os cenários validados manualmente para as três entidades implementadas.
+\subsection{Contas no SQL Server}
 
-\begin{table}[H]
+Os totais são calculados no SQL Server com \texttt{DECIMAL}, que é exato. Em JavaScript, \texttt{3 * 19.99} dá \texttt{59.970000000000006}, e um valor assim não pode aparecer numa conta de um cliente. Cada linha é arredondada ao cêntimo e o \ac{IVA} é calculado sobre o subtotal, com a taxa guardada na folha. A resposta traz os totais por categoria (peças, mão de obra e outros), o subtotal, o \ac{IVA} e o total. Acrescentar ou remover uma linha devolve logo os totais novos, sem outro pedido.
+
+% ------------------------------------------------------------------
+\section{Segurança}
+\label{sec:seguranca}
+
+\subsection{A revisão}
+
+No início da terceira fase foi feita uma revisão de segurança de todo o repositório. O \textit{backend} estava bem encaminhado (consultas parametrizadas, passwords com bcrypt, helmet, limite de tentativas no login e segredos fora do código), mas havia falhas importantes. A Tabela~\ref{tab:seguranca} resume as principais. A análise completa, com todos os pontos, está em \texttt{docs/analise.md}.
+
+\begin{table}[htbp]
 \centering
-\begin{tabular}{|p{4.5cm}|p{7.5cm}|c|}
-\hline
-\textbf{Cenário} & \textbf{Resultado Esperado} & \textbf{OK?} \\
-\hline
-Criar cliente com todos os campos válidos & Resposta 201, registo devolvido com \texttt{ID\_cliente} & Sim \\
-\hline
-Listar clientes & Resposta 200, apenas clientes com \texttt{Ativo = 1} & Sim \\
-\hline
-Criar autocaravana com \texttt{id\_cliente} inexistente & Resposta 400, mensagem clara (sem expor erro SQL) & Sim \\
-\hline
-Criar autocaravana com matrícula já existente & Resposta 409 Conflict & Sim \\
-\hline
-Criar colaborador e confirmar que a \textit{password} não é devolvida em texto simples & Resposta 201, campo \texttt{password} ausente da resposta & Sim \\
-\hline
-Desativar (soft delete) um colaborador e tentar listá-lo & Não aparece na listagem, mas mantém-se na base de dados & Sim \\
-\hline
-\end{tabular}
-\caption{Casos de teste manuais executados sobre a API.}
+\small
+\begin{tabularx}{\textwidth}{@{}Lp{1.5cm}L@{}}
+\toprule
+\textbf{O que encontrei} & \textbf{Risco} & \textbf{O que mudou} \\
+\midrule
+Uma oficina ver ou alterar os dados de outra (risco novo, com a passagem a multi-oficina). & Crítico & Filtro por oficina em todas as consultas, chaves estrangeiras compostas e testes automáticos (secção~\ref{sec:isolamento}). \\
+A password \texttt{sa} e um segredo \acs{JWT} estiveram no código, num repositório público. & Crítico & Fora do código; tratados como públicos e nunca reutilizados. \\
+O SQL Server estava publicado em todas as interfaces de rede. & Alto & Porta só em \texttt{127.0.0.1}. \\
+A \ac{API} ligava-se à base de dados como administrador (\texttt{sa}). & Alto & Login \texttt{bancada\_app}, só com leitura e escrita de dados e sem permissão para apagar. \\
+O responsável de uma folha vinha no pedido e podia ser falsificado. & Alto & A autoria vem sempre da sessão. \\
+O token de sessão ficava no \texttt{localStorage}, ao alcance de qualquer script (\acs{XSS}). & Médio & Cookie \texttt{httpOnly} e \texttt{SameSite=Strict}, e \ac{CSP} rigorosa. \\
+Com cookies, passa a haver risco de pedidos forjados (\acs{CSRF}). & Médio & Verificação da origem em todos os pedidos que alteram dados. \\
+Uma sessão continuava válida horas depois de a conta ser desativada. & Médio & A \ac{API} relê o colaborador em cada pedido; desativar ou mudar a password corta as sessões logo. \\
+O limite de tentativas de login era só por IP, e numa oficina todos os dispositivos saem com o mesmo IP. & Médio & Limite por IP e por conta, mais um teto por IP. \\
+Validação mínima dos dados. & Médio & Validador para todos os campos e \texttt{CHECK} na base de dados. \\
+\bottomrule
+\end{tabularx}
+\caption{Principais problemas de segurança encontrados na revisão e o que mudou.}
+\label{tab:seguranca}
+\end{table}
+
+\subsection{Sessões}
+
+Quando alguém entra, a \ac{API} cria um \ac{JWT} assinado com HS256 e guarda-o num cookie com duas marcas. Com \texttt{httpOnly}, o JavaScript da página não o consegue ler, nem mesmo um script injetado num ataque de \ac{XSS}. Com \texttt{SameSite=Strict}, o browser não o envia em pedidos que venham de outros sites. O token tem emissor e audiência fixos, e o algoritmo também é fixo, para um token de outro tipo ou sem assinatura (\texttt{alg: none}) não ser aceite. Há testes que tentam estes ataques.
+
+Em cada pedido, a \ac{API} volta a ler o colaborador na base de dados e compara a versão da sessão guardada no token com a que está na tabela. Mudar a password, mudar o PIN ou desativar uma conta aumenta essa versão, e todas as sessões antigas dessa pessoa deixam de valer na hora. Quem mudou a própria password recebe logo uma sessão nova. Uma sessão dura 12 horas, o tempo de um turno longo.
+
+Contra os ataques de \ac{CSRF}, em que outro site tenta fazer pedidos em nome de quem tem a sessão aberta, há uma segunda proteção por cima do \texttt{SameSite=Strict}. Todos os pedidos que alteram dados passam por uma verificação de origem: os cabeçalhos \texttt{Origin} e \texttt{Sec-Fetch-Site} têm de indicar que o pedido veio da própria aplicação. Um pedido vindo de outro site recebe 403.
+
+\subsection{Isolamento entre oficinas}
+\label{sec:isolamento}
+
+O isolamento está em três camadas, para um erro numa delas não chegar para expor dados:
+\begin{enumerate}
+    \item \textbf{Na \ac{API}:} a oficina vem sempre da sessão, e todas as consultas filtram por ela. Pedir um cliente de outra oficina dá 404, tal como pedir um cliente que não existe (não se fica a saber que existe).
+    \item \textbf{Na base de dados:} as chaves estrangeiras compostas impedem uma folha de apontar para dados de outra oficina.
+    \item \textbf{Nos testes:} criam duas oficinas, A e B, e verificam que B não lê, não altera, não arquiva e não usa nos seus registos os dados de A, e que não vê nem altera a equipa de A.
+\end{enumerate}
+
+\subsection{O modo bancada}
+
+O tablet partilhado precisava de uma forma rápida de trocar de pessoa. Escrever email e password com as mãos sujas, várias vezes por dia, não ia funcionar. A solução foi o modo bancada:
+\begin{itemize}
+    \item um gestor, já com sessão iniciada, ativa o tablet como bancada da oficina. O tablet recebe um cookie de dispositivo, válido cerca de seis meses, e a sessão do gestor termina;
+    \item a partir daí o tablet mostra ``Quem vai trabalhar?'' com os nomes da equipa, e cada mecânico entra com o seu nome e um PIN de 4 a 6 algarismos;
+    \item o que o mecânico regista fica em nome dele. Quando acaba toca em Terminar, e se o tablet ficar 5 minutos parado a sessão termina sozinha.
+\end{itemize}
+
+Um PIN é fraco por natureza, e por isso o modo bancada tem limites apertados. O PIN só funciona num tablet ativado por um gestor dessa oficina. Ao fim de 5 falhas o PIN fica bloqueado durante 5 minutos, com a contagem na base de dados e não na memória do servidor. Os PINs óbvios (\texttt{1234}, \texttt{0000}) são recusados. Uma sessão aberta com PIN não dá acesso à gestão de contas nem às definições da oficina, mesmo que seja de um gestor. E se um tablet se perder, o gestor carrega em ``Desligar todos os tablets'' e todos os dispositivos da oficina deixam de servir como bancada.
+
+\subsection{Permissões mínimas na base de dados}
+
+O script \texttt{db:setup} cria o login \texttt{bancada\_app} só com os papéis de leitura e escrita de dados, e nega-lhe explicitamente o \texttt{DELETE} nas tabelas com soft delete. Se um erro na \ac{API}, ou um ataque, tentar apagar clientes ou folhas, é o SQL Server que recusa, e há um teste que confirma isto.
+
+\subsection{Outras proteções}
+
+\begin{itemize}
+    \item \textbf{Passwords:} bcrypt com custo 12, mínimo de 10 caracteres, máximo de 72 bytes (o bcrypt ignora em silêncio o que passa disso) e uma lista de passwords óbvias recusadas.
+    \item \textbf{Login com tempo constante:} a \ac{API} compara sempre a password com um hash, mesmo quando o email não existe. Assim o tempo de resposta não denuncia que contas existem, e a mensagem de erro é a mesma nos dois casos.
+    \item \textbf{Limites de pedidos:} no login (por IP e por conta), no registo de oficinas, no PIN e na \ac{API} em geral.
+    \item \textbf{Cabeçalhos:} o helmet define a \ac{CSP}, que só aceita scripts, estilos, fontes e imagens do próprio site, e outros cabeçalhos de segurança. As respostas da \ac{API} levam \texttt{Cache-Control: no-store}.
+    \item \textbf{Respostas:} as colunas devolvidas são sempre explícitas. Nenhuma resposta traz passwords, PINs ou hashes, e há um teste para isso.
+    \item \textbf{Dependências:} os \textit{lockfiles} estão no repositório, e o \texttt{npm audit} corre na integração contínua. Neste momento não há vulnerabilidades conhecidas.
+\end{itemize}
+
+% ------------------------------------------------------------------
+\section{Interface}
+\label{sec:interface}
+
+\subsection{Ponto de partida}
+
+Em julho comecei a interface em React: o ecrã de entrada, com uma luz indicadora que pisca enquanto espera pela resposta do servidor e fica verde ou vermelha consoante o resultado, e a ligação à \ac{API}. Mas o frontend não arrancava (faltava o ficheiro de entrada, \texttt{main.jsx}, e havia ficheiros em pastas trocadas) e os ecrãs da oficina e de gestão ainda não existiam. Na terceira fase a interface foi feita de novo, mantendo a ideia da luz indicadora.
+
+A interface usa React 19, Vite e React Router, com CSS próprio organizado em \textit{tokens} (cores, tipos, espaços). Não usa bibliotecas de componentes.
+
+\subsection{Identidade visual}
+
+Mantive e elevei a identidade que já tinha: o grafite, o âmbar e a luz indicadora. A ideia que organiza tudo é o tablier de um carro, que tem uma parte sempre escura (o painel de instrumentos, com as luzes de aviso) e uma superfície de trabalho que segue o tema do dispositivo, clara ao sol e escura à noite. Os elementos principais são estes:
+\begin{itemize}
+    \item \textbf{As luzes de aviso.} Cada estado tem um pictograma desenhado de propósito, cheio, como as luzes de um carro: a frente de um carro (aberta), uma chave de bocas (em curso), um pistão (a aguardar peças), uma bandeira de xadrez (pronta) e uma chave (entregue). Numa primeira versão, ``a aguardar peças'' era uma roda dentada, mas a revisão de design notou que toda a gente a lê como ``definições'', e foi trocada pelo pistão.
+    \item \textbf{A matrícula como chapa.} As matrículas aparecem desenhadas como a chapa: brancas nos dois temas, com letras pretas e a faixa azul europeia. Na chapa grande, as matrículas portuguesas levam as estrelas e o P. É assim que numa oficina se reconhece um carro, mais depressa do que pelo nome do dono.
+    \item \textbf{Um só acento.} O âmbar é a única cor de ação: o botão principal de cada ecrã, o separador ativo e o filtro ativo.
+    \item \textbf{Letra de sinalética.} A Barlow, que nasceu da sinalética e das matrículas, na versão condensada para títulos, números e chapas. As fontes vêm da própria aplicação e não de um serviço externo.
+\end{itemize}
+
+Todas estas regras estão escritas no \texttt{DESIGN.md}, com os valores exatos, para quem continuar o trabalho não ter de os adivinhar.
+
+\subsection{O ecrã principal: o tablier}
+
+Para o ecrã principal, o processo de design da impeccable fez uma lista de sete formas possíveis, entre elas um quadro com uma coluna por estado, um quadro de chaves como o que há em muitas oficinas e começar sempre pela matrícula. Três foram-me apresentadas como opções: o tablier de luzes, uma calha com as folhas penduradas lado a lado (como as de papel na parede da oficina) e a lista e a folha lado a lado. Escolhi o tablier (Figura~\ref{fig:quadro}): uma faixa escura com quatro luzes (abertas, em curso, a aguardar peças e prontas), cada uma acesa quando há carros nesse estado e com o número por baixo. Por baixo fica a pesquisa, o botão ``Nova entrada'' e a lista dos carros na oficina, dos que estão há mais tempo para os mais recentes. Cada linha mostra a chapa, o veículo e o cliente, o que o cliente pediu e o estado.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.92\textwidth]{ecras/quadro-tablet-claro.png}
+  \caption[Quadro da oficina no tablet (tema claro).]{Quadro da oficina no tablet, com um mecânico na bancada (tema claro). Os dados são fictícios.}
+  \label{fig:quadro}
+\end{figure}
+
+Tocar numa luz filtra a lista, e tocar outra vez tira o filtro. Quando alguém entra, as quatro luzes acendem por ordem e ficam acesas só as que têm carros, como num carro quando se roda a chave. Quando um estado passa de zero para um ou mais carros, a luz acende com um pequeno cintilar. O quadro volta a pedir os dados de 20 em 20 segundos, para o tablet mostrar o que os colegas mudaram noutros dispositivos. A Figura~\ref{fig:escuro} mostra o quadro no tema escuro, desta vez visto por um gestor.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.92\textwidth]{ecras/quadro-tablet-escuro.png}
+  \caption[O quadro no tema escuro, visto por um gestor.]{O quadro no tema escuro, visto por um gestor: tem também os valores do mês e os separadores Equipa e Definições. O painel das luzes é escuro nos dois temas.}
+  \label{fig:escuro}
+\end{figure}
+
+\subsection{O tablet partilhado}
+
+A Figura~\ref{fig:bancada} mostra os dois ecrãs do modo bancada: a escolha de quem vai trabalhar e o teclado do PIN, com teclas de 72 píxeis para dedos com luvas. O teclado também funciona com um teclado físico.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.49\textwidth]{ecras/bancada-quem.png}\hfill
+  \includegraphics[width=0.49\textwidth]{ecras/bancada-pin.png}
+  \caption{Modo bancada: ``Quem vai trabalhar?'' e o teclado do PIN.}
+  \label{fig:bancada}
+\end{figure}
+
+\subsection{Nova entrada e folha de obra}
+
+A nova entrada começa pela matrícula, escrita num campo com a forma da própria chapa (Figura~\ref{fig:entrada}). Enquanto se escreve, aparecem os veículos que já cá estiveram. Se o carro já está na oficina, a aplicação diz em que folha. Se é novo, regista-se o veículo e o dono no mesmo passo.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.85\textwidth,trim=0 560 0 0,clip]{ecras/nova-entrada.png}
+  \caption{Nova entrada: a matrícula escrita na chapa e o veículo encontrado.}
+  \label{fig:entrada}
+\end{figure}
+
+A folha de obra (Figura~\ref{fig:folha}) junta o que estava no papel. Tem a chapa, o veículo, o cliente com o telefone (tocar liga), a entrada e quem a abriu. Tem o estado, escolhido com um toque, com o mesmo pictograma das luzes aceso no estado atual. E tem as linhas com os totais, as notas e os conselhos. Depois de acrescentar uma linha, o cursor volta à descrição, para quem regista várias peças seguidas não ter de tocar em nada. Remover uma linha pede confirmação no próprio botão, sem janelas por cima.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.92\textwidth]{ecras/folha-tablet.png}
+  \caption{Folha de obra de uma autocaravana, com as linhas e as contas.}
+  \label{fig:folha}
+\end{figure}
+
+\subsection{Gestão, computador e telemóvel}
+
+No computador, o gestor tem os mesmos ecrãs e mais três coisas: os valores do mês por cima do quadro (trabalho em curso sem \ac{IVA} e folhas entregues com \ac{IVA}), a equipa (criar colaboradores, definir PINs e tirar acessos) e as definições da oficina (dados, taxa de \ac{IVA} e tablets). Há também o histórico de folhas, os clientes e os veículos, com pesquisa e o histórico de visitas de cada veículo. A Figura~\ref{fig:gestao} mostra o quadro no computador e no telemóvel.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[height=7.2cm]{ecras/quadro-computador.png}\hfill
+  \includegraphics[height=7.2cm]{ecras/quadro-telemovel.png}
+  \caption{O quadro no computador do gestor e no telemóvel.}
+  \label{fig:gestao}
+\end{figure}
+
+\subsection{Acessibilidade e uso na oficina}
+
+\begin{itemize}
+    \item \textbf{Contraste:} um script confirma que todas as combinações de texto e fundo passam o nível AA das \ac{WCAG}~2.2 (4,5:1) nos dois temas.
+    \item \textbf{Toque:} todos os botões e ligações têm pelo menos 48 píxeis, as ações principais do tablet 56 e as teclas do PIN 72. Os efeitos de passar o rato só existem em dispositivos com rato, para não ficarem ``presos'' depois de um toque.
+    \item \textbf{A cor nunca é a única pista:} cada estado tem sempre o nome escrito ao lado da luz.
+    \item \textbf{Teclado e leitores de ecrã:} o foco é sempre visível, há uma ligação para saltar para o conteúdo e os campos têm etiquetas (o texto de exemplo nunca substitui a etiqueta).
+    \item \textbf{Movimento:} as animações são curtas e desaparecem para quem pede menos movimento no sistema.
+\end{itemize}
+
+\subsection{Desempenho}
+
+\begin{itemize}
+    \item O JavaScript inicial tem 120 KB comprimido (React DOM 66 KB, React Router 31 KB, a aplicação e os ícones 23 KB) e o CSS 8,4 KB. As páginas de gestão são carregadas à parte, e o browser vai buscá-las com antecedência quando está parado.
+    \item Os ícones da biblioteca Phosphor traziam seis pesos cada um, cerca de 30 KB, mais do dobro do código da aplicação. Um script gera um módulo só com os ícones e os pesos usados, o que tirou 22 KB ao pacote inicial.
+    \item As fontes estão em woff2, só com os caracteres latinos. Os ficheiros com \textit{hash} ficam em cache ``para sempre'', e a \ac{API} comprime as respostas.
+    \item Ao voltar ao quadro, a lista aparece logo, a partir da última resposta guardada em memória, e é atualizada por trás. Essa memória é limpa sempre que a sessão muda, para quem entra a seguir no tablet nunca ver o que ficou da pessoa anterior.
+\end{itemize}
+
+% ------------------------------------------------------------------
+\section{Testes e validação}
+\label{sec:testes}
+
+\subsection{Testes manuais de julho}
+
+Em julho, para o relatório intercalar, testei a \ac{API} à mão, com o Thunder Client e com \texttt{curl}, contra o SQL Server a correr em Docker. A Tabela~\ref{tab:testes-manuais} mostra os cenários dessa altura. As rotas das autocaravanas deram lugar às dos veículos, e estes cenários estão agora cobertos pelos testes automáticos.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}LL@{}}
+\toprule
+\textbf{Cenário} & \textbf{Resultado esperado (e obtido)} \\
+\midrule
+Criar um cliente com todos os campos válidos & 201, com o registo criado \\
+Listar clientes & 200, só os clientes ativos \\
+Criar uma autocaravana com um cliente inexistente & 400, com uma mensagem clara (sem o erro do SQL) \\
+Criar uma autocaravana com uma matrícula que já existe & 409 \\
+Criar um colaborador & 201, sem a password na resposta \\
+Desativar um colaborador e listar & Não aparece na lista, mas continua na base de dados \\
+\bottomrule
+\end{tabularx}
+\caption{Testes manuais de julho.}
+\label{tab:testes-manuais}
+\end{table}
+
+\subsection{Testes automáticos}
+
+Na terceira fase foram escritos 52 testes automáticos com o \texttt{node:test}, o executor de testes que já vem com o Node.js. Os testes arrancam a \ac{API} de verdade e fazem pedidos HTTP com cookies, como um browser, contra um SQL Server real, numa base de dados própria (\texttt{Bancada\_Teste}) criada de novo em cada ficheiro. Nunca tocam na base de dados de desenvolvimento. A Tabela~\ref{tab:testes} resume o que cobrem.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}p{3.9cm}cL@{}}
+\toprule
+\textbf{Ficheiro} & \textbf{Testes} & \textbf{O que verifica} \\
+\midrule
+\texttt{auth.test.js} & 16 & Registo de oficinas (\ac{NIF} inválido ou repetido, email repetido, passwords fracas); login com a mesma mensagem para email inexistente e password errada; tokens adulterados e \texttt{alg: none}; \acs{CSRF}; sessões cortadas ao desativar ou mudar a password; permissões dos mecânicos; limites de tentativas; respostas sem passwords, PINs nem hashes; cabeçalhos de segurança. \\
+\texttt{isolamento.test.js} & 7 & A oficina B não lê, não altera, não arquiva e não usa os dados da oficina A, nem vê a equipa de A; a mesma matrícula e o mesmo \ac{NIF} podem existir em oficinas diferentes; numeração por oficina. \\
+\texttt{folhas.test.js} & 11 & Totais e \ac{IVA} ao cêntimo; autoria pela sessão; uma folha aberta por veículo; estados e datas; folha entregue fechada; mudar a taxa de \ac{IVA} não altera folhas abertas; criar com linhas é tudo ou nada; uma entrada recusada não gasta número; filtros do quadro; regras de arquivo. \\
+\texttt{bancada.test.js} & 9 & Mecânicos só com PIN; ativar o tablet; o trabalho fica em nome de quem entrou; bloqueio ao fim de 5 falhas; o PIN não serve sem tablet ativado nem noutra oficina; com PIN não se mexe em contas; desligar todos os tablets; a base de dados recusa apagar registos protegidos. \\
+\texttt{validar.test.js} & 9 & \ac{NIF} (dígito de controlo e estrangeiros), matrículas, decimais com vírgula, textos, passwords, PINs, pesquisas com caracteres especiais e erros com o caminho do campo. \\
+\bottomrule
+\end{tabularx}
+\caption{Os 52 testes automáticos da API.}
 \label{tab:testes}
 \end{table}
 
-\subsection{Validação de Integridade Referencial}
-Foram realizadas tentativas propositadas de inserção de dados inconsistentes para confirmar que o sistema bloqueia operações ilícitas --- por exemplo, associar uma autocaravana a um \texttt{ID\_cliente} inexistente ou já inativo. Estas validações são feitas explicitamente ao nível da aplicação (e não apenas por rejeição da base de dados), permitindo devolver mensagens de erro percetíveis ao utilizador final da API.
+Os 52 testes passam e correm em cerca de 22 segundos. Também apanharam erros durante o desenvolvimento: por exemplo, o número \texttt{123456789} estava a ser usado como exemplo de \ac{NIF} inválido, mas tem o dígito de controlo certo.
 
-\textit{[Nota de Edição: inserir aqui as capturas de ecrã do Thunder Client/Postman correspondentes aos testes da Tabela~\ref{tab:testes}, uma por cada pedido relevante, por exemplo:]}
-% \begin{figure}[H]
-%   \centering
-%   \includegraphics[width=0.9\textwidth]{Anexos/teste_post_cliente.png}
-%   \caption{Criação de um cliente via POST /api/clientes.}
-% \end{figure}
+\subsection{Integração contínua}
 
+O GitHub Actions corre dois trabalhos em cada \textit{push} para o \texttt{main} e o \texttt{dev} e em cada \textit{pull request}. O primeiro arranca um SQL Server num container, com passwords geradas na hora que nunca ficam escritas no repositório, verifica as dependências da \ac{API} com o \texttt{npm audit} e corre os testes. O segundo verifica as dependências do frontend, corre o \textit{linter} (oxlint) e compila a aplicação.
+
+\subsection{Verificação da interface}
+
+A interface foi verificada num browser a sério (Chromium, com o Playwright), com a versão compilada servida pela própria \ac{API} e com a \ac{CSP} ligada. O percurso passa por todos os ecrãs no computador (1440 píxeis), no tablet deitado (1180 × 820) e ao alto (820 × 1180) e no telemóvel (390 píxeis), nos temas claro e escuro, incluindo o modo bancada com PIN. No último percurso não houve erros na consola nem violações da \ac{CSP}. A revisão de design (secção~\ref{sec:arquitetura}) usou as capturas deste percurso.
+
+Falta a validação mais importante: pôr os mecânicos da Duarte \& Raposo a usar a aplicação no dia a dia. Isso ainda não foi feito.
+
+% ------------------------------------------------------------------
 \section{Conclusão}
+\label{sec:conclusao}
 
-\textit{[Nota de Edição: esta é uma síntese do estado intercalar do projeto; será revista e completada no relatório final, após a conclusão das Folhas de Obra, autenticação e interfaces React.]}
+\subsection{O que está feito}
 
-O desenvolvimento deste projeto, até ao momento, percorreu com sucesso as fases de levantamento de requisitos, modelação de dados e implementação inicial do \textit{backend}, tendo o modelo relacional e a infraestrutura Docker sido validados na prática.
+O projeto começou com um problema concreto, as folhas de obra em papel da Duarte \& Raposo, e chegou a uma plataforma para várias oficinas. Neste momento existe:
+\begin{itemize}
+    \item uma base de dados em SQL Server, na segunda versão, com o isolamento entre oficinas garantido também pelas chaves estrangeiras e com as regras principais em restrições da própria base de dados;
+    \item uma \ac{API} REST com sessões seguras, validação de todos os dados, contas exatas, transações, o modo bancada para o tablet partilhado e o registo público de oficinas;
+    \item uma interface em React, instalável como \ac{PWA}, pensada para o tablet da oficina e que funciona também no computador e no telemóvel, com temas claro e escuro;
+    \item 52 testes automáticos contra um SQL Server real e integração contínua no GitHub;
+    \item a documentação: README, análise de segurança, desempenho e viabilidade, o mapa para agentes de IA (\texttt{AI.md}) e o sistema visual (\texttt{DESIGN.md}).
+\end{itemize}
 
-\textbf{O que foi conseguido até ao momento:}
-Foi desenhado e fundamentado um modelo de dados relacional adaptado à realidade oficinal, com foco nas autocaravanas, e implementado o \textit{backend} correspondente às três entidades independentes do modelo (Colaboradores, Clientes e Autocaravanas), com \ac{CRUD} completo, validações de integridade referencial e testes manuais documentados na secção anterior. A arquitetura \textit{containerizada} em Docker provou ser eficaz e portátil entre diferentes máquinas de desenvolvimento.
+\subsection{O que falta}
 
-\textbf{O que falta concluir:} as rotas de Folhas de Obra e Linhas de Reparação (com lógica transacional), a autenticação de colaboradores, e a camada de interface --- a PWA em React para os mecânicos e o Dashboard para a gestão, incluindo o cálculo automático de IVA para faturação.
+Há coisas que ainda não estão feitas, e é justo dizê-las:
+\begin{itemize}
+    \item a aplicação ainda não está instalada na oficina nem foi testada pelos mecânicos. É o passo mais importante que falta;
+    \item não está publicada na Internet. Para isso é preciso HTTPS (com cookies marcadas como \texttt{Secure}), ligação encriptada à base de dados e cópias de segurança automáticas;
+    \item o esquema da base de dados recria-se do zero. Antes de haver dados reais, é preciso um sistema de migrações;
+    \item não há recuperação de password por email, nem um registo completo de quem alterou o quê (só a autoria das folhas e das linhas);
+    \item a Bancada não emite faturas. O caminho realista é integrar com programas de faturação certificados que têm \ac{API}, em vez de certificar a própria aplicação;
+    \item para ser usada por outras oficinas a sério, precisa de política de privacidade e de contratos de tratamento de dados com cada oficina, por causa do \ac{RGPD}.
+\end{itemize}
 
-De uma forma geral, os objetivos propostos na fase de idealização estão a ser cumpridos progressivamente, com o backend a substituir já parte do fluxo em papel. A conclusão integral do sistema, com a camada de interface funcional, permitirá validar por completo a solução junto da oficina Duarte \& Raposo.
+\subsection{Reflexão}
+
+A parte mais difícil deste projeto não foi escrever código, foi decidir o que o sistema devia ser. Começou como ``uma aplicação para a minha oficina'' e acabou como ``uma plataforma para oficinas'', e essa mudança obrigou-me a pensar em coisas que no início nem me passavam pela cabeça, como o isolamento dos dados entre oficinas. Também aprendi a desenhar para o sítio onde a aplicação vai ser usada: um tablet partilhado, numa oficina com barulho, luz forte e mãos sujas, é muito diferente de um computador num escritório.
+
+Aprendi ainda que a segurança não é um passo que se faz no fim. A password que deixei no código na primeira fase continua no histórico do repositório, e a única solução é nunca mais a usar. Os testes automáticos dão confiança para mexer no código sem medo de partir o que já funcionava, e durante esta fase apanharam erros que de outra forma teriam passado.
+
+Falta a prova mais importante, que é pôr a Bancada nas mãos dos mecânicos da Duarte \& Raposo e ver se é mesmo mais rápida do que o papel. Um dos princípios que segui foi precisamente esse: se um passo digital for mais lento do que escrever na folha, está errado.
 
 \clearpage
 
-\section{Referências Bibliográficas}
+% ------------------------------------------------------------------
+\section*{Referências}
+\addcontentsline{toc}{section}{Referências}
 
 \begin{itemize}
-    \item Documentação Oficial Docker. \textit{Docker Compose Overview}. Disponível em: \url{https://docs.docker.com/compose/}
-    \item Documentação Microsoft. \textit{SQL Server on Linux}. Disponível em: \url{https://learn.microsoft.com/en-us/sql/linux/}
-    \item MDN Web Docs. \textit{Progressive Web Apps (PWAs)}. Disponível em: \url{https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps}
+    \item Docker. \textit{Docker Compose overview}. \url{https://docs.docker.com/compose/}
+    \item Microsoft. \textit{SQL Server on Linux}. \url{https://learn.microsoft.com/en-us/sql/linux/}
+    \item Express. \textit{Express 5 documentation}. \url{https://expressjs.com/}
+    \item React. \textit{React documentation}. \url{https://react.dev/}
+    \item MDN Web Docs. \textit{Progressive web apps}. \url{https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps}
+    \item MDN Web Docs. \textit{Content Security Policy (CSP)}. \url{https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP}
+    \item MDN Web Docs. \textit{Set-Cookie: SameSite}. \url{https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie}
+    \item OWASP. \textit{Cross-Site Request Forgery Prevention Cheat Sheet}. \url{https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html}
+    \item OWASP. \textit{Password Storage Cheat Sheet}. \url{https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html}
+    \item W3C. \textit{Web Content Accessibility Guidelines (WCAG) 2.2}. \url{https://www.w3.org/TR/WCAG22/}
+    \item Portaria n.º 363/2010, de 23 de junho: certificação prévia dos programas informáticos de faturação.
+    \item Regulamento (UE) 2016/679 (Regulamento Geral sobre a Proteção de Dados).
+    \item Google Labs. \textit{DESIGN.md}. \url{https://github.com/google-labs-code/design.md}
+    \item VoltAgent. \textit{awesome-design-md}. \url{https://github.com/VoltAgent/awesome-design-md}
+    \item Paul Bakaus. \textit{impeccable}. \url{https://github.com/pbakaus/impeccable}
+    \item Leonxlnx. \textit{taste-skill}. \url{https://github.com/Leonxlnx/taste-skill}
 \end{itemize}
 
 \section*{Acrónimos}
 \addcontentsline{toc}{section}{Acrónimos}
-\begin{acronym}[UBI]
-    \acro{UBI}{Universidade da Beira Interior}
-    \acro{API}{Application Programming Interface}
-    \acro{SQL}{Structured Query Language}
-    \acro{PWA}{Progressive Web App}
-    \acro{CRUD}{Create, Read, Update, Delete}
-    \acro{SGBD}{Sistema de Gestão de Bases de Dados}
+\begin{acronym}[WCAG]
     \acro{3FN}{Terceira Forma Normal}
+    \acro{API}{Application Programming Interface}
+    \acro{AT}{Autoridade Tributária e Aduaneira}
+    \acro{CRUD}{Create, Read, Update, Delete}
+    \acro{CSP}{Content Security Policy}
+    \acro{CSRF}{Cross-Site Request Forgery}
+    \acro{IVA}{Imposto sobre o Valor Acrescentado}
     \acro{JWT}{JSON Web Token}
+    \acro{NIF}{Número de Identificação Fiscal}
+    \acro{PWA}{Progressive Web App}
+    \acro{RGPD}{Regulamento Geral sobre a Proteção de Dados}
+    \acro{SGBD}{Sistema de Gestão de Bases de Dados}
+    \acro{SQL}{Structured Query Language}
+    \acro{UBI}{Universidade da Beira Interior}
+    \acro{WCAG}{Web Content Accessibility Guidelines}
+    \acro{XSS}{Cross-Site Scripting}
 \end{acronym}
 
 \clearpage
 
-% --- ANEXOS ---
-\section{Anexos}
+% ------------------------------------------------------------------
+\section*{Anexos}
 \addcontentsline{toc}{section}{Anexos}
 
-\subsection*{Anexo I: Diagrama da Base de Dados}
- \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{Anexos/Diagrama.png}
-    \caption{Diagrama concetual gerado no ERDPlus.}
- \end{figure}
+\subsection*{Anexo I: Esquema da base de dados (segunda versão)}
+\addcontentsline{toc}{subsection}{Anexo I: Esquema da base de dados (segunda versão)}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,height=0.8\textheight,keepaspectratio]{esquema_bancada.pdf}
+  \caption[Esquema relacional da Bancada (segunda versão).]{Esquema relacional da Bancada (segunda versão, multi-oficina), gerado com o Graphviz a partir do \texttt{schema.sql}. PK: chave primária; FK: chave estrangeira; UQ: única. Cada linha liga uma chave estrangeira à tabela referenciada: um traço do lado ``um'' e um pé de galinha do lado ``muitos''.}
+  \label{fig:esquema}
+\end{figure}
 
-\subsection*{Anexo II: Esquema Relacional da Base de Dados}
- \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\textwidth]{Anexos/Esquema_relacional.png}
-    \caption{Esquema Relacional final gerado no ERDPlus.}
- \end{figure}
+\clearpage
+\subsection*{Anexo II: Diagrama concetual (primeira versão)}
+\addcontentsline{toc}{subsection}{Anexo II: Diagrama concetual (primeira versão)}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{Diagrama.png}
+  \caption[Diagrama concetual da primeira versão.]{Diagrama concetual da primeira versão, feito no ERDPlus. A cardinalidade entre colaboradores e folhas está invertida (ver secção~\ref{sec:dados}).}
+\end{figure}
+
+\clearpage
+\subsection*{Anexo III: Esquema relacional (primeira versão)}
+\addcontentsline{toc}{subsection}{Anexo III: Esquema relacional (primeira versão)}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{Esquema_relacional.png}
+  \caption[Esquema relacional da primeira versão.]{Esquema relacional da primeira versão, feito no ERDPlus. A chave estrangeira entre a folha e as linhas está do lado errado (ver secção~\ref{sec:dados}).}
+\end{figure}
 
 \end{document}
