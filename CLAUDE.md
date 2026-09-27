@@ -33,10 +33,11 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 | Pictogramas dos estados | desenhados de propósito (`Luzes.jsx`): carro, chave de bocas, pistão, bandeira de xadrez, chave. Não usar a roda dentada (lê-se como "definições") |
 | Faturação | a Bancada não emite faturas (é preciso software certificado pela AT); calcula totais e IVA |
 | Documentos para agentes | `AI.md` (mapa), `CLAUDE.md` (esta memória), `AGENTS.md` (aponta para o `AI.md`) |
+| Direitos | todos os direitos reservados ao autor (`LICENSE`); repositório público só para consulta e avaliação. O README abre com um aviso grande de "em desenvolvimento" (`docs/imagens/aviso-em-desenvolvimento.svg`, gerado por `gerar-aviso.mjs`) até a Bancada estar pronta |
 
 ## Como trabalhar neste repositório
 
-- **Ramos**: `main` é a versão estável e é o que aparece na página do GitHub. `dev` é a integração. Cada tarefa tem um ramo próprio, que entra no `dev` por PR.
+- **Ramos**: `main` é a versão estável e é o que aparece na página do GitHub. `dev` é a integração. Cada tarefa tem um ramo próprio, que entra no `dev` por PR. O `main` recebe o `dev` por PR e o merge é do autor: o classificador de segurança do Claude Code não deixa o agente fazê-lo (trata-o como publicação em produção).
 - **CI** (`.github/workflows/ci.yml`): testes da API contra um SQL Server num container, e lint + build do frontend. A GitGuardian (app instalada no repositório) verifica segredos nos PRs. O CI só corre em pushes para `main`/`dev` e em PRs.
 - **Antes de fazer push**: `cd backend && npm test` (precisa do SQL Server) e `cd frontend && npm run lint && npm run build`. Para mexidas no visual, confirmar num browser nos dois temas e em 390, 1180 e 1440 px.
 - **Commits** em português, a explicar o porquê. Terminam com as linhas de atribuição que o ambiente indicar.
@@ -80,7 +81,8 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - 82 verificações: 69 passam, 9 observações, 4 problemas. Nenhum crítico nem alto.
   - Prioridade alta: REL-001 (sem `errorElement`, erros mostram o ecrã do React Router em inglês) e REL-003 (sem rede, a app mostra "Entrar").
   - Nenhum código mudou: os achados estão todos abertos. Cada um diz como validar a correção.
-- Este trabalho entrou no `dev` por três PRs do ramo `claude/ecstatic-lamport-81qsk8`: o #1 (plataforma, interface, testes e documentação), o #2 (documento das ferramentas) e o #3 (auditoria). O `main` continua na versão de julho: o README novo só aparece na página do GitHub quando o `dev` passar para o `main`, e isso tem de ser pedido ao autor.
+- `LICENSE` de todos os direitos reservados e aviso grande no topo do README: "em desenvolvimento, ainda não está pronto" e "todos os direitos reservados".
+- Este trabalho entrou no `dev` por PRs do ramo `claude/ecstatic-lamport-81qsk8`: o #1 (plataforma, interface, testes e documentação), o #2 (documento das ferramentas), o #3 (auditoria), o #4 (memória) e o #5 (licença e aviso). A 27/09/2026 o `dev` passou para o `main` pelo PR #6, com o merge feito pelo autor: é a versão que aparece na página do GitHub.
 
 **Por fazer** (sugestões, nada disto existe):
 1. Testar com os mecânicos da Duarte & Raposo: medir o tempo de uma entrada e de uma peça no papel e no tablet.
@@ -106,4 +108,6 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - este CLAUDE.md passou a ser a memória do projeto e o PRODUCT.md passou a descrição completa do produto;
   - documento das ferramentas (`relatorio_ferramentas_55019`), com todas as afirmações confirmadas no código, no git ou no registo da sessão;
   - relatório principal corrigido: os testes manuais são de julho, e as três opções do ecrã principal foram sorteadas pela impeccable entre sete formas;
-  - auditoria completa (`docs/auditoria.md`), a pedido do autor, com os guiões de auditoria técnica e de mentoria que ele forneceu.
+  - auditoria completa (`docs/auditoria.md`), a pedido do autor, com os guiões de auditoria técnica e de mentoria que ele forneceu;
+  - `LICENSE` de todos os direitos reservados e aviso grande no README; o `dev` passou para o `main` (PR #6, merge feito pelo autor);
+  - o autor perguntou se valia a pena uma organização no GitHub: recomendei esperar pela nota e manter um só repositório.

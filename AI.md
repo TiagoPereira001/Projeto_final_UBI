@@ -24,13 +24,14 @@ Projeto final de licenciatura (Informática Web, Móvel e na Nuvem, UBI) do Tiag
 ├── PRODUCT.md                 o produto: utilizadores, percurso, funcionalidades, o que não existe
 ├── DESIGN.md                  tokens e regras visuais (formato DESIGN.md do Google Stitch)
 ├── README.md                  instalação e visão geral
+├── LICENSE                    todos os direitos reservados ao autor (não é código aberto)
 ├── docker-compose.yml         SQL Server (e, com --profile app, a app completa)
 ├── Dockerfile                 imagem de produção: API + frontend compilado
 ├── .env.example               todas as variáveis de ambiente, explicadas
 ├── .github/workflows/ci.yml   CI: testes da API contra SQL Server + lint e build do frontend
 ├── .claude/skills/            skills de design (impeccable, taste-skill) para agentes
 ├── .impeccable/surfaces/      contrato de direção visual do ecrã principal
-├── docs/                      análise de segurança, performance e viabilidade; auditoria (auditoria.md + scripts); imagens
+├── docs/                      análise de segurança, performance e viabilidade; auditoria (auditoria.md + scripts); imagens (o aviso do README gera-se com imagens/gerar-aviso.mjs)
 ├── Relatorio/                 relatório e documento das ferramentas em LaTeX (.tex + .pdf) e anexos
 ├── backend/                   API REST (Node.js 22 + Express 5 + SQL Server)
 │   ├── server.js              arranque do servidor e encerramento limpo
@@ -98,6 +99,7 @@ browser ──> /api/*  ──> helmet (CSP) ─> rate limit ─> JSON ─> cook
 - **Base de dados**: tabelas no singular (`Folha_Obra`), colunas `Pascal_Com_Underscore`, códigos em minúsculas sem acentos (`em_curso`, `mao_de_obra`, `gestor`).
 - **API**: JSON em `camelCase` (`clienteId`, `valorUnitario`); listas devolvem `{ itens, total, pagina, porPagina }`; erros `{ erro, campos? }`.
 - **Frontend**: os nomes bonitos dos códigos vivem em `src/lib/formatar.js`. Dados de rede via `useRecurso(caminho, { intervalo, memoria })`; `memoria` guarda a última resposta para o ecrã aparecer logo ao voltar, e limpa-se sempre que a sessão muda (nunca a usar para dados que uma pessoa não deva ver depois de outra). Ícones importam-se de `src/components/icones.js` (gerado; para um ícone novo, acrescentar a `scripts/gerar-icones.mjs` e correr `npm run icones`).
+- **Direitos**: todos os direitos reservados ao autor (`LICENSE`). Não copiar código de terceiros sem confirmar que a licença o permite, e manter o aviso de autor quando a licença o exige (MIT, Apache).
 - **Texto da interface**: frases curtas, sem travessões (—), mensagens de erro dizem o problema e como resolver.
 - **Design**: seguir `DESIGN.md`. Cores só por tokens de `styles/tokens.css`. O tablier e a barra de topo são sempre escuros; o âmbar é a única cor de ação. Os estados usam os pictogramas de `components/Luzes.jsx` (não ícones Phosphor). `:hover` sempre dentro de `@media (hover: hover)` e alvos de toque de 48 px ou mais.
 
