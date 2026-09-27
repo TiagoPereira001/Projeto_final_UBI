@@ -1,0 +1,1182 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-26T22:31:14+00:00",
+  "title": "Design System: Bancada",
+  "extensions": {
+    "colorMeta": {
+      "ambar": {
+        "role": "primary",
+        "displayName": "Âmbar Luz Indicadora",
+        "canonical": "#f0a43a",
+        "oklch": "oklch(77.6% 0.146 70.8)",
+        "tonalRamp": [
+          "#230000",
+          "#471100",
+          "#6e2d00",
+          "#934d00",
+          "#b87000",
+          "#de9322",
+          "#ffb95b",
+          "#ffe193"
+        ]
+      },
+      "ambar-hover": {
+        "role": "primary",
+        "displayName": "Âmbar ao passar",
+        "canonical": "#f5b457",
+        "oklch": "oklch(81.3% 0.132 73.7)",
+        "tonalRamp": [
+          "#200000",
+          "#431600",
+          "#683200",
+          "#8d5200",
+          "#b17400",
+          "#d69736",
+          "#fabc67",
+          "#ffe49c"
+        ]
+      },
+      "ambar-premido": {
+        "role": "primary",
+        "displayName": "Âmbar premido",
+        "canonical": "#e0922a",
+        "oklch": "oklch(72.3% 0.145 68.2)",
+        "tonalRamp": [
+          "#230000",
+          "#481000",
+          "#6f2c00",
+          "#944c00",
+          "#b96e00",
+          "#df9129",
+          "#ffb75f",
+          "#ffe096"
+        ]
+      },
+      "ambar-tinta": {
+        "role": "primary",
+        "displayName": "Tinta sobre âmbar",
+        "canonical": "#1b1407",
+        "oklch": "oklch(19.6% 0.026 82.3)",
+        "tonalRamp": [
+          "#0f0a04",
+          "#2a2419",
+          "#494133",
+          "#696051",
+          "#8a8171",
+          "#ada493",
+          "#d1c8b8",
+          "#f6eddf"
+        ]
+      },
+      "painel": {
+        "role": "neutral",
+        "displayName": "Grafite do painel: Painel",
+        "canonical": "#0f1012",
+        "oklch": "oklch(17.3% 0.004 264.5)",
+        "tonalRamp": [
+          "#0a0b0c",
+          "#242527",
+          "#414244",
+          "#606164",
+          "#818285",
+          "#a3a5a8",
+          "#c8c9cc",
+          "#edeef1"
+        ]
+      },
+      "painel-2": {
+        "role": "neutral",
+        "displayName": "Grafite do painel: Painel 2",
+        "canonical": "#1a1c1f",
+        "oklch": "oklch(22.6% 0.007 258.4)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#232528",
+          "#404245",
+          "#5f6165",
+          "#808286",
+          "#a2a5a9",
+          "#c7c9cd",
+          "#eceff2"
+        ]
+      },
+      "painel-linha": {
+        "role": "neutral",
+        "displayName": "Grafite do painel: Painel linha",
+        "canonical": "#2a2d31",
+        "oklch": "oklch(29.6% 0.008 255.6)",
+        "tonalRamp": [
+          "#0a0b0e",
+          "#232528",
+          "#3f4246",
+          "#5e6166",
+          "#7f8387",
+          "#a2a5aa",
+          "#c6c9ce",
+          "#ebeff3"
+        ]
+      },
+      "painel-aro": {
+        "role": "neutral",
+        "displayName": "Grafite do painel: Painel aro",
+        "canonical": "#5a6068",
+        "oklch": "oklch(48.7% 0.015 255.6)",
+        "tonalRamp": [
+          "#080b10",
+          "#21252b",
+          "#3d424a",
+          "#5c626a",
+          "#7d838b",
+          "#9fa6ae",
+          "#c3cad2",
+          "#e9eff7"
+        ]
+      },
+      "painel-tinta": {
+        "role": "neutral",
+        "displayName": "Grafite do painel: Painel tinta",
+        "canonical": "#e7e9e4",
+        "oklch": "oklch(93.1% 0.007 124.5)",
+        "tonalRamp": [
+          "#0b0c09",
+          "#242622",
+          "#41433f",
+          "#60625e",
+          "#81837f",
+          "#a4a6a1",
+          "#c8cac5",
+          "#edefeb"
+        ]
+      },
+      "painel-tinta-2": {
+        "role": "neutral",
+        "displayName": "Grafite do painel: Painel tinta 2",
+        "canonical": "#9aa0a6",
+        "oklch": "oklch(70.3% 0.011 248.0)",
+        "tonalRamp": [
+          "#090b0e",
+          "#222629",
+          "#3e4348",
+          "#5c6267",
+          "#7d8389",
+          "#a0a6ac",
+          "#c4cad0",
+          "#eaeff4"
+        ]
+      },
+      "luz-aberta": {
+        "role": "secondary",
+        "displayName": "Luz azul (aberta)",
+        "canonical": "#5b9bff",
+        "oklch": "oklch(69.3% 0.162 259.0)",
+        "tonalRamp": [
+          "#00003a",
+          "#001c64",
+          "#003b92",
+          "#1e5dbb",
+          "#4180e1",
+          "#64a4ff",
+          "#8bcaff",
+          "#b9f0ff"
+        ]
+      },
+      "luz-em-curso": {
+        "role": "secondary",
+        "displayName": "Luz âmbar (em curso)",
+        "canonical": "#f0a43a",
+        "oklch": "oklch(77.6% 0.146 70.8)",
+        "tonalRamp": [
+          "#230000",
+          "#471100",
+          "#6e2d00",
+          "#934d00",
+          "#b87000",
+          "#de9322",
+          "#ffb95b",
+          "#ffe193"
+        ]
+      },
+      "luz-aguarda": {
+        "role": "secondary",
+        "displayName": "Luz vermelha (aguarda peças)",
+        "canonical": "#ff5a55",
+        "oklch": "oklch(68.8% 0.202 25.7)",
+        "tonalRamp": [
+          "#320000",
+          "#5e0000",
+          "#8d0000",
+          "#b90018",
+          "#e23d3d",
+          "#ff665f",
+          "#ff9187",
+          "#ffc0b5"
+        ]
+      },
+      "luz-pronta": {
+        "role": "secondary",
+        "displayName": "Luz verde (pronta)",
+        "canonical": "#3ecf74",
+        "oklch": "oklch(75.7% 0.178 151.5)",
+        "tonalRamp": [
+          "#001600",
+          "#003500",
+          "#005800",
+          "#007b23",
+          "#009e46",
+          "#2dc369",
+          "#68e790",
+          "#a0ffbd"
+        ]
+      },
+      "luz-apagada": {
+        "role": "secondary",
+        "displayName": "Lâmpada apagada",
+        "canonical": "#3a3e44",
+        "oklch": "oklch(36.2% 0.012 258.4)",
+        "tonalRamp": [
+          "#090b0f",
+          "#22252a",
+          "#3e4248",
+          "#5d6268",
+          "#7e8389",
+          "#a1a5ac",
+          "#c5c9d0",
+          "#ebeff5"
+        ]
+      },
+      "chapa": {
+        "role": "tertiary",
+        "displayName": "Chapa branca",
+        "canonical": "#f6f6f2",
+        "oklch": "oklch(97.2% 0.005 106.5)",
+        "tonalRamp": [
+          "#0b0b09",
+          "#252523",
+          "#42423f",
+          "#61615e",
+          "#82827f",
+          "#a5a5a1",
+          "#c9c9c6",
+          "#efefeb"
+        ]
+      },
+      "chapa-tinta": {
+        "role": "tertiary",
+        "displayName": "Letra da chapa",
+        "canonical": "#101114",
+        "oklch": "oklch(17.8% 0.006 271.0)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#242528",
+          "#414245",
+          "#606165",
+          "#818286",
+          "#a3a5a9",
+          "#c7c9cd",
+          "#edeef2"
+        ]
+      },
+      "chapa-faixa": {
+        "role": "tertiary",
+        "displayName": "Faixa azul europeia",
+        "canonical": "#1d48a8",
+        "oklch": "oklch(43.4% 0.162 263.1)",
+        "tonalRamp": [
+          "#00003a",
+          "#001965",
+          "#113892",
+          "#2d5abc",
+          "#4d7de2",
+          "#6ea1ff",
+          "#94c7ff",
+          "#c0eeff"
+        ]
+      },
+      "chapa-estrelas": {
+        "role": "tertiary",
+        "displayName": "Estrelas da faixa",
+        "canonical": "#ffd84a",
+        "oklch": "oklch(89.1% 0.159 93.2)",
+        "tonalRamp": [
+          "#1b0400",
+          "#3b1e00",
+          "#5e3b00",
+          "#805b00",
+          "#a37d00",
+          "#c7a100",
+          "#eac642",
+          "#ffed84"
+        ]
+      },
+      "fundo": {
+        "role": "neutral",
+        "displayName": "Fundo",
+        "canonical": "#eceef0",
+        "oklch": "oklch(94.8% 0.003 247.9)",
+        "tonalRamp": [
+          "#0a0b0c",
+          "#242526",
+          "#414244",
+          "#606163",
+          "#818284",
+          "#a3a5a7",
+          "#c7c9cb",
+          "#edeff0"
+        ]
+      },
+      "superficie": {
+        "role": "neutral",
+        "displayName": "Superficie",
+        "canonical": "#f8f9fa",
+        "oklch": "oklch(98.2% 0.002 247.8)",
+        "tonalRamp": [
+          "#0b0b0c",
+          "#242526",
+          "#414243",
+          "#606162",
+          "#818283",
+          "#a4a5a6",
+          "#c8c9ca",
+          "#eeeeef"
+        ]
+      },
+      "superficie-2": {
+        "role": "neutral",
+        "displayName": "Superficie 2",
+        "canonical": "#fcfcfd",
+        "oklch": "oklch(99.1% 0.001 286.4)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424243",
+          "#616162",
+          "#828283",
+          "#a5a5a6",
+          "#c9c9ca",
+          "#eeeeef"
+        ]
+      },
+      "realce": {
+        "role": "neutral",
+        "displayName": "Realce",
+        "canonical": "#e3e6e9",
+        "oklch": "oklch(92.3% 0.005 247.9)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#232527",
+          "#404245",
+          "#5f6164",
+          "#808385",
+          "#a2a5a8",
+          "#c7c9cc",
+          "#eceff1"
+        ]
+      },
+      "linha": {
+        "role": "neutral",
+        "displayName": "Linha",
+        "canonical": "#d3d7db",
+        "oklch": "oklch(87.7% 0.007 247.9)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#232528",
+          "#3f4245",
+          "#5e6265",
+          "#7f8386",
+          "#a2a5a9",
+          "#c6cacd",
+          "#ebeff2"
+        ]
+      },
+      "linha-forte": {
+        "role": "neutral",
+        "displayName": "Linha forte",
+        "canonical": "#848b93",
+        "oklch": "oklch(63.4% 0.015 251.6)",
+        "tonalRamp": [
+          "#080b0f",
+          "#21262b",
+          "#3d4349",
+          "#5b6269",
+          "#7c838b",
+          "#9fa6ae",
+          "#c3cad2",
+          "#e9eff6"
+        ]
+      },
+      "tinta": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "#15171a",
+        "oklch": "oklch(20.4% 0.007 258.4)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#232528",
+          "#404245",
+          "#5f6165",
+          "#808286",
+          "#a2a5a9",
+          "#c7c9cd",
+          "#eceff2"
+        ]
+      },
+      "tinta-2": {
+        "role": "neutral",
+        "displayName": "Tinta 2",
+        "canonical": "#4a5058",
+        "oklch": "oklch(42.9% 0.015 255.6)",
+        "tonalRamp": [
+          "#080b10",
+          "#21252b",
+          "#3d424a",
+          "#5c626a",
+          "#7c838c",
+          "#9fa6af",
+          "#c3cad3",
+          "#e9eff7"
+        ]
+      },
+      "tinta-3": {
+        "role": "neutral",
+        "displayName": "Tinta 3",
+        "canonical": "#5f6670",
+        "oklch": "oklch(50.8% 0.018 257.2)",
+        "tonalRamp": [
+          "#080b11",
+          "#20252c",
+          "#3c424b",
+          "#5b626c",
+          "#7c838d",
+          "#9ea6b1",
+          "#c2cad4",
+          "#e8eff9"
+        ]
+      },
+      "foco": {
+        "role": "neutral",
+        "displayName": "Foco",
+        "canonical": "#a35a00",
+        "oklch": "oklch(54.2% 0.127 60.2)",
+        "tonalRamp": [
+          "#230000",
+          "#471000",
+          "#6e2c00",
+          "#934c00",
+          "#b86e24",
+          "#de914b",
+          "#ffb676",
+          "#ffdfa7"
+        ]
+      },
+      "erro": {
+        "role": "neutral",
+        "displayName": "Erro",
+        "canonical": "#b42318",
+        "oklch": "oklch(50.0% 0.182 29.5)",
+        "tonalRamp": [
+          "#2f0000",
+          "#5a0000",
+          "#870000",
+          "#b12015",
+          "#da4a3b",
+          "#ff705e",
+          "#ff9a86",
+          "#ffc7b3"
+        ]
+      },
+      "erro-fundo": {
+        "role": "neutral",
+        "displayName": "Erro fundo",
+        "canonical": "#fdecea",
+        "oklch": "oklch(95.6% 0.019 25.6)",
+        "tonalRamp": [
+          "#100908",
+          "#2c2221",
+          "#4b3e3d",
+          "#6c5d5c",
+          "#8d7e7d",
+          "#b1a19f",
+          "#d4c5c3",
+          "#f9ebe9"
+        ]
+      },
+      "sucesso": {
+        "role": "neutral",
+        "displayName": "Sucesso",
+        "canonical": "#17773f",
+        "oklch": "oklch(50.2% 0.122 152.1)",
+        "tonalRamp": [
+          "#001300",
+          "#003107",
+          "#00521f",
+          "#12743c",
+          "#3f975d",
+          "#64bb7e",
+          "#8edfa4",
+          "#bcffce"
+        ]
+      },
+      "sucesso-fundo": {
+        "role": "neutral",
+        "displayName": "Sucesso fundo",
+        "canonical": "#e6f4ec",
+        "oklch": "oklch(95.5% 0.018 161.1)",
+        "tonalRamp": [
+          "#070d09",
+          "#1f2723",
+          "#3a453f",
+          "#59655e",
+          "#79867f",
+          "#9ca9a1",
+          "#c0cdc5",
+          "#e6f2eb"
+        ]
+      },
+      "estado-aberta": {
+        "role": "neutral",
+        "displayName": "Estado aberta",
+        "canonical": "#2563eb",
+        "oklch": "oklch(54.6% 0.215 262.9)",
+        "tonalRamp": [
+          "#03004a",
+          "#000579",
+          "#002cac",
+          "#1451d8",
+          "#3777ff",
+          "#599dff",
+          "#81c4ff",
+          "#afecff"
+        ]
+      },
+      "estado-em-curso": {
+        "role": "neutral",
+        "displayName": "Estado em curso",
+        "canonical": "#c77a0a",
+        "oklch": "oklch(64.7% 0.142 66.3)",
+        "tonalRamp": [
+          "#230000",
+          "#480f00",
+          "#6f2c00",
+          "#954c00",
+          "#ba6e00",
+          "#e09132",
+          "#ffb764",
+          "#ffdf99"
+        ]
+      },
+      "estado-aguarda": {
+        "role": "neutral",
+        "displayName": "Estado aguarda",
+        "canonical": "#d92d20",
+        "oklch": "oklch(57.6% 0.209 29.5)",
+        "tonalRamp": [
+          "#340000",
+          "#600000",
+          "#8f0000",
+          "#bb0000",
+          "#e43a2b",
+          "#ff6450",
+          "#ff907a",
+          "#ffc0aa"
+        ]
+      },
+      "estado-pronta": {
+        "role": "neutral",
+        "displayName": "Estado pronta",
+        "canonical": "#18a04a",
+        "oklch": "oklch(61.9% 0.166 149.4)",
+        "tonalRamp": [
+          "#001500",
+          "#003400",
+          "#005600",
+          "#007923",
+          "#0f9c46",
+          "#47c169",
+          "#77e590",
+          "#abffbd"
+        ]
+      },
+      "estado-entregue": {
+        "role": "neutral",
+        "displayName": "Estado entregue",
+        "canonical": "#848b93",
+        "oklch": "oklch(63.4% 0.015 251.6)",
+        "tonalRamp": [
+          "#080b0f",
+          "#21262b",
+          "#3d4349",
+          "#5b6269",
+          "#7c838b",
+          "#9fa6ae",
+          "#c3cad2",
+          "#e9eff6"
+        ]
+      },
+      "fundo-escuro": {
+        "role": "neutral",
+        "displayName": "Fundo (tema escuro)",
+        "canonical": "#16181b",
+        "oklch": "oklch(20.8% 0.007 258.4)",
+        "tonalRamp": [
+          "#0a0b0d",
+          "#232528",
+          "#404245",
+          "#5f6165",
+          "#808286",
+          "#a2a5a9",
+          "#c7c9cd",
+          "#eceff2"
+        ]
+      },
+      "superficie-escuro": {
+        "role": "neutral",
+        "displayName": "Superficie (tema escuro)",
+        "canonical": "#1d2024",
+        "oklch": "oklch(24.2% 0.009 255.6)",
+        "tonalRamp": [
+          "#090b0e",
+          "#232529",
+          "#3f4247",
+          "#5e6266",
+          "#7f8388",
+          "#a1a5ab",
+          "#c6c9cf",
+          "#ebeff3"
+        ]
+      },
+      "superficie-2-escuro": {
+        "role": "neutral",
+        "displayName": "Superficie 2 (tema escuro)",
+        "canonical": "#24282d",
+        "oklch": "oklch(27.5% 0.011 254.0)",
+        "tonalRamp": [
+          "#090b0e",
+          "#222529",
+          "#3e4248",
+          "#5d6267",
+          "#7e8389",
+          "#a0a6ac",
+          "#c5cad0",
+          "#eaeff4"
+        ]
+      },
+      "realce-escuro": {
+        "role": "neutral",
+        "displayName": "Realce (tema escuro)",
+        "canonical": "#2c3036",
+        "oklch": "oklch(30.8% 0.012 258.4)",
+        "tonalRamp": [
+          "#090b0f",
+          "#22252a",
+          "#3e4248",
+          "#5d6268",
+          "#7e838a",
+          "#a0a5ad",
+          "#c5c9d1",
+          "#eaeff5"
+        ]
+      },
+      "linha-escuro": {
+        "role": "neutral",
+        "displayName": "Linha (tema escuro)",
+        "canonical": "#33373e",
+        "oklch": "oklch(33.6% 0.013 261.7)",
+        "tonalRamp": [
+          "#090b0f",
+          "#22252b",
+          "#3e4249",
+          "#5d6169",
+          "#7e838b",
+          "#a0a5ae",
+          "#c5c9d2",
+          "#eaeff6"
+        ]
+      },
+      "linha-forte-escuro": {
+        "role": "neutral",
+        "displayName": "Linha forte (tema escuro)",
+        "canonical": "#6b727b",
+        "oklch": "oklch(54.9% 0.016 254.7)",
+        "tonalRamp": [
+          "#080b10",
+          "#21252c",
+          "#3c434a",
+          "#5b626b",
+          "#7c838c",
+          "#9ea6af",
+          "#c3cad3",
+          "#e9eff8"
+        ]
+      },
+      "tinta-escuro": {
+        "role": "neutral",
+        "displayName": "Tinta (tema escuro)",
+        "canonical": "#eef0ec",
+        "oklch": "oklch(95.2% 0.006 128.5)",
+        "tonalRamp": [
+          "#0b0b0a",
+          "#242523",
+          "#41433f",
+          "#60625e",
+          "#81837f",
+          "#a4a6a2",
+          "#c8cac6",
+          "#edefec"
+        ]
+      },
+      "tinta-2-escuro": {
+        "role": "neutral",
+        "displayName": "Tinta 2 (tema escuro)",
+        "canonical": "#b3b8be",
+        "oklch": "oklch(78.0% 0.010 252.8)",
+        "tonalRamp": [
+          "#090b0e",
+          "#222529",
+          "#3e4247",
+          "#5d6267",
+          "#7e8388",
+          "#a1a6ab",
+          "#c5cacf",
+          "#ebeff4"
+        ]
+      },
+      "tinta-3-escuro": {
+        "role": "neutral",
+        "displayName": "Tinta 3 (tema escuro)",
+        "canonical": "#8f969e",
+        "oklch": "oklch(67.0% 0.014 251.6)",
+        "tonalRamp": [
+          "#080b0f",
+          "#21262b",
+          "#3d4349",
+          "#5b6269",
+          "#7c838b",
+          "#9fa6ae",
+          "#c3cad2",
+          "#e9eff6"
+        ]
+      },
+      "foco-escuro": {
+        "role": "neutral",
+        "displayName": "Foco (tema escuro)",
+        "canonical": "#f0a43a",
+        "oklch": "oklch(77.6% 0.146 70.8)",
+        "tonalRamp": [
+          "#230000",
+          "#471100",
+          "#6e2d00",
+          "#934d00",
+          "#b87000",
+          "#de9322",
+          "#ffb95b",
+          "#ffe193"
+        ]
+      },
+      "erro-escuro": {
+        "role": "neutral",
+        "displayName": "Erro (tema escuro)",
+        "canonical": "#ff8f85",
+        "oklch": "oklch(76.8% 0.137 26.1)",
+        "tonalRamp": [
+          "#280000",
+          "#4f0002",
+          "#791818",
+          "#a13a35",
+          "#c75d55",
+          "#ef8077",
+          "#ffa79d",
+          "#ffd2c7"
+        ]
+      },
+      "erro-fundo-escuro": {
+        "role": "neutral",
+        "displayName": "Erro fundo (tema escuro)",
+        "canonical": "#3a1a18",
+        "oklch": "oklch(26.3% 0.051 24.8)",
+        "tonalRamp": [
+          "#180504",
+          "#371c1b",
+          "#593835",
+          "#7c5653",
+          "#9f7773",
+          "#c39995",
+          "#e7beba",
+          "#ffe4e1"
+        ]
+      },
+      "sucesso-escuro": {
+        "role": "neutral",
+        "displayName": "Sucesso (tema escuro)",
+        "canonical": "#6fdc98",
+        "oklch": "oklch(81.2% 0.140 154.4)",
+        "tonalRamp": [
+          "#001500",
+          "#003304",
+          "#00551c",
+          "#00773a",
+          "#229a5a",
+          "#50be7c",
+          "#7ee2a2",
+          "#b0ffcc"
+        ]
+      },
+      "sucesso-fundo-escuro": {
+        "role": "neutral",
+        "displayName": "Sucesso fundo (tema escuro)",
+        "canonical": "#13301f",
+        "oklch": "oklch(28.1% 0.047 155.9)",
+        "tonalRamp": [
+          "#010f06",
+          "#142b1d",
+          "#2d4938",
+          "#4b6a56",
+          "#6c8b76",
+          "#8eae99",
+          "#b3d2bd",
+          "#dbf7e4"
+        ]
+      },
+      "estado-aberta-escuro": {
+        "role": "neutral",
+        "displayName": "Estado aberta (tema escuro)",
+        "canonical": "#5b9bff",
+        "oklch": "oklch(69.3% 0.162 259.0)",
+        "tonalRamp": [
+          "#00003a",
+          "#001c64",
+          "#003b92",
+          "#1e5dbb",
+          "#4180e1",
+          "#64a4ff",
+          "#8bcaff",
+          "#b9f0ff"
+        ]
+      },
+      "estado-em-curso-escuro": {
+        "role": "neutral",
+        "displayName": "Estado em curso (tema escuro)",
+        "canonical": "#f0a43a",
+        "oklch": "oklch(77.6% 0.146 70.8)",
+        "tonalRamp": [
+          "#230000",
+          "#471100",
+          "#6e2d00",
+          "#934d00",
+          "#b87000",
+          "#de9322",
+          "#ffb95b",
+          "#ffe193"
+        ]
+      },
+      "estado-aguarda-escuro": {
+        "role": "neutral",
+        "displayName": "Estado aguarda (tema escuro)",
+        "canonical": "#ff5a55",
+        "oklch": "oklch(68.8% 0.202 25.7)",
+        "tonalRamp": [
+          "#320000",
+          "#5e0000",
+          "#8d0000",
+          "#b90018",
+          "#e23d3d",
+          "#ff665f",
+          "#ff9187",
+          "#ffc0b5"
+        ]
+      },
+      "estado-pronta-escuro": {
+        "role": "neutral",
+        "displayName": "Estado pronta (tema escuro)",
+        "canonical": "#3ecf74",
+        "oklch": "oklch(75.7% 0.178 151.5)",
+        "tonalRamp": [
+          "#001600",
+          "#003500",
+          "#005800",
+          "#007b23",
+          "#009e46",
+          "#2dc369",
+          "#68e790",
+          "#a0ffbd"
+        ]
+      },
+      "estado-entregue-escuro": {
+        "role": "neutral",
+        "displayName": "Estado entregue (tema escuro)",
+        "canonical": "#6b727b",
+        "oklch": "oklch(54.9% 0.016 254.7)",
+        "tonalRamp": [
+          "#080b10",
+          "#21252c",
+          "#3c434a",
+          "#5b626b",
+          "#7c838c",
+          "#9ea6af",
+          "#c3cad3",
+          "#e9eff8"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Título dos ecrãs de entrada (\"Entrar\", \"Quem vai trabalhar?\")."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Título de cada página."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Título dos painéis."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto corrente, queixas e observações."
+      },
+      "body-tablet": {
+        "displayName": "Body tablet",
+        "purpose": "Textos de apoio lidos à distância no tablet."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Etiquetas de campos, nomes de estados, botões."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Metadados das linhas (nº da folha, há quanto tempo)."
+      },
+      "readout": {
+        "displayName": "Readout",
+        "purpose": "Número de veículos por baixo de cada luz do tablier."
+      },
+      "plate": {
+        "displayName": "Plate",
+        "purpose": "Texto da chapa de matrícula."
+      },
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "BANCADA ao lado da marca."
+      }
+    },
+    "shadows": [
+      {
+        "name": "sombra-flutuante",
+        "value": "0 12px 32px -8px hsl(220 15% 20% / 0.28), 0 2px 6px hsl(220 15% 20% / 0.12)",
+        "purpose": "Só os avisos temporários que flutuam sobre o conteúdo (mais forte no tema escuro)."
+      },
+      {
+        "name": "emissao-da-luz",
+        "value": "drop-shadow(0 0 6px color-mix(in srgb, <cor da luz> 55%, transparent))",
+        "purpose": "Filtro nos símbolos acesos do tablier e do painel de entrada. É luz, não elevação."
+      },
+      {
+        "name": "anel-de-foco",
+        "value": "0 0 0 3px color-mix(in srgb, var(--foco) 28%, transparent)",
+        "purpose": "Campo com foco, junto com o contorno em foco."
+      },
+      {
+        "name": "aro-da-chapa",
+        "value": "inset 0 0 0 1.5px #25282d",
+        "purpose": "O rebordo da chapa de matrícula (2px na grande, 2.5px no campo da nova entrada)."
+      }
+    ],
+    "motion": [
+      {
+        "name": "dur-rapida",
+        "value": "120ms",
+        "purpose": "Hover, premir, mudanças de cor pequenas."
+      },
+      {
+        "name": "dur",
+        "value": "200ms",
+        "purpose": "Luzes a acender ou apagar, fundos."
+      },
+      {
+        "name": "curva",
+        "value": "cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "purpose": "Curva única de todas as transições."
+      },
+      {
+        "name": "autoteste",
+        "value": "1.4s, 110ms entre luzes",
+        "purpose": "As luzes do tablier acendem por ordem quando o quadro abre; só com prefers-reduced-motion: no-preference."
+      },
+      {
+        "name": "acender",
+        "value": "0.8s linear",
+        "purpose": "Cintilar de uma luz quando um estado passa de 0 para 1 ou mais."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "telemovel",
+        "value": "600px"
+      },
+      {
+        "name": "estreito",
+        "value": "760px"
+      },
+      {
+        "name": "gestao-e-entrada",
+        "value": "860px"
+      },
+      {
+        "name": "folha",
+        "value": "980px"
+      },
+      {
+        "name": "quadro",
+        "value": "1024px"
+      },
+      {
+        "name": "largura-max",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "A ação principal de cada ecrã (uma só). A luz indicadora pisca enquanto espera pela API.",
+      "html": "<button class=\"ds-botao-primario\"><span class=\"ds-luz\"></span>Nova entrada</button>",
+      "css": ".ds-botao-primario { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 20px; border: 1px solid transparent; border-radius: 10px; background: var(--ambar, #f0a43a); color: var(--ambar-tinta, #1b1407); font: 600 1rem/1.1 Barlow, system-ui, sans-serif; cursor: pointer; transition: background 120ms cubic-bezier(0.2, 0.8, 0.2, 1), transform 120ms cubic-bezier(0.2, 0.8, 0.2, 1); } @media (hover: hover) { .ds-botao-primario:hover { background: var(--ambar-hover, #f5b457); } } .ds-botao-primario:active { background: var(--ambar-premido, #e0922a); transform: translateY(1px); } .ds-botao-primario:focus-visible { outline: 2px solid var(--foco, #a35a00); outline-offset: 2px; } .ds-luz { width: 10px; height: 10px; border-radius: 50%; background: color-mix(in srgb, currentColor 35%, transparent); }"
+    },
+    {
+      "name": "Botão secundário",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ações de apoio ao lado da principal.",
+      "html": "<button class=\"ds-botao-secundario\">Cancelar</button>",
+      "css": ".ds-botao-secundario { min-height: 48px; padding: 0 20px; border: 1px solid var(--linha, #d3d7db); border-radius: 10px; background: var(--superficie-2, #fcfcfd); color: var(--tinta, #15171a); font: 600 1rem/1.1 Barlow, system-ui, sans-serif; cursor: pointer; } @media (hover: hover) { .ds-botao-secundario:hover { border-color: var(--linha-forte, #848b93); } } .ds-botao-secundario:focus-visible { outline: 2px solid var(--foco, #a35a00); outline-offset: 2px; }"
+    },
+    {
+      "name": "Confirmar no próprio botão",
+      "kind": "button",
+      "refersTo": "button-danger-confirm",
+      "description": "Neutro em repouso; o primeiro toque pergunta (vermelho cheio), o segundo executa. Sem janelas modais.",
+      "html": "<button class=\"ds-botao-fantasma\">Remover</button> <button class=\"ds-botao-confirmar\">Remover?</button>",
+      "css": ".ds-botao-fantasma, .ds-botao-confirmar { min-height: 48px; padding: 0 20px; border: 1px solid transparent; border-radius: 10px; font: 600 1rem/1.1 Barlow, system-ui, sans-serif; cursor: pointer; } .ds-botao-fantasma { background: transparent; color: var(--tinta-2, #4a5058); } @media (hover: hover) { .ds-botao-fantasma:hover { background: var(--realce, #e3e6e9); color: var(--tinta, #15171a); } } .ds-botao-confirmar { background: var(--erro, #b42318); color: var(--superficie, #f8f9fa); } .ds-botao-fantasma:focus-visible, .ds-botao-confirmar:focus-visible { outline: 2px solid var(--foco, #a35a00); outline-offset: 2px; }"
+    },
+    {
+      "name": "Campo de texto",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Etiqueta sempre por cima; o placeholder nunca a substitui. 17px para o iPad não fazer zoom.",
+      "html": "<label class=\"ds-campo\"><span class=\"ds-campo__etiqueta\">Telefone</span><input class=\"ds-controlo\" value=\"962 418 730\"></label>",
+      "css": ".ds-campo { display: grid; gap: 6px; font-family: Barlow, system-ui, sans-serif; } .ds-campo__etiqueta { font-size: 0.875rem; font-weight: 600; color: var(--tinta-2, #4a5058); } .ds-controlo { min-height: 48px; padding: 0 14px; border: 1px solid var(--linha-forte, #848b93); border-radius: 10px; background: var(--superficie-2, #fcfcfd); color: var(--tinta, #15171a); font: 400 1.0625rem Barlow, system-ui, sans-serif; transition: border-color 120ms, box-shadow 120ms; } .ds-controlo:focus { outline: none; border-color: var(--foco, #a35a00); box-shadow: 0 0 0 3px color-mix(in srgb, var(--foco, #a35a00) 28%, transparent); }"
+    },
+    {
+      "name": "Barra de topo e separadores",
+      "kind": "nav",
+      "refersTo": "top-bar",
+      "description": "Barra sempre grafite; separadores na superfície com a barra âmbar no ativo.",
+      "html": "<header class=\"ds-topo\"><div class=\"ds-topo__barra\"><strong class=\"ds-topo__marca\">BANCADA</strong><span class=\"ds-topo__oficina\">Duarte &amp; Raposo</span><button class=\"ds-topo__sair\">Terminar</button></div><nav class=\"ds-separadores\"><a class=\"ds-separador ds-separador--ativo\" href=\"#\">Oficina</a><a class=\"ds-separador\" href=\"#\">Histórico</a><a class=\"ds-separador\" href=\"#\">Clientes</a></nav></header>",
+      "css": ".ds-topo { font-family: Barlow, system-ui, sans-serif; } .ds-topo__barra { display: flex; align-items: center; gap: 16px; min-height: 64px; padding: 0 16px; background: var(--painel, #0f1012); color: var(--painel-tinta, #e7e9e4); } .ds-topo__marca { font: 700 1.375rem/1 \"Barlow Condensed\", Barlow, sans-serif; letter-spacing: 0.06em; } .ds-topo__oficina { padding-left: 16px; border-left: 1px solid var(--painel-linha, #2a2d31); color: var(--painel-tinta-2, #9aa0a6); } .ds-topo__sair { margin-left: auto; min-height: 48px; padding: 0 20px; border: 1px solid var(--ambar, #f0a43a); border-radius: 10px; background: transparent; color: var(--ambar, #f0a43a); font-weight: 600; cursor: pointer; } .ds-separadores { display: flex; gap: 4px; padding: 0 8px; background: var(--superficie, #f8f9fa); border-bottom: 1px solid var(--linha, #d3d7db); } .ds-separador { position: relative; display: inline-flex; align-items: center; min-height: 52px; padding: 0 16px; color: var(--tinta-2, #4a5058); font-weight: 600; text-decoration: none; } @media (hover: hover) { .ds-separador:hover { color: var(--tinta, #15171a); } } .ds-separador--ativo { color: var(--tinta, #15171a); } .ds-separador--ativo::after { content: \"\"; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 3px; border-radius: 3px 3px 0 0; background: var(--ambar, #f0a43a); }"
+    },
+    {
+      "name": "Tablier",
+      "kind": "custom",
+      "refersTo": "tablier",
+      "description": "Assinatura: uma luz por estado, desenhada no grafite; acesa quando há veículos, com o número como leitura.",
+      "html": "<div class=\"ds-tablier\"><button class=\"ds-luz-tablier\" data-acesa=\"true\" style=\"--cor-luz: #5b9bff\"><svg viewBox=\"0 0 32 32\" width=\"60\" height=\"60\" fill=\"currentColor\" aria-hidden=\"true\"><path transform=\"translate(-1.9 -2.2) scale(1.12)\" d=\"M9.2 15 L11.4 9.1 Q11.9 7.8 13.3 7.8 L18.7 7.8 Q20.1 7.8 20.6 9.1 L22.8 15 Z M7.5 14 H24.5 Q27 14 27 16.5 V21 Q27 23.5 24.5 23.5 H7.5 Q5 23.5 5 21 V16.5 Q5 14 7.5 14 Z M7 23 H11 V26.2 Q11 27 10.2 27 H7.8 Q7 27 7 26.2 Z M21 23 H25 V26.2 Q25 27 24.2 27 H21.8 Q21 27 21 26.2 Z M13.6 10 L12.3 13.4 L19.7 13.4 L18.4 10 Z M11.4 18.6 A2.1 2.1 0 1 0 7.2 18.6 A2.1 2.1 0 1 0 11.4 18.6 Z M24.8 18.6 A2.1 2.1 0 1 0 20.6 18.6 A2.1 2.1 0 1 0 24.8 18.6 Z M13.5 18 L13.5 20.2 L18.5 20.2 L18.5 18 Z\" /></svg><span><span class=\"ds-luz-tablier__nome\">Abertas</span><span class=\"ds-luz-tablier__numero\">2</span></span></button><button class=\"ds-luz-tablier\" data-acesa=\"true\" aria-pressed=\"true\" style=\"--cor-luz: #f0a43a\"><svg viewBox=\"0 0 32 32\" width=\"60\" height=\"60\" fill=\"currentColor\" aria-hidden=\"true\"><g transform=\"rotate(-45 16 16)\"> <path d=\"M-0.08 13.7 A6.5 6.5 0 1 1 -0.08 18.3 L6 18.3 L6 13.7 Z M32.08 18.3 A6.5 6.5 0 1 1 32.08 13.7 L26 13.7 L26 18.3 Z M10 13.2 H22 V18.8 H10 Z\" /> </g></svg><span><span class=\"ds-luz-tablier__nome\">Em curso</span><span class=\"ds-luz-tablier__numero\">1</span></span></button><button class=\"ds-luz-tablier\" data-acesa=\"false\" style=\"--cor-luz: #ff5a55\"><svg viewBox=\"0 0 32 32\" width=\"60\" height=\"60\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M7 6.2 Q7 3.4 9.8 3.4 H22.2 Q25 3.4 25 6.2 V17.2 H7 Z M7 6.6 V7.9 H25 V6.6 Z M7 9.4 V10.7 H25 V9.4 Z M17.8 13.9 A1.8 1.8 0 1 0 14.2 13.9 A1.8 1.8 0 1 0 17.8 13.9 Z M13.2 16.6 H18.8 L17.9 22.4 H14.1 Z M20.6 25.4 A4.6 4.6 0 1 1 11.4 25.4 A4.6 4.6 0 1 1 20.6 25.4 Z M18 25.4 A2 2 0 1 0 14 25.4 A2 2 0 1 0 18 25.4 Z\" /></svg><span><span class=\"ds-luz-tablier__nome\">Aguardam peças</span><span class=\"ds-luz-tablier__numero\">0</span></span></button><button class=\"ds-luz-tablier\" data-acesa=\"true\" style=\"--cor-luz: #3ecf74\"><svg viewBox=\"0 0 32 32\" width=\"60\" height=\"60\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M5.2 4.2 Q5.2 2.6 6.85 2.6 Q8.5 2.6 8.5 4.2 V29.6 H5.2 Z M8.5 3.4 H29 V19.6 H8.5 Z M14.47 5.1 V9.37 H18.75 V5.1 Z M23.02 5.1 V9.37 H27.3 V5.1 Z M10.2 9.37 V13.63 H14.47 V9.37 Z M18.75 9.37 V13.63 H23.02 V9.37 Z M14.47 13.63 V17.9 H18.75 V13.63 Z M23.02 13.63 V17.9 H27.3 V13.63 Z\" /></svg><span><span class=\"ds-luz-tablier__nome\">Prontas</span><span class=\"ds-luz-tablier__numero\">1</span></span></button></div>",
+      "css": ".ds-tablier { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: var(--painel, #0f1012); border: 1px solid var(--painel-linha, #2a2d31); border-radius: 14px; overflow: hidden; font-family: Barlow, system-ui, sans-serif; } .ds-luz-tablier { position: relative; display: flex; align-items: center; gap: 20px; min-height: 112px; padding: 16px 20px; border: 0; border-left: 1px solid var(--painel-linha, #2a2d31); background: transparent; color: var(--painel-tinta-2, #9aa0a6); text-align: left; cursor: pointer; } .ds-luz-tablier:first-child { border-left: 0; } .ds-luz-tablier svg { color: var(--luz-apagada, #3a3e44); transition: color 200ms, filter 200ms; } .ds-luz-tablier[data-acesa=\"true\"] svg { color: var(--cor-luz); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cor-luz) 55%, transparent)); } .ds-luz-tablier[data-acesa=\"true\"] { color: var(--painel-tinta, #e7e9e4); } .ds-luz-tablier__nome { display: block; font-weight: 600; line-height: 1.2; } .ds-luz-tablier__numero { display: block; font: 600 1.625rem/1 \"Barlow Condensed\", Barlow, sans-serif; font-variant-numeric: tabular-nums; } .ds-luz-tablier[aria-pressed=\"true\"] { background: #1b1e22; } .ds-luz-tablier[aria-pressed=\"true\"]::after { content: \"\"; position: absolute; left: 20px; right: 20px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--ambar, #f0a43a); } @media (hover: hover) { .ds-luz-tablier:hover { background: #15171a; } } .ds-luz-tablier:focus-visible { outline: 2px solid var(--ambar, #f0a43a); outline-offset: -4px; }"
+    },
+    {
+      "name": "Matrícula",
+      "kind": "custom",
+      "refersTo": "plate",
+      "description": "Assinatura: a chapa branca com a faixa europeia; largura fixa e texto ao centro. Na grande, as portuguesas levam estrelas e P.",
+      "html": "<span class=\"ds-chapa\"><span class=\"ds-chapa__faixa\"></span><span class=\"ds-chapa__texto\">AV-19-QS</span></span> <span class=\"ds-chapa ds-chapa--grande\"><span class=\"ds-chapa__faixa\"><svg viewBox=\"0 0 20 20\" width=\"16\" height=\"16\" aria-hidden=\"true\"><circle cx=\"10.00\" cy=\"3.60\" r=\"1.35\"/><circle cx=\"13.20\" cy=\"4.46\" r=\"1.35\"/><circle cx=\"15.54\" cy=\"6.80\" r=\"1.35\"/><circle cx=\"16.40\" cy=\"10.00\" r=\"1.35\"/><circle cx=\"15.54\" cy=\"13.20\" r=\"1.35\"/><circle cx=\"13.20\" cy=\"15.54\" r=\"1.35\"/><circle cx=\"10.00\" cy=\"16.40\" r=\"1.35\"/><circle cx=\"6.80\" cy=\"15.54\" r=\"1.35\"/><circle cx=\"4.46\" cy=\"13.20\" r=\"1.35\"/><circle cx=\"3.60\" cy=\"10.00\" r=\"1.35\"/><circle cx=\"4.46\" cy=\"6.80\" r=\"1.35\"/><circle cx=\"6.80\" cy=\"4.46\" r=\"1.35\"/></svg><span class=\"ds-chapa__pais\">P</span></span><span class=\"ds-chapa__texto\">45-TR-89</span></span>",
+      "css": ".ds-chapa { display: inline-flex; align-items: stretch; min-width: 124px; height: 30px; border-radius: 5px; background: var(--chapa, #f6f6f2); color: var(--chapa-tinta, #101114); box-shadow: inset 0 0 0 1.5px #25282d; overflow: hidden; vertical-align: middle; } .ds-chapa__faixa { flex-shrink: 0; width: 9px; background: var(--chapa-faixa, #1d48a8); } .ds-chapa__texto { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 9px 0 8px; font: 600 1.1875rem/1 \"Barlow Condensed\", Barlow, sans-serif; letter-spacing: 0.06em; font-variant-numeric: tabular-nums; white-space: nowrap; } .ds-chapa--grande { min-width: 212px; height: 50px; border-radius: 7px; box-shadow: inset 0 0 0 2px #25282d; } .ds-chapa--grande .ds-chapa__faixa { display: flex; flex-direction: column; align-items: center; justify-content: space-between; width: 20px; padding: 6px 0 5px; } .ds-chapa--grande svg { fill: var(--chapa-estrelas, #ffd84a); } .ds-chapa__pais { color: #fff; font: 700 0.8125rem/1 \"Barlow Condensed\", Barlow, sans-serif; } .ds-chapa--grande .ds-chapa__texto { padding: 0 16px 0 14px; font-size: 2rem; }"
+    },
+    {
+      "name": "Luz de estado",
+      "kind": "chip",
+      "refersTo": "state-lamp",
+      "description": "Luz sólida de 10px sempre com o nome do estado; entregue é um anel.",
+      "html": "<span class=\"ds-estado\" style=\"--cor-estado: var(--estado-em-curso, #c77a0a)\"><span class=\"ds-estado__luz\"></span>Em curso</span> <span class=\"ds-estado\" style=\"--cor-estado: var(--estado-pronta, #18a04a)\"><span class=\"ds-estado__luz\"></span>Pronta</span> <span class=\"ds-estado ds-estado--entregue\"><span class=\"ds-estado__luz\"></span>Entregue</span>",
+      "css": ".ds-estado { display: inline-flex; align-items: center; gap: 8px; margin-right: 16px; font: 600 0.875rem Barlow, system-ui, sans-serif; color: var(--tinta, #15171a); white-space: nowrap; } .ds-estado__luz { width: 10px; height: 10px; border-radius: 50%; background: var(--cor-estado); } .ds-estado--entregue .ds-estado__luz { background: transparent; box-shadow: inset 0 0 0 2px var(--estado-entregue, #848b93); }"
+    },
+    {
+      "name": "Tecla do PIN",
+      "kind": "button",
+      "refersTo": "pin-key",
+      "description": "Teclas de 72px para dedos com luvas; só a de entrar é âmbar.",
+      "html": "<div class=\"ds-teclas\"><button class=\"ds-tecla\">7</button><button class=\"ds-tecla\">0</button><button class=\"ds-tecla ds-tecla--entrar\" aria-label=\"Entrar\">→</button></div>",
+      "css": ".ds-teclas { display: grid; grid-template-columns: repeat(3, 96px); gap: 12px; } .ds-tecla { height: 72px; border: 1px solid var(--linha, #d3d7db); border-radius: 14px; background: var(--superficie, #f8f9fa); color: var(--tinta, #15171a); font: 600 2rem/1 \"Barlow Condensed\", Barlow, sans-serif; cursor: pointer; transition: border-color 120ms, transform 120ms; } @media (hover: hover) { .ds-tecla:hover { border-color: var(--linha-forte, #848b93); } } .ds-tecla:active { transform: scale(0.97); background: var(--realce, #e3e6e9); } .ds-tecla:focus-visible { outline: 2px solid var(--foco, #a35a00); outline-offset: 2px; } .ds-tecla--entrar { background: var(--ambar, #f0a43a); border-color: var(--ambar, #f0a43a); color: var(--ambar-tinta, #1b1407); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Tablier da Oficina",
+    "overview": "A Bancada é desenhada como o painel de instrumentos de um carro. Há uma parte que é sempre escura (a barra de topo, o tablier com as luzes de aviso, o painel da entrada) e uma superfície de trabalho que segue o tema do dispositivo: clara ao sol da oficina, escura à noite. As luzes são o sinal principal. Num relance, a meio de uma reparação e a um ou dois metros do tablet, o mecânico vê quantos carros estão abertos, em curso, à espera de peças ou prontos, tal como se vê uma luz de aviso acesa sem ler nada.\n\nÉ uma ferramenta de trabalho e não um produto de marketing. A densidade é média: alvos grandes para dedos sujos ou com luvas, texto de leitura entre 16 e 18 px, números sempre tabulares. A identidade vem de objetos reais da oficina e não de decoração: as luzes do tablier, a chapa de matrícula branca com a faixa azul europeia e a letra Barlow, que nasceu da sinalética e das matrículas. O âmbar é a cor de ação, a mesma \"luz indicadora\" que já existia no login original do projeto.\n\nO que foi rejeitado de forma explícita: o quadro kanban genérico de colunas, o dashboard de métricas com números gigantes, as lentes e os aros à volta das luzes (fazem-nas parecer botões de uma app e não lâmpadas) e as janelas modais para confirmar.",
+    "keyCharacteristics": [
+      "Painel de instrumentos sempre escuro por cima de uma superfície de trabalho clara ou escura.",
+      "Luzes de aviso desenhadas de propósito (carro, chave de bocas, pistão, bandeira de xadrez, chave), acesas quando há veículos nesse estado.",
+      "Matrículas desenhadas como chapas: brancas nos dois temas, com a faixa azul europeia.",
+      "Um só acento: âmbar para a ação principal, o separador ativo e o filtro ativo.",
+      "Plano, sem sombras de profundidade: camadas tonais e linhas de 1 px.",
+      "Alvos de toque de 48 px no mínimo, 56 px nas ações principais e 72 px no teclado do PIN."
+    ],
+    "rules": [
+      {
+        "name": "A Regra da Voz Única",
+        "body": "O âmbar é a única cor de ação. Se um ecrã tiver dois botões âmbar, um deles está errado.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra das Luzes no Painel",
+        "body": "As cores `luz-*` só aparecem sobre o grafite do painel. Na superfície de trabalho o estado usa as cores `estado-*` (a luz sólida de 10 px nas listas, o pictograma no seletor da folha) e vem sempre com o nome, porque a cor nunca pode ser a única pista.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra da Chapa Branca",
+        "body": "A matrícula é branca em qualquer tema. Não se inverte, não se tinge, não se põe transparente.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra da Sinalética",
+        "body": "Barlow Condensed nos títulos, nas chapas e nas leituras. Barlow no texto que se lê. Não entra uma terceira família.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra dos Números Alinhados",
+        "body": "Valores em euros, quantidades, horas e quilómetros usam sempre algarismos tabulares (a classe `.num`), para as colunas alinharem.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Plano",
+        "body": "Superfícies planas em repouso. Se um cartão precisa de sombra para se distinguir, falta-lhe uma linha ou um tom.",
+        "section": "elevation"
+      },
+      {
+        "name": "A Regra da Lâmpada",
+        "body": "As luzes do tablier não têm aro, lente, gradiente nem sombra interior. São o próprio símbolo desenhado no grafite, apagado ou aceso.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** usar âmbar (`ambar`) só na ação principal de cada ecrã, na barra do separador ativo, na barra do filtro ativo e no foco sobre o painel escuro.",
+      "**Do** acompanhar sempre a cor de um estado com o nome dele. A cor nunca pode ser a única pista.",
+      "**Do** manter os alvos de toque em 48 px ou mais (`--toque`), 56 px nas ações principais do tablet (`--toque-g`) e 72 px no teclado do PIN.",
+      "**Do** pôr os estilos de `:hover` dentro de `@media (hover: hover)`, para o toque num tablet não deixar o hover preso.",
+      "**Do** usar algarismos tabulares (`.num`) em euros, quantidades, horas e quilómetros.",
+      "**Do** usar os pictogramas de `Luzes.jsx` para os estados. Os ícones Phosphor servem para ações e navegação e são gerados só com os pesos usados (`npm run icones`).",
+      "**Do** escrever o texto da interface em português de Portugal, sem travessões: usar dois pontos, vírgulas ou parênteses.",
+      "**Do** verificar os dois temas e os 1180 × 820 do tablet antes de dar um ecrã por acabado."
+    ],
+    "donts": [
+      "**Don't** usar as cores `luz-*` fora do grafite do painel.",
+      "**Don't** pôr aros, lentes, gradientes radiais ou sombras interiores nas luzes do tablier.",
+      "**Don't** mostrar o número de um estado maior do que a luz. O número é uma leitura, como o conta-quilómetros.",
+      "**Don't** usar sombras para destacar cartões ou painéis. A única sombra é a do aviso flutuante.",
+      "**Don't** mudar a cor da chapa de matrícula no tema escuro.",
+      "**Don't** confirmar ações com janelas modais. Confirma-se no próprio botão.",
+      "**Don't** pintar de vermelho um botão em repouso. O vermelho cheio só aparece no passo de confirmação.",
+      "**Don't** carregar fontes ou scripts de CDNs. A CSP só aceita `'self'` e a Barlow vem da própria aplicação.",
+      "**Don't** criar um segundo botão âmbar no mesmo ecrã."
+    ]
+  }
+}

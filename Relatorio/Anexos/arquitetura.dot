@@ -1,0 +1,42 @@
+// Arquitetura da Bancada (o que está implementado).
+// Para voltar a desenhar: dot -Tpdf arquitetura.dot -o arquitetura.pdf
+digraph Arquitetura {
+  graph [rankdir=TB, splines=spline, nodesep=0.8, ranksep=0.55, pad=0.25, bgcolor="white", fontname="Helvetica"];
+  node  [shape=plain, fontname="Helvetica", fontsize=10];
+  edge  [fontname="Helvetica", fontsize=9, color="#4a5058", fontcolor="#4a5058", penwidth=1.1, arrowsize=0.8];
+
+  Dispositivos [label=<
+    <table border="0" cellborder="1" cellspacing="0" cellpadding="6" color="#4a5058">
+      <tr><td bgcolor="#15171a"><font color="#f0a43a"><b>Dispositivos (browser)</b></font></td></tr>
+      <tr><td align="left">Tablet partilhado na oficina<br align="left"/><font color="#5f6670">modo bancada: nome + PIN</font><br align="left"/></td></tr>
+      <tr><td align="left">Computador do gestor<br align="left"/><font color="#5f6670">email + password</font><br align="left"/></td></tr>
+      <tr><td align="left">Telemóvel<br align="left"/></td></tr>
+      <tr><td align="left" bgcolor="#eceef0">Frontend React 19 (PWA)<br align="left"/><font color="#5f6670">guardado pelo service worker</font><br align="left"/></td></tr>
+    </table>>];
+
+  subgraph cluster_docker {
+    label=<<font color="#4a5058">Docker Compose (uma máquina)</font>>;
+    fontsize=10; style="rounded,dashed"; color="#848b93"; margin=14;
+
+    API [label=<
+      <table border="0" cellborder="1" cellspacing="0" cellpadding="6" color="#4a5058">
+        <tr><td bgcolor="#15171a"><font color="#f0a43a"><b>Container api</b></font></td></tr>
+        <tr><td align="left">Node.js 22 + Express 5<br align="left"/></td></tr>
+        <tr><td align="left">serve o frontend compilado<br align="left"/><font color="#5f6670">(a mesma origem que a API)</font><br align="left"/></td></tr>
+        <tr><td align="left">/api: sessões em cookies httpOnly,<br align="left"/>validação, regras de negócio,<br align="left"/>isolamento por oficina<br align="left"/></td></tr>
+        <tr><td align="left"><font color="#5f6670">helmet (CSP), rate limiting,<br align="left"/>verificação de origem (CSRF)</font><br align="left"/></td></tr>
+      </table>>];
+
+    BD [label=<
+      <table border="0" cellborder="1" cellspacing="0" cellpadding="6" color="#4a5058">
+        <tr><td bgcolor="#15171a"><font color="#f0a43a"><b>Container db</b></font></td></tr>
+        <tr><td align="left">SQL Server 2022<br align="left"/></td></tr>
+        <tr><td align="left">base Bancada: 6 tabelas<br align="left"/><font color="#5f6670">chaves compostas por oficina</font><br align="left"/></td></tr>
+        <tr><td align="left">porta só em 127.0.0.1<br align="left"/></td></tr>
+      </table>>];
+  }
+
+  Dispositivos -> API [label="  pedidos HTTP (mesma origem)"];
+  API -> BD [label="login bancada_app\n(sem DELETE)"];
+  { rank=same; API; BD; }
+}

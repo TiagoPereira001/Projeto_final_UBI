@@ -1,47 +1,71 @@
-const jwt = require('jsonwebtoken');
+const { sql, getPool } = require('../db');
+const { ErroHttp } = require('../lib/erros');
+const { lerSessao, terminarSessao } = require('../lib/sessao');
 
-// mesma lógica do db.js: sem segredo escondido no código.
-// o JWT_SECRET antigo esteve exposto num repositório público, por isso
-// tem de ser um valor novo, só guardado no .env
-if (!process.env.JWT_SECRET) {
-    throw new Error(
-        'Falta a variável JWT_SECRET no .env. Ve o .env.example para saberes o que definir.'
-    );
+// vai buscar à BD o colaborador da sessão. Isto corre em cada pedido de
+// propósito: se o gestor desativar alguém, mudar o cargo ou a password, a
+// mudança conta logo, em vez de esperar até o token expirar (até 12h).
+// É uma consulta pela chave primária, custa menos de um milissegundo.
+async function carregarColaborador(sessao) {
+    const pool = await getPool();
+    const resultado = await pool.request()
+        .input('id', sql.Int, sessao.colaboradorId)
+        .query(`
+            SELECT c.ID_Colaborador AS id, c.Nome AS nome, c.Cargo AS cargo,
+                   c.Versao_Sessao AS versaoSessao, c.ID_Oficina AS oficinaId,
+                   o.Nome AS oficinaNome
+            FROM Colaborador c
+            JOIN Oficina o ON o.ID_Oficina = c.ID_Oficina
+            WHERE c.ID_Colaborador = @id AND c.Ativo = 1 AND o.Ativo = 1
+        `);
+
+    const colaborador = resultado.recordset[0];
+    if (!colaborador ||
+        colaborador.versaoSessao !== sessao.versao ||
+        colaborador.oficinaId !== sessao.oficinaId) {
+        return null;
+    }
+    return { ...colaborador, via: sessao.via };
 }
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-// vai no cabeçalho: Authorization: Bearer <token>
-// se o token for válido, mete os dados do colaborador em req.colaborador
-// e deixa o pedido seguir. senão, corta logo aqui com 401/403
-function verificarToken(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
-    if (!token) {
-        return res.status(401).json({ error: 'Token em falta. Faz login primeiro.' });
+// exige uma sessão válida. Se estiver tudo bem, deixa em req.colaborador:
+// { id, nome, cargo, oficinaId, oficinaNome, via }
+// e todas as consultas seguintes filtram por req.colaborador.oficinaId
+async function exigirSessao(req, res, next) {
+    const sessao = lerSessao(req);
+    if (!sessao) {
+        throw new ErroHttp(401, 'A tua sessão terminou. Entra outra vez.');
     }
 
-    jwt.verify(token, JWT_SECRET, (err, colaborador) => {
-        if (err) {
-            return res.status(403).json({ error: 'Token inválido ou expirado.' });
-        }
-        req.colaborador = colaborador;
-        next();
-    });
+    const colaborador = await carregarColaborador(sessao);
+    if (!colaborador) {
+        terminarSessao(res);
+        throw new ErroHttp(401, 'A tua sessão terminou. Entra outra vez.');
+    }
+
+    req.colaborador = colaborador;
+    next();
 }
 
-// diferente do verificarToken (que só confirma QUEM está logado), este
-// middleware confirma que o colaborador logado tem um dos Cargos
-// permitidos para aquela ação. usa-se depois do verificarToken:
-// router.post('/', verificarToken, autorizar('Gestor'), ...)
-function autorizar(...cargosPermitidos) {
+// depois do exigirSessao: confirma que o colaborador tem um dos cargos
+// permitidos. Ex.: router.post('/', exigirCargo('gestor'), ...)
+function exigirCargo(...cargos) {
     return (req, res, next) => {
-        if (!req.colaborador || !cargosPermitidos.includes(req.colaborador.cargo)) {
-            return res.status(403).json({ error: 'Não tens permissão para esta ação.' });
+        if (!req.colaborador || !cargos.includes(req.colaborador.cargo)) {
+            throw new ErroHttp(403, 'Só um gestor da oficina pode fazer isto.');
         }
         next();
     };
 }
 
-module.exports = { verificarToken, autorizar, JWT_SECRET };
+// o PIN do tablet partilhado é fácil de ver por cima do ombro. Por isso dá
+// acesso ao trabalho do dia a dia, mas mexer em contas e nas definições da
+// oficina exige ter entrado com email e password
+function exigirEntradaComPassword(req, res, next) {
+    if (req.colaborador?.via !== 'password') {
+        throw new ErroHttp(403, 'Para isto tens de entrar com o teu email e password (o PIN não chega).');
+    }
+    next();
+}
+
+module.exports = { exigirSessao, exigirCargo, exigirEntradaComPassword, carregarColaborador };

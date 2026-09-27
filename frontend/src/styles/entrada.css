@@ -1,0 +1,336 @@
+/* Entrar, Registar e o ecrã da bancada (tablet partilhado) */
+
+.entrada {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(320px, 5fr) 7fr;
+  min-height: 100dvh;
+  background: var(--fundo);
+}
+
+/* o painel da marca é o tablier: sempre escuro */
+.entrada__painel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-6);
+  padding: clamp(var(--e-8), 6vw, 72px);
+  background: var(--painel);
+  color: var(--painel-tinta);
+  border-right: 1px solid var(--painel-linha);
+}
+.entrada__painel .marca__nome {
+  font-size: 1.875rem;
+}
+
+.entrada__luzes {
+  display: flex;
+  gap: var(--e-6);
+  margin-top: auto;
+}
+/* as luzes vão direitas no grafite, sem aro: apagadas quase não se veem */
+.entrada__luz {
+  --cor-luz: var(--luz-aberta);
+  color: var(--luz-apagada);
+}
+.entrada__luz.tablier__luz--em_curso { --cor-luz: var(--luz-em-curso); }
+.entrada__luz.tablier__luz--aguarda_pecas { --cor-luz: var(--luz-aguarda); }
+.entrada__luz.tablier__luz--concluida { --cor-luz: var(--luz-pronta); }
+
+/* autoteste: cada luz acende por ordem e apaga; a âmbar (em curso) fica acesa */
+@media (prefers-reduced-motion: no-preference) {
+  .entrada__luz {
+    animation: autoteste 2.2s var(--curva) both;
+    animation-delay: calc(var(--ordem) * 140ms + 250ms);
+  }
+  .entrada__luz.tablier__luz--em_curso {
+    animation-name: autoteste-fica;
+  }
+}
+.entrada__luz.tablier__luz--em_curso {
+  color: var(--cor-luz);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cor-luz) 55%, transparent));
+}
+@keyframes autoteste {
+  0% { color: var(--luz-apagada); filter: none; }
+  12%, 55% { color: var(--cor-luz); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cor-luz) 55%, transparent)); }
+  100% { color: var(--luz-apagada); filter: none; }
+}
+@keyframes autoteste-fica {
+  0% { color: var(--luz-apagada); filter: none; }
+  12%, 100% { color: var(--cor-luz); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cor-luz) 55%, transparent)); }
+}
+
+.entrada__lema {
+  font-family: var(--letra-estreita);
+  font-weight: 600;
+  font-size: clamp(2rem, 3.4vw, 2.75rem);
+  line-height: 1.08;
+  max-width: 14ch;
+  text-wrap: balance;
+}
+.entrada__texto {
+  max-width: 38ch;
+  color: var(--painel-tinta-2);
+  font-size: var(--t-corpo-g);
+}
+.entrada__passos {
+  display: grid;
+  gap: var(--e-3);
+  margin: 0;
+  padding-left: 1.2em;
+  color: var(--painel-tinta-2);
+  font-size: var(--t-corpo-g);
+}
+.entrada__passos strong {
+  color: var(--painel-tinta);
+  font-weight: 600;
+}
+.entrada__passos li::marker {
+  color: var(--ambar);
+  font-family: var(--letra-estreita);
+  font-weight: 700;
+}
+
+.entrada__lado {
+  display: grid;
+  place-items: center;
+  padding: var(--e-8) var(--e-6);
+}
+.entrada__formulario {
+  width: min(100%, 420px);
+}
+.entrada__formulario--largo {
+  width: min(100%, 560px);
+}
+.entrada__titulo {
+  font-size: var(--t-ecra);
+}
+.entrada__alternativa {
+  color: var(--tinta-2);
+}
+.entrada__alternativa a {
+  color: var(--tinta);
+  font-weight: 600;
+}
+
+.entrada__grupo {
+  display: grid;
+  gap: var(--e-4);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.entrada__grupo legend {
+  padding: 0;
+  margin-bottom: var(--e-3);
+  font-family: var(--letra-estreita);
+  font-size: var(--t-titulo);
+  font-weight: 600;
+}
+
+.entrada__bancada {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+  padding: var(--e-3) var(--e-4);
+  border: 1px solid var(--linha);
+  border-radius: var(--r-controlo);
+  background: var(--superficie);
+  color: var(--tinta-2);
+  text-decoration: none;
+}
+@media (hover: hover) {
+  .entrada__bancada:hover {
+    border-color: var(--linha-forte);
+  }
+}
+.entrada__bancada strong {
+  color: var(--tinta);
+}
+.entrada__bancada-acao {
+  color: var(--tinta);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 860px) {
+  .entrada {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  .entrada__painel {
+    gap: var(--e-4);
+    padding: var(--e-6);
+    border-right: 0;
+    border-bottom: 1px solid var(--painel-linha);
+  }
+  .entrada__luzes {
+    order: 3;
+    margin-top: 0;
+  }
+  .entrada__luzes {
+    gap: var(--e-5);
+  }
+  .entrada__luz {
+    width: 32px;
+    height: 32px;
+  }
+  .entrada__lema {
+    max-width: none;
+    font-size: 1.75rem;
+  }
+  .entrada__texto,
+  .entrada__passos {
+    font-size: var(--t-corpo);
+  }
+  .entrada__lado {
+    place-items: start center;
+    padding: var(--e-6) var(--e-4) var(--e-10);
+  }
+}
+
+/* ============================================================
+   Bancada: o ecrã de descanso do tablet partilhado.
+   Segue o tema do tablet (claro ao sol, escuro à noite); só a faixa de
+   cima é sempre escura, como a barra de topo da aplicação.
+   ============================================================ */
+.bancada {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--fundo);
+  color: var(--tinta);
+}
+.bancada__topo {
+  display: flex;
+  align-items: center;
+  gap: var(--e-4);
+  padding: var(--e-4) clamp(var(--e-5), 4vw, var(--e-12));
+  background: var(--painel);
+  color: var(--painel-tinta);
+  border-bottom: 1px solid var(--painel-linha);
+}
+.bancada__oficina {
+  padding-left: var(--e-4);
+  border-left: 1px solid var(--painel-linha);
+  color: var(--painel-tinta-2);
+  font-weight: 500;
+}
+.bancada__ligacao {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque);
+  padding: 0 var(--e-4);
+  color: var(--painel-tinta-2);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--r-controlo);
+}
+@media (hover: hover) {
+  .bancada__ligacao:hover {
+    color: var(--painel-tinta);
+    background: var(--painel-2);
+  }
+}
+.bancada__ligacao:focus-visible {
+  outline-color: var(--ambar);
+}
+
+.bancada__centro {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--e-6);
+  padding: clamp(var(--e-6), 6vh, 72px) var(--e-5) var(--e-10);
+}
+.bancada__titulo {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  text-align: center;
+}
+.bancada__aviso {
+  max-width: 48ch;
+  text-align: center;
+  color: var(--tinta-2);
+}
+.bancada__pessoas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 260px));
+  justify-content: center;
+  gap: var(--e-3);
+  width: min(100%, 1100px);
+}
+.bancada__pessoa {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  min-height: 104px;
+  padding: var(--e-4) var(--e-5);
+  border: 1px solid var(--linha);
+  border-radius: var(--r-painel);
+  background: var(--superficie);
+  color: var(--tinta);
+  text-align: left;
+  transition: border-color var(--dur-rapida) var(--curva), background var(--dur-rapida) var(--curva), transform var(--dur-rapida) var(--curva);
+  -webkit-tap-highlight-color: transparent;
+}
+@media (hover: hover) {
+  .bancada__pessoa:hover {
+    border-color: var(--linha-forte);
+  }
+}
+.bancada__pessoa:active {
+  transform: scale(0.985);
+  background: var(--realce);
+}
+.bancada__nome {
+  font-family: var(--letra-estreita);
+  font-size: 1.625rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.bancada__cargo {
+  color: var(--tinta-2);
+  font-size: var(--t-pequeno);
+}
+
+.bancada__pin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--e-3);
+  width: 100%;
+}
+.bancada__voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  min-height: var(--toque);
+  padding: 0 var(--e-4);
+  border: 1px solid var(--linha);
+  border-radius: var(--r-controlo);
+  background: transparent;
+  color: var(--tinta-2);
+  font-weight: 600;
+}
+@media (hover: hover) {
+  .bancada__voltar:hover {
+    color: var(--tinta);
+    border-color: var(--linha-forte);
+  }
+}
+.bancada__instrucao {
+  margin-bottom: var(--e-3);
+  color: var(--tinta-2);
+  font-size: var(--t-corpo-g);
+}
