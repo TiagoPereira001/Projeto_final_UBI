@@ -88,7 +88,11 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - 12 itens de dívida técnica. O principal é a regra do dinheiro escrita em 10 sítios (DT-001).
   - As correções foram validadas numa cópia (52 testes e provas antes e depois), mas nenhum código mudou: estão todas por fazer.
 - `LICENSE` de todos os direitos reservados e aviso grande no topo do README: "em desenvolvimento, ainda não está pronto" e "todos os direitos reservados".
-- Este trabalho entrou no `dev` por PRs do ramo `claude/ecstatic-lamport-81qsk8`: o #1 (plataforma, interface, testes e documentação), o #2 (documento das ferramentas), o #3 (auditoria), o #4 e o #7 (memória), o #5 (licença e aviso) e o da revisão de código. A 27/09/2026 o `dev` passou para o `main` pelo PR #6, com o merge feito pelo autor: é a versão que aparece na página do GitHub.
+- Guia de arranque no README ("Como pôr a Bancada a funcionar"), para macOS e Windows:
+  - passo a passo desde um computador sem nada instalado, e 16 problemas comuns com as mensagens de erro reais;
+  - `node backend/scripts/criar-env.js` cria o `.env` com segredos aleatórios (nunca substitui um que exista);
+  - o percurso e as mensagens foram confirmados num clone limpo, em Linux. Os passos próprios do macOS e do Windows (instaladores, Rosetta, WSL, PowerShell) não se testaram aqui.
+- Este trabalho entrou no `dev` por PRs do ramo `claude/ecstatic-lamport-81qsk8`: o #1 (plataforma, interface, testes e documentação), o #2 (documento das ferramentas), o #3 (auditoria), o #4 e o #7 (memória), o #5 (licença e aviso), o #8 (revisão de código) e o do guia de arranque. A 27/09/2026 o `dev` passou para o `main` pelo PR #6, com o merge feito pelo autor. O que entrou no `dev` depois disso (do #7 em diante) só aparece na página do GitHub quando o `dev` voltar a passar para o `main`, e isso tem de ser pedido ao autor.
 
 **Por fazer** (sugestões, nada disto existe):
 1. Testar com os mecânicos da Duarte & Raposo: medir o tempo de uma entrada e de uma peça no papel e no tablet.
@@ -117,4 +121,5 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - auditoria completa (`docs/auditoria.md`), a pedido do autor, com os guiões de auditoria técnica e de mentoria que ele forneceu;
   - `LICENSE` de todos os direitos reservados e aviso grande no README; o `dev` passou para o `main` (PR #6, merge feito pelo autor);
   - o autor perguntou se valia a pena uma organização no GitHub: recomendei esperar pela nota e manter um só repositório;
-  - revisão de código e dívida técnica (`docs/revisao-codigo.md`), a pedido do autor, com os guiões de revisão de código e de refatoração que ele forneceu.
+  - revisão de código e dívida técnica (`docs/revisao-codigo.md`), a pedido do autor, com os guiões de revisão de código e de refatoração que ele forneceu;
+  - o autor não conseguia arrancar o projeto no Mac (o Docker Desktop estava fechado): a secção de arranque do README passou a um guia completo para macOS e Windows, com o `criar-env.js`.
