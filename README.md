@@ -154,6 +154,7 @@ Os dados criados pelo `npm run db:seed` (clientes, veículos, matrículas, folha
 | [`CLAUDE.md`](CLAUDE.md) | memória do projeto para o Claude Code: decisões tomadas, preferências, estado atual |
 | [`docs/analise.md`](docs/analise.md) | análise de segurança, desempenho e viabilidade |
 | [`docs/auditoria.md`](docs/auditoria.md) | auditoria de qualidade, segurança, desempenho e acessibilidade (27/09/2026), com os scripts para a repetir |
+| [`docs/revisao-codigo.md`](docs/revisao-codigo.md) | revisão de código e dívida técnica (27/09/2026): bugs encontrados, plano de refatoração por fases e exemplos validados, com as provas |
 | [`Relatorio/`](Relatorio/) | relatório do projeto e documento das ferramentas usadas (e porquê), em LaTeX, com os PDF compilados |
 
 ## Fluxo de trabalho

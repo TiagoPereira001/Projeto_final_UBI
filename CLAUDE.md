@@ -56,6 +56,8 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - Para ver o PDF página a página é preciso o `poppler-utils`. Para ver várias páginas numa só imagem (não há PIL nem ImageMagick): um `.tex` com `\includepdf[pages=-,nup=4x2]{...}` (pacote `pdfpages`) e depois `pdftoppm`.
   - Com o babel em português, o `"` é um atalho e come o espaço seguinte: usar ``` ``...'' ``` para as aspas.
 - **Auditoria** (`docs/auditoria/scripts/`): precisa de `npm install --no-save playwright axe-core` na pasta dos scripts, do `seed-output.txt` do `db:seed` e de `AUDITORIA_DIR`. Reiniciar a API entre corridas (o limite de logins é por email). Para mexer em tabelas com índices filtrados pelo `sqlcmd`, usar `-I` (senão o `QUOTED_IDENTIFIER` fica desligado e o `UPDATE` falha).
+- **Revisão de código** (`docs/revisao-codigo/provas/`): `npm install --no-save playwright` na pasta das provas. O `pin-simultaneo.cjs` usa a BD de testes; os outros precisam da API a servir o frontend compilado.
+- **`npm test` com 47 falhas `hookFailed`** (no `db-setup.js --reset`): ou o SQL Server está parado (o Docker não sobrevive ao reinício da sessão), ou a shell não tem o `DB_ADMIN_PASSWORD` e o `DB_PASSWORD` (não há `.env` no repositório).
 - **Capturas de ecrã**: as do relatório estão em `Relatorio/Anexos/ecras/` (@2x) e as do README em `docs/imagens/` (@1x). Todas usam os dados fictícios do `db:seed`.
 
 ## Estado atual (27/09/2026)
@@ -81,8 +83,12 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - 82 verificações: 69 passam, 9 observações, 4 problemas. Nenhum crítico nem alto.
   - Prioridade alta: REL-001 (sem `errorElement`, erros mostram o ecrã do React Router em inglês) e REL-003 (sem rede, a app mostra "Entrar").
   - Nenhum código mudou: os achados estão todos abertos. Cada um diz como validar a correção.
+- Revisão de código e dívida técnica em `docs/revisao-codigo.md` (27/09/2026), com as provas em `docs/revisao-codigo/provas/`.
+  - Três bugs confirmados que a auditoria não apanhou: BUG-01 (ALTA: guardar as notas de uma folha apaga o que um colega gravou noutro dispositivo), BUG-02 (MÉDIA: o bloqueio do PIN contorna-se com pedidos em simultâneo) e BUG-03 (BAIXA: Definições não se atualiza depois de desligar os tablets).
+  - 12 itens de dívida técnica. O principal é a regra do dinheiro escrita em 10 sítios (DT-001).
+  - As correções foram validadas numa cópia (52 testes e provas antes e depois), mas nenhum código mudou: estão todas por fazer.
 - `LICENSE` de todos os direitos reservados e aviso grande no topo do README: "em desenvolvimento, ainda não está pronto" e "todos os direitos reservados".
-- Este trabalho entrou no `dev` por PRs do ramo `claude/ecstatic-lamport-81qsk8`: o #1 (plataforma, interface, testes e documentação), o #2 (documento das ferramentas), o #3 (auditoria), o #4 (memória) e o #5 (licença e aviso). A 27/09/2026 o `dev` passou para o `main` pelo PR #6, com o merge feito pelo autor: é a versão que aparece na página do GitHub.
+- Este trabalho entrou no `dev` por PRs do ramo `claude/ecstatic-lamport-81qsk8`: o #1 (plataforma, interface, testes e documentação), o #2 (documento das ferramentas), o #3 (auditoria), o #4 e o #7 (memória), o #5 (licença e aviso) e o da revisão de código. A 27/09/2026 o `dev` passou para o `main` pelo PR #6, com o merge feito pelo autor: é a versão que aparece na página do GitHub.
 
 **Por fazer** (sugestões, nada disto existe):
 1. Testar com os mecânicos da Duarte & Raposo: medir o tempo de uma entrada e de uma peça no papel e no tablet.
@@ -92,7 +98,7 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 5. Folha imprimível para o cliente, com os conselhos.
 6. Recuperação de password por email e um registo de auditoria completo.
 7. Integração com programas de faturação certificados; política de privacidade e contratos RGPD.
-8. Corrigir os achados da auditoria pela ordem da secção 10 de `docs/auditoria.md` (primeiro REL-001 e REL-003) e passar os percursos no browser para testes E2E no CI.
+8. Corrigir os achados da auditoria (secção 10 de `docs/auditoria.md`, primeiro REL-001 e REL-003) e da revisão de código (secção 14 de `docs/revisao-codigo.md`, primeiro BUG-01 e BUG-02), e passar os percursos no browser para testes E2E no CI.
 
 ## Registo
 
@@ -110,4 +116,5 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - relatório principal corrigido: os testes manuais são de julho, e as três opções do ecrã principal foram sorteadas pela impeccable entre sete formas;
   - auditoria completa (`docs/auditoria.md`), a pedido do autor, com os guiões de auditoria técnica e de mentoria que ele forneceu;
   - `LICENSE` de todos os direitos reservados e aviso grande no README; o `dev` passou para o `main` (PR #6, merge feito pelo autor);
-  - o autor perguntou se valia a pena uma organização no GitHub: recomendei esperar pela nota e manter um só repositório.
+  - o autor perguntou se valia a pena uma organização no GitHub: recomendei esperar pela nota e manter um só repositório;
+  - revisão de código e dívida técnica (`docs/revisao-codigo.md`), a pedido do autor, com os guiões de revisão de código e de refatoração que ele forneceu.
