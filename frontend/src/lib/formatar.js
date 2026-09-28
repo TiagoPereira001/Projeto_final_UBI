@@ -44,6 +44,14 @@ export function tempoDesde(valor) {
   return DATA.format(inicio);
 }
 
+// "entrou hoje às 09:15", "entrou ontem", "entrou há 4 dias", "entrou a 12/05/2026"
+export function quandoEntrou(valor) {
+  if (!valor) return '';
+  const quando = tempoDesde(valor);
+  if (quando.startsWith('hoje, ')) return `entrou hoje às ${quando.slice(6)}`;
+  return /^\d/.test(quando) ? `entrou a ${quando}` : `entrou ${quando}`;
+}
+
 // o dia 1 deste mês à meia-noite, na hora local (para o resumo do gestor)
 export function inicioDoMes() {
   const agora = new Date();
@@ -83,9 +91,9 @@ export const CARGOS = [
 ];
 export const nomeCargo = (codigo) => CARGOS.find((c) => c.codigo === codigo)?.nome ?? codigo;
 
-// "Fiat Ducato + Hymer" nas autocaravanas; "Renault Clio" nos outros
+// "Fiat Ducato, célula Hymer" nas autocaravanas; "Renault Clio" nos outros
 export function descreverVeiculo(v) {
   if (!v) return '';
   const base = [v.marca, v.modelo].filter(Boolean).join(' ');
-  return v.marcaCelula ? `${base} · célula ${v.marcaCelula}` : base;
+  return v.marcaCelula ? `${base}, célula ${v.marcaCelula}` : base;
 }

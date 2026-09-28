@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Plus, MagnifyingGlass } from '../components/icones';
 import { useSessao } from '../context/SessaoContext';
 import { useRecurso } from '../lib/useRecurso';
-import { ESTADOS, descreverVeiculo, euros, inicioDoMes, tempoDesde } from '../lib/formatar';
+import { ESTADOS, descreverVeiculo, euros, inicioDoMes, quandoEntrou } from '../lib/formatar';
 import { contem } from '../lib/texto';
 import { Tablier } from '../components/Tablier';
 import { Matricula } from '../components/Matricula';
@@ -78,10 +78,12 @@ export default function Quadro() {
 
       <section className="painel" aria-labelledby="titulo-lista">
         <header className="painel__cabecalho">
-          <h2 className="painel__titulo" id="titulo-lista">
-            {filtro ? nomeFiltro : 'Na oficina'}
-            {itens && <span className="quadro__contagem num"> {visiveis.length}</span>}
-          </h2>
+          <h2 className="painel__titulo" id="titulo-lista">{filtro ? nomeFiltro : 'Na oficina'}</h2>
+          {itens && (
+            <span className="quadro__contagem num">
+              {visiveis.length} {visiveis.length === 1 ? 'veículo' : 'veículos'}
+            </span>
+          )}
           {filtro && (
             <button type="button" className="quadro__limpar" onClick={() => setFiltro(null)}>
               Mostrar todos
@@ -114,7 +116,10 @@ export default function Quadro() {
             {visiveis.map((folha) => (
               <li key={folha.id}>
                 <Link to={`/folhas/${folha.id}`} className="lista__item fila">
-                  <span className="fila__matricula"><Matricula valor={folha.veiculo.matricula} /></span>
+                  <span className="fila__matricula">
+                    <Matricula valor={folha.veiculo.matricula} />
+                    <span className="fila__folha num">Folha {folha.numero}</span>
+                  </span>
                   <span className="fila__veiculo">
                     <span className="fila__titulo">{descreverVeiculo(folha.veiculo)}</span>
                     <span className="fila__sub">{folha.cliente.nome}</span>
@@ -122,9 +127,7 @@ export default function Quadro() {
                   <span className="fila__queixa">{folha.observacoes || 'Sem observações de entrada.'}</span>
                   <span className="fila__estado">
                     <EstadoFolha estado={folha.estado} />
-                    <span className="fila__tempo">
-                      <span className="num">nº {folha.numero}</span> · {tempoDesde(folha.dataEntrada)}
-                    </span>
+                    <span className="fila__tempo">{quandoEntrou(folha.dataEntrada)}</span>
                   </span>
                 </Link>
               </li>
