@@ -25,6 +25,7 @@ Projeto final de licenciatura (Informática Web, Móvel e na Nuvem, UBI) do Tiag
 ├── DESIGN.md                  tokens e regras visuais (formato DESIGN.md do Google Stitch)
 ├── README.md                  instalação e visão geral
 ├── LICENSE                    todos os direitos reservados ao autor (não é código aberto)
+├── Iniciar Bancada.command    arranque para testes com duplo clique no macOS (bash 3.2, tudo em containers)
 ├── docker-compose.yml         SQL Server (e, com --profile app, a app completa)
 ├── Dockerfile                 imagem de produção: API + frontend compilado
 ├── .env.example               todas as variáveis de ambiente, explicadas
@@ -127,6 +128,7 @@ cd frontend && npm run lint && npm run build
 
 # tudo em containers (produção local)
 docker compose --profile app up -d --build   # http://localhost:3000
+./Iniciar\ Bancada.command                   # o mesmo, para testes: abre o Docker, cria o .env e os dados, abre o browser
 ```
 
 Os testes precisam de um SQL Server a correr e das variáveis `DB_ADMIN_PASSWORD` e `DB_PASSWORD` (do `.env`). Usam uma base de dados própria, `Bancada_Teste`, apagada e recriada em cada ficheiro de testes.
