@@ -97,6 +97,11 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - passo a passo desde um computador sem nada instalado, e 16 problemas comuns com as mensagens de erro reais;
   - `node backend/scripts/criar-env.js` cria o `.env` com segredos aleatórios (nunca substitui um que exista);
   - o percurso e as mensagens foram confirmados num clone limpo, em Linux. Os passos próprios do macOS e do Windows (instaladores, Rosetta, WSL, PowerShell) não se testaram aqui.
+- `Iniciar Bancada.command` na raiz: arranque para testes com duplo clique no macOS, a pedido do autor (28/09/2026).
+  - Só precisa do Docker Desktop: abre-o se estiver fechado, cria o `.env` (com o `criar-env.js` num container do Node), arranca tudo com `--profile app`, cria os dados de demonstração e abre http://localhost:3000. Para ao carregar em Enter ou ao fechar a janela.
+  - Resolve sozinho: container de outra cópia ou o `dr_oficina_sql` antigo, `.env` incompleto, password fraca (recomeça), password diferente da do primeiro arranque (pede APAGAR). Deteta-os nos registos do SQL Server: `Password did not match` e `Password validation failed` (não serve procurar só `Login failed for user 'sa'`, que também aparece num arranque normal).
+  - Testado em Linux, num terminal simulado, em oito cenários; o `shellcheck` passa e a sintaxe foi verificada com o bash 3.2 (o do macOS). Os passos próprios do macOS (`open -a Docker`, o Finder, o Gatekeeper) não se testaram aqui.
+  - O `docker-compose.yml` passou a arrancar a API com `exec`: recebe o sinal do `docker stop` e para em 0 s. O SQL Server continua a ser parado à força ao fim de 10 s (o `launch_sqlservr.sh` da imagem não passa o sinal).
 - Este trabalho entrou no `dev` por PRs do ramo `claude/ecstatic-lamport-81qsk8`: o #1 (plataforma, interface, testes e documentação), o #2 (documento das ferramentas), o #3 (auditoria), o #4 e o #7 (memória), o #5 (licença e aviso), o #8 (revisão de código) e o do guia de arranque. A 27/09/2026 o `dev` passou para o `main` pelo PR #6, com o merge feito pelo autor. O que entrou no `dev` depois disso (do #7 em diante) só aparece na página do GitHub quando o `dev` voltar a passar para o `main`, e isso tem de ser pedido ao autor.
 
 **Por fazer** (sugestões, nada disto existe):
@@ -131,4 +136,5 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - o autor não conseguia arrancar o projeto no Mac (o Docker Desktop estava fechado): a secção de arranque do README passou a um guia completo para macOS e Windows, com o `criar-env.js`.
 - **28/09/2026**:
   - no Mac do autor, o `db:setup` dava `Login failed for user 'sa'`: o volume `sql_dados` de junho/julho (mesmo nome no compose antigo) guardava a password antiga do `sa`. Solução: `docker compose down -v` e `docker rm -f dr_oficina_sql`;
-  - interface revista com o plugin `frontend-design` (anthropics/claude-code), a pedido do autor.
+  - interface revista com o plugin `frontend-design` (anthropics/claude-code), a pedido do autor;
+  - `Iniciar Bancada.command`: arranque com duplo clique no macOS, para testes.
