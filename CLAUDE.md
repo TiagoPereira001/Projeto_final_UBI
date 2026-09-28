@@ -60,7 +60,7 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 - **`npm test` com 47 falhas `hookFailed`** (no `db-setup.js --reset`): ou o SQL Server está parado (o Docker não sobrevive ao reinício da sessão), ou a shell não tem o `DB_ADMIN_PASSWORD` e o `DB_PASSWORD` (não há `.env` no repositório).
 - **Capturas de ecrã**: as do relatório estão em `Relatorio/Anexos/ecras/` (@2x) e as do README em `docs/imagens/` (@1x). Todas usam os dados fictícios do `db:seed`.
 
-## Estado atual (27/09/2026)
+## Estado atual (28/09/2026)
 
 **Feito:**
 - Backend multi-oficina (Node 22, Express 5, SQL Server 2022):
@@ -73,6 +73,11 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - histórico, clientes, veículos, equipa e definições;
   - temas claro e escuro.
 - Revisão de design com a impeccable até ao veredito final "ship" (só cobre as correções pontuadas na última ronda).
+- Segunda revisão da interface com o plugin `frontend-design` do repositório `anthropics/claude-code`, a pedido do autor, para "não parecer tão IA" (28/09/2026):
+  - saíram os sinais de interface gerada que o plugin lista: cartões todos com o mesmo raio, textos separados por "·", ícones nos separadores, o login dividido ao meio com lema, dois botões âmbar em Definições;
+  - cada raio vem de um objeto (tablier 16 px, papel 4 px, botões e campos 6 px); o número do tablier aparece num visor como o do computador de bordo; os dados da folha estão em caixas como numa folha de obra em papel;
+  - o plugin não foi copiado para o repositório (a licença é da Anthropic): foi seguido a partir de uma cópia na sessão. As regras novas estão no `DESIGN.md`;
+  - as capturas do README foram refeitas; as do relatório (`Relatorio/Anexos/ecras/`) ainda mostram a versão anterior.
 - Documentação: `README.md`, `AI.md`, `DESIGN.md` (+ `.impeccable/design.json`), `PRODUCT.md` e `docs/analise.md` (segurança, desempenho e viabilidade).
 - Relatório LaTeX atualizado (32 páginas, só o que está feito) e compilado em `Relatorio/relatorio_projeto_final_55019.pdf`.
 - Documento complementar para a apresentação: `Relatorio/relatorio_ferramentas_55019.pdf` (30 páginas).
@@ -102,7 +107,8 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 5. Folha imprimível para o cliente, com os conselhos.
 6. Recuperação de password por email e um registo de auditoria completo.
 7. Integração com programas de faturação certificados; política de privacidade e contratos RGPD.
-8. Corrigir os achados da auditoria (secção 10 de `docs/auditoria.md`, primeiro REL-001 e REL-003) e da revisão de código (secção 14 de `docs/revisao-codigo.md`, primeiro BUG-01 e BUG-02), e passar os percursos no browser para testes E2E no CI.
+8. Atualizar as capturas do relatório (`Relatorio/Anexos/ecras/`) para a interface revista a 28/09/2026 e recompilar o PDF.
+9. Corrigir os achados da auditoria (secção 10 de `docs/auditoria.md`, primeiro REL-001 e REL-003) e da revisão de código (secção 14 de `docs/revisao-codigo.md`, primeiro BUG-01 e BUG-02), e passar os percursos no browser para testes E2E no CI.
 
 ## Registo
 
@@ -123,3 +129,6 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - o autor perguntou se valia a pena uma organização no GitHub: recomendei esperar pela nota e manter um só repositório;
   - revisão de código e dívida técnica (`docs/revisao-codigo.md`), a pedido do autor, com os guiões de revisão de código e de refatoração que ele forneceu;
   - o autor não conseguia arrancar o projeto no Mac (o Docker Desktop estava fechado): a secção de arranque do README passou a um guia completo para macOS e Windows, com o `criar-env.js`.
+- **28/09/2026**:
+  - no Mac do autor, o `db:setup` dava `Login failed for user 'sa'`: o volume `sql_dados` de junho/julho (mesmo nome no compose antigo) guardava a password antiga do `sa`. Solução: `docker compose down -v` e `docker rm -f dr_oficina_sql`;
+  - interface revista com o plugin `frontend-design` (anthropics/claude-code), a pedido do autor.

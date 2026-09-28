@@ -88,7 +88,7 @@ export default function Cliente() {
                     <Matricula valor={v.matricula} />
                     <span className="linha-veiculo__texto">
                       <span className="linha-veiculo__titulo">{descreverVeiculo(v)}</span>
-                      <span className="linha-veiculo__sub">{nomeTipo(v.tipo)}{v.ano ? ` · ${v.ano}` : ''}</span>
+                      <span className="linha-veiculo__sub">{nomeTipo(v.tipo)}{v.ano ? ` de ${v.ano}` : ''}</span>
                     </span>
                   </Link>
                 </li>

@@ -10,24 +10,29 @@ import { ESTADOS_ATIVOS } from '../lib/formatar';
 import { SimboloEstado } from '../components/Luzes';
 import '../styles/entrada.css';
 
-// o painel da esquerda: as quatro luzes fazem o "autoteste" de um carro
-// quando se roda a chave (acendem todas e apagam). Fica a âmbar acesa.
-export function PainelMarca({ children }) {
+// a faixa de cima é o painel do carro antes de arrancar: a marca à esquerda
+// e as quatro luzes do tablier à direita, que fazem o "autoteste" de quando
+// se roda a chave (acendem todas e apagam). Fica a âmbar acesa.
+export function PainelMarca() {
   return (
     <section className="entrada__painel" aria-label="Bancada">
-      <Marca tamanho={44} />
-      <div className="entrada__luzes" aria-hidden="true">
-        {ESTADOS_ATIVOS.map((estado, i) => (
-          <SimboloEstado
-            key={estado.codigo}
-            estado={estado.codigo}
-            tamanho={40}
-            className={`entrada__luz tablier__luz--${estado.codigo}`}
-            estilo={{ '--ordem': i }}
-          />
-        ))}
+      <div className="entrada__coluna entrada__coluna--painel">
+        <div className="entrada__marca">
+          <Marca tamanho={44} />
+          <p className="entrada__descricao">Folhas de obra digitais para oficinas.</p>
+        </div>
+        <div className="entrada__luzes" aria-hidden="true">
+          {ESTADOS_ATIVOS.map((estado, i) => (
+            <SimboloEstado
+              key={estado.codigo}
+              estado={estado.codigo}
+              tamanho={40}
+              className={`entrada__luz tablier__luz--${estado.codigo}`}
+              estilo={{ '--ordem': i }}
+            />
+          ))}
+        </div>
       </div>
-      {children}
     </section>
   );
 }
@@ -63,13 +68,10 @@ export default function Entrar() {
 
   return (
     <div className="entrada">
-      <PainelMarca>
-        <p className="entrada__lema">Folhas de obra digitais para oficinas.</p>
-        <p className="entrada__texto">Da entrada do carro à entrega, com cada peça, cada hora e quem as registou.</p>
-      </PainelMarca>
+      <PainelMarca />
 
       <section className="entrada__lado">
-        <form className="entrada__formulario formulario" onSubmit={submeter} noValidate>
+        <form className="entrada__coluna entrada__formulario formulario" onSubmit={submeter} noValidate>
           <h1 className="entrada__titulo">Entrar</h1>
 
           {bancada && (

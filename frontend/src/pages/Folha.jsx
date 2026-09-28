@@ -76,7 +76,7 @@ function FolhaAberta({ folha, definir }) {
             <h1 className="folha__titulo">Folha nº <span className="num">{folha.numero}</span></h1>
             <p className="folha__veiculo">
               <Link to={`/veiculos/${folha.veiculo.id}`}>{descreverVeiculo(folha.veiculo)}</Link>
-              {folha.veiculo.ano ? <span className="num"> · {folha.veiculo.ano}</span> : null}
+              {folha.veiculo.ano ? <>, de <span className="num">{folha.veiculo.ano}</span></> : null}
             </p>
           </div>
         </div>
@@ -144,7 +144,7 @@ function FolhaAberta({ folha, definir }) {
                   <tr key={linha.id}>
                     <td>
                       <span className="tabela__designacao">{linha.designacao}</span>
-                      <span className="tabela__meta">{categoria(linha.categoria).nome} · {linha.colaborador.nome}</span>
+                      <span className="tabela__meta">{categoria(linha.categoria).nome}, por {linha.colaborador.nome}</span>
                       <span className="tabela__meta tabela__so-estreito num">
                         {numero(linha.quantidade)} {categoria(linha.categoria).unidade} × {euros(linha.valorUnitario)}
                       </span>

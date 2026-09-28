@@ -31,10 +31,13 @@
   --e-10: 40px;
   --e-12: 48px;
 
-  /* formas: uma só escala em toda a app */
-  --r-chip: 6px;
-  --r-controlo: 10px;
-  --r-painel: 14px;
+  /* formas: cada raio vem de um objeto, não de um tamanho.
+     o papel da folha tem os cantos quase direitos, os botões e os campos
+     são peças de ferramenta, o tablier é plástico moldado como num carro */
+  --r-chip: 4px;
+  --r-controlo: 6px;
+  --r-painel: 4px;
+  --r-tablier: 16px;
 
   /* alvos de toque: pensados para luvas */
   --toque: 48px;
@@ -63,6 +66,7 @@
   --luz-aguarda: #ff5a55;
   --luz-pronta: #3ecf74;
   --luz-apagada: #3a3e44;
+  --painel-visor: #07080a;
 
   /* a matrícula é um objeto físico: branca nos dois temas */
   --chapa: #f6f6f2;

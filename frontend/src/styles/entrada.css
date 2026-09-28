@@ -2,30 +2,47 @@
 
 .entrada {
   flex: 1;
-  display: grid;
-  grid-template-columns: minmax(320px, 5fr) 7fr;
+  display: flex;
+  flex-direction: column;
   min-height: 100dvh;
   background: var(--fundo);
 }
 
-/* o painel da marca é o tablier: sempre escuro */
+/* a mesma aresta à esquerda para a marca e para o formulário */
+.entrada__coluna {
+  width: min(100% - 2 * var(--e-6), 960px);
+  margin-inline: auto;
+}
+
+/* a faixa de cima é painel de instrumentos: sempre escura */
 .entrada__painel {
-  display: flex;
-  flex-direction: column;
-  gap: var(--e-6);
-  padding: clamp(var(--e-8), 6vw, 72px);
+  padding: clamp(var(--e-6), 5vw, var(--e-12)) 0;
   background: var(--painel);
   color: var(--painel-tinta);
-  border-right: 1px solid var(--painel-linha);
+  border-bottom: 1px solid var(--painel-linha);
+}
+.entrada__coluna--painel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--e-6);
+}
+.entrada__marca {
+  display: grid;
+  gap: var(--e-3);
 }
 .entrada__painel .marca__nome {
   font-size: 1.875rem;
+}
+.entrada__descricao {
+  color: var(--painel-tinta-2);
 }
 
 .entrada__luzes {
   display: flex;
   gap: var(--e-6);
-  margin-top: auto;
+  padding-bottom: 2px;
 }
 /* as luzes vão direitas no grafite, sem aro: apagadas quase não se veem */
 .entrada__luz {
@@ -60,47 +77,18 @@
   12%, 100% { color: var(--cor-luz); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--cor-luz) 55%, transparent)); }
 }
 
-.entrada__lema {
-  font-family: var(--letra-estreita);
-  font-weight: 600;
-  font-size: clamp(2rem, 3.4vw, 2.75rem);
-  line-height: 1.08;
-  max-width: 14ch;
-  text-wrap: balance;
-}
-.entrada__texto {
-  max-width: 38ch;
-  color: var(--painel-tinta-2);
-  font-size: var(--t-corpo-g);
-}
-.entrada__passos {
-  display: grid;
-  gap: var(--e-3);
-  margin: 0;
-  padding-left: 1.2em;
-  color: var(--painel-tinta-2);
-  font-size: var(--t-corpo-g);
-}
-.entrada__passos strong {
-  color: var(--painel-tinta);
-  font-weight: 600;
-}
-.entrada__passos li::marker {
-  color: var(--ambar);
-  font-family: var(--letra-estreita);
-  font-weight: 700;
-}
-
 .entrada__lado {
-  display: grid;
-  place-items: center;
-  padding: var(--e-8) var(--e-6);
+  flex: 1;
+  padding: var(--e-10) 0 var(--e-12);
 }
 .entrada__formulario {
-  width: min(100%, 420px);
+  max-width: 960px;
 }
-.entrada__formulario--largo {
-  width: min(100%, 560px);
+.entrada__formulario > * {
+  max-width: 420px;
+}
+.entrada__formulario--largo > * {
+  max-width: 560px;
 }
 .entrada__titulo {
   font-size: var(--t-ecra);
@@ -111,6 +99,15 @@
 .entrada__alternativa a {
   color: var(--tinta);
   font-weight: 600;
+}
+
+/* o registo em três passos: é mesmo uma sequência, por isso vai numerada */
+.entrada__passos {
+  display: grid;
+  gap: var(--e-1);
+  margin: 0;
+  padding-left: 1.3em;
+  color: var(--tinta-2);
 }
 
 .entrada__grupo {
@@ -155,20 +152,9 @@
   text-underline-offset: 3px;
 }
 
-@media (max-width: 860px) {
-  .entrada {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-  }
-  .entrada__painel {
-    gap: var(--e-4);
-    padding: var(--e-6);
-    border-right: 0;
-    border-bottom: 1px solid var(--painel-linha);
-  }
-  .entrada__luzes {
-    order: 3;
-    margin-top: 0;
+@media (max-width: 600px) {
+  .entrada__coluna {
+    width: min(100% - 2 * var(--e-4), 960px);
   }
   .entrada__luzes {
     gap: var(--e-5);
@@ -177,17 +163,8 @@
     width: 32px;
     height: 32px;
   }
-  .entrada__lema {
-    max-width: none;
-    font-size: 1.75rem;
-  }
-  .entrada__texto,
-  .entrada__passos {
-    font-size: var(--t-corpo);
-  }
   .entrada__lado {
-    place-items: start center;
-    padding: var(--e-6) var(--e-4) var(--e-10);
+    padding: var(--e-6) 0 var(--e-10);
   }
 }
 
@@ -277,7 +254,7 @@
   min-height: 104px;
   padding: var(--e-4) var(--e-5);
   border: 1px solid var(--linha);
-  border-radius: var(--r-painel);
+  border-radius: var(--r-controlo);
   background: var(--superficie);
   color: var(--tinta);
   text-align: left;
