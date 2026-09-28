@@ -120,6 +120,34 @@ Este guia leva-te de um computador sem nada instalado até à Bancada aberta no 
 
 A primeira vez demora mais, porque há programas para instalar e a base de dados para descarregar. Da segunda vez em diante é muito mais rápido: ver [Da próxima vez](#da-próxima-vez).
 
+### No Mac, com um duplo clique
+
+Para experimentar a Bancada num Mac só precisas do **Docker Desktop**. Não é preciso instalar o Node.js nem escrever comandos.
+
+1. Instala o Docker Desktop (passo 1, no macOS) e descarrega o projeto (passo 2).
+2. Abre a pasta do projeto no Finder e faz duplo clique em **`Iniciar Bancada.command`**.
+3. Abre-se uma janela do Terminal que trata de tudo:
+   - abre o Docker Desktop, se estiver fechado;
+   - cria o `.env` com passwords aleatórias;
+   - arranca a base de dados, a API e a interface, em containers;
+   - cria os dados de demonstração (fictícios);
+   - abre o browser em **http://localhost:3000**.
+
+   Da primeira vez demora vários minutos.
+4. Entra com o email e a password que a janela mostra. Das vezes seguintes, a janela pergunta se continuas com os mesmos dados ou se crias dados novos, com uma password nova.
+
+**Para parar**, carrega em Enter nessa janela, ou fecha-a. Os dados ficam guardados para a próxima vez.
+
+A janela também resolve sozinha os problemas mais comuns:
+- o Docker Desktop fechado;
+- um `.env` antigo ou incompleto;
+- uma base de dados criada antes com outra password (pergunta antes de a apagar);
+- containers de outra cópia do projeto.
+
+> **Se o macOS não deixar abrir o ficheiro** ("programador não identificado"): acontece quando o projeto veio num ZIP descarregado pelo browser. Carrega com o botão direito no ficheiro, depois em *Abrir* e outra vez em *Abrir*. Nas versões mais recentes do macOS, vai a *Definições do Sistema* → *Privacidade e segurança*: mais abaixo aparece um botão para o abrir na mesma.
+>
+> **Se o duplo clique abrir o ficheiro num editor de texto** em vez de o correr: no Terminal, na pasta do projeto, escreve `chmod +x "Iniciar Bancada.command"` e tenta outra vez.
+
 ### Início rápido (para quem já tem Docker Desktop, Node.js 22 e Git)
 
 Com o Docker Desktop aberto, num terminal (Terminal no macOS, PowerShell no Windows), um comando de cada vez:
@@ -348,7 +376,7 @@ Não é preciso repetir o `npm install`, o `db:setup` nem o `db:seed`.
 
 ### Alternativa: tudo em containers
 
-Em vez dos passos 5 e 6, o Docker pode correr também a API e a interface já compilada. Serve para experimentar a Bancada sem instalar o Node.js, mas as alterações ao código só aparecem depois de voltar a construir tudo. Precisas na mesma do `.env` do passo 3 (sem Node.js, cria-o à mão). Não uses este modo ao mesmo tempo que os passos 5 e 6: a porta 3000 é a mesma.
+Em vez dos passos 5 e 6, o Docker pode correr também a API e a interface já compilada. Serve para experimentar a Bancada sem instalar o Node.js, mas as alterações ao código só aparecem depois de voltar a construir tudo. Precisas na mesma do `.env` do passo 3 (sem Node.js, cria-o à mão). Não uses este modo ao mesmo tempo que os passos 5 e 6: a porta 3000 é a mesma. No Mac, o [`Iniciar Bancada.command`](#no-mac-com-um-duplo-clique) faz isto tudo com um duplo clique.
 
 ```bash
 docker compose --profile app up -d --build
@@ -459,6 +487,7 @@ Dica: procura nesta página (`Cmd + F` no Mac, `Ctrl + F` no Windows) um pedaço
 ├── CLAUDE.md           memória do projeto para o Claude Code
 ├── AGENTS.md           ponto de entrada para outros agentes (aponta para o AI.md)
 ├── LICENSE             todos os direitos reservados
+├── Iniciar Bancada.command   arranque com duplo clique no Mac (tudo em containers)
 ├── docker-compose.yml
 └── Dockerfile
 ```

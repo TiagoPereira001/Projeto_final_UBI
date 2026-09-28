@@ -49,8 +49,10 @@ services:
       # em http://localhost as cookies não podem ser "Secure"; atrás de HTTPS, apagar esta linha
       COOKIE_SECURE: "false"
       APP_ORIGINS: http://localhost:3000
-    # prepara a base de dados (não mexe no que já existe) e arranca a API
-    command: ["sh", "-c", "node backend/scripts/db-setup.js && node backend/server.js"]
+    # prepara a base de dados (não mexe no que já existe) e arranca a API.
+    # O exec põe a API no lugar do sh: assim recebe o sinal de parar do
+    # docker stop e desliga-se com calma, em vez de ser morta ao fim de 10 s
+    command: ["sh", "-c", "node backend/scripts/db-setup.js && exec node backend/server.js"]
     ports:
       - "127.0.0.1:3000:3000"
 

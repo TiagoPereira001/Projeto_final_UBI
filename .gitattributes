@@ -1,0 +1,2 @@
+# o lançador do macOS tem de ter fins de linha LF, mesmo que seja gravado no Windows
+*.command text eol=lf
