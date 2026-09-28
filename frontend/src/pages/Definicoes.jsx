@@ -129,7 +129,6 @@ function TabletOficina() {
   return (
     <section className="painel painel__corpo tablet-oficina" aria-labelledby="titulo-tablet">
       <h2 className="painel__titulo" id="titulo-tablet">Tablet da oficina</h2>
-      <DeviceTablet size={40} weight="regular" aria-hidden="true" className="tablet-oficina__icone" />
       <p>
         No modo bancada, o tablet fica na oficina e cada mecânico entra com o seu nome e PIN.
         Tudo o que regista fica em nome dele. Se ninguém mexer durante 5 minutos, a sessão termina sozinha.
@@ -143,7 +142,7 @@ function TabletOficina() {
           </BotaoConfirmar>
         </>
       ) : (
-        <Botao variante="primario" icone={DeviceTablet} onClick={ligar} aTrabalhar={aTrabalhar}>
+        <Botao variante="secundario" icone={DeviceTablet} onClick={ligar} aTrabalhar={aTrabalhar}>
           Usar este dispositivo como bancada
         </Botao>
       )}

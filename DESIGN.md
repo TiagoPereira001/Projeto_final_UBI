@@ -17,6 +17,7 @@ colors:
   luz-aguarda: "#ff5a55"
   luz-pronta: "#3ecf74"
   luz-apagada: "#3a3e44"
+  painel-visor: "#07080a"
   chapa: "#f6f6f2"
   chapa-tinta: "#101114"
   chapa-faixa: "#1d48a8"
@@ -97,9 +98,15 @@ typography:
     fontSize: "0.8125rem"
     fontWeight: 500
     lineHeight: 1.3
+  tab:
+    fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
+    fontSize: "1.125rem"
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: "0.01em"
   readout:
     fontFamily: "Barlow Condensed, Barlow, system-ui, sans-serif"
-    fontSize: "1.625rem"
+    fontSize: "1.5rem"
     fontWeight: 600
     lineHeight: 1
     fontFeature: "tnum"
@@ -117,9 +124,10 @@ typography:
     lineHeight: 1
     letterSpacing: "0.06em"
 rounded:
-  chip: "6px"
-  controlo: "10px"
-  painel: "14px"
+  chip: "4px"
+  controlo: "6px"
+  painel: "4px"
+  tablier: "16px"
   chapa: "5px"
   chapa-grande: "7px"
 spacing:
@@ -188,14 +196,14 @@ components:
   tab:
     backgroundColor: "{colors.superficie}"
     textColor: "{colors.tinta-2}"
-    typography: "{typography.label}"
+    typography: "{typography.tab}"
     padding: "0 16px"
     height: "52px"
   tab-active:
     textColor: "{colors.tinta}"
   tablier:
     backgroundColor: "{colors.painel}"
-    rounded: "{rounded.painel}"
+    rounded: "{rounded.tablier}"
   tablier-lamp:
     textColor: "{colors.painel-tinta-2}"
     padding: "16px 20px"
@@ -205,6 +213,12 @@ components:
   tablier-symbol:
     textColor: "{colors.luz-apagada}"
     size: "60px"
+  tablier-readout:
+    backgroundColor: "{colors.painel-visor}"
+    textColor: "{colors.painel-tinta-2}"
+    typography: "{typography.readout}"
+    rounded: "3px"
+    padding: "5px 9px 4px"
   panel:
     backgroundColor: "{colors.superficie}"
     rounded: "{rounded.painel}"
@@ -229,12 +243,12 @@ components:
   pin-key:
     backgroundColor: "{colors.superficie}"
     textColor: "{colors.tinta}"
-    rounded: "{rounded.painel}"
+    rounded: "{rounded.controlo}"
     height: "72px"
   pin-key-enter:
     backgroundColor: "{colors.ambar}"
     textColor: "{colors.ambar-tinta}"
-    rounded: "{rounded.painel}"
+    rounded: "{rounded.controlo}"
     height: "72px"
 ---
 
@@ -252,12 +266,15 @@ A Bancada é desenhada como o painel de instrumentos de um carro. Há uma parte 
 
 O que foi rejeitado de forma explícita: o quadro kanban genérico de colunas, o dashboard de métricas com números gigantes, as lentes e os aros à volta das luzes (fazem-nas parecer botões de uma app e não lâmpadas) e as janelas modais para confirmar.
 
+Em setembro de 2026, a interface foi revista com o plugin `frontend-design` do Claude Code (repositório `anthropics/claude-code`), que lista os sinais mais comuns de uma interface gerada por IA. Saíram os que a Bancada tinha: cartões todos com o mesmo raio, textos de apoio separados por pontos ("Fiat Ducato · célula Rapido · 2021"), ícones que repetiam o nome de cada separador, o ecrã de entrada dividido ao meio com um lema de marketing e dois botões âmbar no mesmo ecrã. O que já era próprio da Bancada ficou (o tablier, as chapas, o âmbar) e ganhou mais peso.
+
 **Key Characteristics:**
 - Painel de instrumentos sempre escuro por cima de uma superfície de trabalho clara ou escura.
 - Luzes de aviso desenhadas de propósito (carro, chave de bocas, pistão, bandeira de xadrez, chave), acesas quando há veículos nesse estado.
 - Matrículas desenhadas como chapas: brancas nos dois temas, com a faixa azul europeia.
 - Um só acento: âmbar para a ação principal, o separador ativo e o filtro ativo.
 - Plano, sem sombras de profundidade: camadas tonais e linhas de 1 px.
+- Cada raio vem de um objeto: o tablier é plástico moldado (16 px), o papel da folha tem os cantos quase direitos (4 px), os botões e os campos são peças de ferramenta (6 px).
 - Alvos de toque de 48 px no mínimo, 56 px nas ações principais e 72 px no teclado do PIN.
 
 ## Colors
@@ -274,7 +291,7 @@ Grafite quase preto no painel, cinzentos frios na superfície de trabalho, âmba
 - **Chapa de matrícula** (`chapa`, `chapa-tinta`, `chapa-faixa`, `chapa-estrelas`): um objeto físico. É branca, com letras pretas, nos dois temas. A faixa é o azul europeu e as estrelas, na chapa grande, são amarelas.
 
 ### Neutral
-- **Grafite do Painel** (`painel`, `painel-2`, `painel-linha`, `painel-aro`, `painel-tinta`, `painel-tinta-2`): barra de topo, tablier, painel da entrada e faixa de topo do tablet partilhado. Igual nos dois temas.
+- **Grafite do Painel** (`painel`, `painel-2`, `painel-linha`, `painel-aro`, `painel-tinta`, `painel-tinta-2`): barra de topo, tablier, faixa de cima dos ecrãs de entrada e faixa de topo do tablet partilhado. Igual nos dois temas. `painel-visor` é o fundo, mais escuro, da janela onde o tablier mostra cada número.
 - **Cinzento Oficina** (`fundo`, `superficie`, `superficie-2`, `realce`): fundo da página, painéis, campos e o realce de linhas premidas. No tema escuro passam para as variantes `-escuro`, sempre mais claras do que o painel para que o tablier se distinga do resto.
 - **Linhas** (`linha`, `linha-forte`): divisórias de 1 px e contornos de campos. `linha-forte` é o contorno dos campos, que tem de passar os 3:1.
 - **Tinta** (`tinta`, `tinta-2`, `tinta-3`): texto principal, secundário e de apoio. Todos passam os 4,5:1 sobre `fundo` e `superficie` nos dois temas.
@@ -303,7 +320,8 @@ Grafite quase preto no painel, cinzentos frios na superfície de trabalho, âmba
 - **Body tablet** (400, 1.125rem, 1.5): textos de apoio lidos à distância (instruções da bancada, dicas).
 - **Label** (600, 0.875rem): etiquetas de campos, nomes de estados, botões compactos.
 - **Caption** (500, 0.8125rem): metadados das linhas (nº da folha, há quanto tempo).
-- **Readout** (Barlow Condensed 600, 1.625rem, 1, algarismos tabulares): o número de veículos por baixo de cada luz do tablier.
+- **Tab** (Barlow Condensed 600, 1.125rem): os nomes dos separadores, na letra das placas, sem ícones.
+- **Readout** (Barlow Condensed 600, 1.5rem, 1, algarismos tabulares): o número de veículos no visor por baixo de cada luz do tablier.
 - **Plate** (Barlow Condensed 600, 1.1875rem, espaçamento 0.06em, algarismos tabulares): o texto da chapa. A chapa grande usa 2rem e o campo de matrícula da nova entrada usa 3rem.
 
 ### Named Rules
@@ -320,9 +338,9 @@ O ecrã principal segue sempre a mesma ordem: o tablier com as quatro luzes, dep
 Pontos de quebra usados:
 - **1024 px**: as linhas do quadro deixam de ter quatro colunas. A chapa fica à esquerda e o estado à direita, com o veículo e a queixa empilhados ao meio.
 - **980 px**: a folha de obra passa a uma coluna (as linhas primeiro, o estado e as notas por baixo).
-- **860 px**: as linhas do histórico reorganizam-se em duas filas e os ecrãs de entrada perdem o painel lateral, que passa para cima.
-- **760 px**: o tablier passa para uma grelha 2×2, com símbolos de 44 px, e a margem do conteúdo desce para 16 px.
-- **600 px**: telemóvel. As linhas das listas empilham-se e as tabelas mostram a quantidade e o preço por baixo da designação.
+- **860 px**: as linhas do histórico reorganizam-se em duas filas.
+- **760 px**: o tablier passa para uma grelha 2×2, com símbolos de 44 px, e a margem do conteúdo desce para 16 px. Os dados da entrada, no cabeçalho da folha, passam a duas colunas.
+- **600 px**: telemóvel. As linhas das listas empilham-se e as tabelas mostram a quantidade e o preço por baixo da designação. Nos ecrãs de entrada, as luzes passam para baixo da marca, com 32 px.
 
 O dispositivo de referência é um tablet na horizontal (1180 × 820), a um ou dois metros do mecânico. O computador do gestor e o telemóvel também são suportados.
 
@@ -344,7 +362,7 @@ A luz de uma lâmpada acesa não conta como elevação. É emissão: `drop-shado
 
 ## Shapes
 
-Há três raios em toda a aplicação. `chip` (6 px) para etiquetas pequenas, `controlo` (10 px) para botões e campos e `painel` (14 px) para painéis, o tablier e as teclas do PIN. As chapas de matrícula têm os seus próprios cantos, mais apertados (5 px na normal, 7 px na grande e 10 px no campo da nova entrada), porque imitam um objeto físico.
+Cada raio vem de um objeto, e não de uma escala de tamanhos. O tablier é o único volume arredondado (`tablier`, 16 px), como o plástico moldado de um painel de instrumentos. Os painéis de conteúdo são papel, com os cantos quase direitos (`painel`, 4 px). Os botões, os campos, as teclas do PIN e os nomes da bancada são peças de ferramenta (`controlo`, 6 px), e as etiquetas pequenas têm 4 px (`chip`). As chapas de matrícula têm os seus próprios cantos (5 px na normal, 7 px na grande e 10 px no campo da nova entrada), porque imitam um objeto físico. Não há pílulas nem cantos de 999 px.
 
 As bordas são sempre de 1 px (`linha` na superfície, `painel-linha` no painel). A barra do separador ativo e a do filtro ativo são iguais: 3 px de âmbar com os cantos de cima arredondados, encostadas ao fundo do elemento. As luzes de estado são círculos perfeitos. Entregue é o único estado que aparece como um anel vazio, porque a folha já saiu da oficina.
 
@@ -364,11 +382,12 @@ Os pictogramas das luzes estão numa grelha de 32 × 32 e usam formas cheias com
 - **Segmentos:** escolhas curtas lado a lado (tipo de veículo, categoria da linha). A opção escolhida fica com contorno âmbar e fundo âmbar a 20%.
 
 ### Cards / Containers
-- **Corner Style:** 14 px.
+- **Corner Style:** 4 px (papel).
 - **Background:** `superficie`, sobre o `fundo` da página.
 - **Shadow Strategy:** nenhuma (ver A Regra do Plano).
 - **Border:** 1 px `linha`. O cabeçalho do painel separa-se do corpo por outra linha.
 - **Internal Padding:** 16 × 20 px no cabeçalho e 20 px no corpo. As linhas das listas têm pelo menos 80 px de altura no quadro.
+- **Uma caixa por ecrã, quando possível.** Na folha de obra, só as linhas ficam em papel; as contas e as notas vão ao lado sem caixa, separadas por uma linha. Os dados da entrada (cliente, entrada, aberto por) ficam em caixas como os campos impressos de uma folha de obra em papel: a etiqueta pequena no canto e o valor por baixo.
 
 ### Inputs / Fields
 - **Style:** fundo `superficie-2`, contorno de 1 px em `linha-forte`, cantos de 10 px, 48 px de altura (56 px na pesquisa do quadro). A etiqueta fica sempre por cima do campo, em Label. O placeholder nunca substitui a etiqueta.
@@ -376,12 +395,14 @@ Os pictogramas das luzes estão numa grelha de 32 × 32 e usam formas cheias com
 - **Error / Disabled:** contorno `erro` e a mensagem por baixo em `erro`, com peso 500. O erro geral do formulário aparece num bloco no fim, antes do botão.
 
 ### Navigation
-- **Barra de topo:** sempre grafite, 64 px. À esquerda a marca e o nome da oficina, à direita quem está a trabalhar, o botão de tema e Sair. No tablet partilhado, Sair passa a "Terminar", com contorno âmbar.
-- **Separadores:** Oficina, Histórico, Clientes e Veículos, mais Equipa e Definições para o gestor. Ficam numa faixa `superficie` com 52 px de altura, com ícone e texto em Label. O ativo fica com o texto em `tinta` e a barra âmbar de 3 px por baixo. Em ecrãs estreitos a faixa faz scroll na horizontal.
+- **Barra de topo:** sempre grafite, 64 px. À esquerda a marca e o nome da oficina, à direita o nome de quem está a trabalhar, o botão de tema e Sair. No tablet partilhado aparece "no tablet da oficina" por baixo do nome, e Sair passa a "Terminar", com contorno âmbar.
+- **Separadores:** Oficina, Histórico, Clientes e Veículos, mais Equipa e Definições para o gestor. Ficam numa faixa `superficie` com 52 px de altura, só com o nome, em Tab (a letra das placas). O ativo fica com o texto em `tinta` e a barra âmbar de 3 px por baixo. Em ecrãs estreitos a faixa faz scroll na horizontal.
+- **Ecrãs de entrada** (Entrar e Registar): uma faixa grafite em cima, com a marca e uma frase a dizer o que é a Bancada à esquerda e as quatro luzes do tablier à direita, que fazem o autoteste de quando se roda a chave. O formulário fica por baixo, na superfície de trabalho, alinhado pela mesma aresta da marca. Não há lema de marketing nem ecrã dividido ao meio.
 
 ### Tablier (componente de assinatura)
 O painel de luzes da oficina: uma luz por estado ativo (Abertas, Em curso, Aguardam peças, Prontas), numa faixa grafite de 4 colunas separadas por linhas de 1 px.
 - **Luz:** o pictograma de 60 px desenhado diretamente no grafite, seguido do nome (Body, 600) e da leitura do número (Readout). A luz nunca é mais pequena do que o número.
+- **Visor:** o número aparece numa janela funda no painel (`painel-visor`, contorno de 1 px em `painel-linha`, cantos de 3 px), alinhado à direita, como o do computador de bordo. Enquanto a lista carrega, o visor mostra "--".
 - **Apagada / acesa:** apagada, o símbolo fica em `luz-apagada` e o texto em `painel-tinta-2`. Acesa (há veículos), o símbolo passa para a cor do estado com emissão e o texto para `painel-tinta`.
 - **Movimento:** logo a seguir a alguém entrar (com password ou PIN) ou à app abrir, as quatro luzes fazem o autoteste de um carro ao rodar a chave. Acendem por ordem, com 110 ms entre cada uma, e ao fim de 1,8 s ficam acesas só as que têm veículos. Acontece uma vez por entrada: voltar ao quadro depois de ver uma folha mostra logo as luzes como estão (a lista fica em memória até a sessão mudar). Quando um estado passa de 0 para 1 ou mais, a luz acende com um cintilar de 0,8 s. As duas animações desaparecem com `prefers-reduced-motion`.
 - **Toque:** tocar numa luz filtra a lista. A luz escolhida fica com o fundo um pouco mais claro e a barra âmbar por baixo, e tocar outra vez tira o filtro. Até 1024 px os nomes reservam duas linhas, para os quatro números ficarem alinhados mesmo quando "Aguardam peças" se parte. Com menos de 760 px a grelha passa a 2×2, com símbolos de 44 px.
@@ -416,6 +437,7 @@ A marca é a "luz indicadora": uma lâmpada âmbar dentro de um aro escuro, num 
 - **Do** usar algarismos tabulares (`.num`) em euros, quantidades, horas e quilómetros.
 - **Do** usar os pictogramas de `Luzes.jsx` para os estados. Os ícones Phosphor servem para ações e navegação e são gerados só com os pesos usados (`npm run icones`).
 - **Do** escrever o texto da interface em português de Portugal, sem travessões: usar dois pontos, vírgulas ou parênteses.
+- **Do** escrever os dados de apoio como frases ou pô-los em colunas próprias: "Fiat Ducato, célula Rapido, de 2021", "Mão de obra, por Carlos Mendes", "entrou há 4 dias".
 - **Do** verificar os dois temas e os 1180 × 820 do tablet antes de dar um ecrã por acabado.
 
 ### Don't:
@@ -428,3 +450,4 @@ A marca é a "luz indicadora": uma lâmpada âmbar dentro de um aro escuro, num 
 - **Don't** pintar de vermelho um botão em repouso. O vermelho cheio só aparece no passo de confirmação.
 - **Don't** carregar fontes ou scripts de CDNs. A CSP só aceita `'self'` e a Barlow vem da própria aplicação.
 - **Don't** criar um segundo botão âmbar no mesmo ecrã.
+- **Don't** juntar dados com pontos ("A · B · C"), pôr ícones que repetem o nome de um separador, usar pílulas (cantos de 999 px) ou dar o mesmo raio a tudo.

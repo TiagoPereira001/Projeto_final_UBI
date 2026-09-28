@@ -69,9 +69,12 @@ export default function Folhas() {
                   <Matricula valor={f.veiculo.matricula} />
                   <span className="linha-historico__texto">
                     <span className="linha-historico__titulo">{descreverVeiculo(f.veiculo)}</span>
-                    <span className="linha-historico__sub">{f.cliente.nome} · {data(f.dataEntrada)}</span>
+                    <span className="linha-historico__sub">{f.cliente.nome}</span>
                   </span>
-                  <EstadoFolha estado={f.estado} />
+                  <span className="linha-historico__estado">
+                    <EstadoFolha estado={f.estado} />
+                    <span className="linha-historico__data num">entrou a {data(f.dataEntrada)}</span>
+                  </span>
                   <span className="linha-historico__valor num">{euros(f.subtotal)}</span>
                 </Link>
               </li>

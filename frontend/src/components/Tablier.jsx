@@ -82,7 +82,7 @@ export function Tablier({ contagens, filtro, aoEscolher, aCarregar = false }) {
             <span className="tablier__leitura">
               <span className="tablier__nome">{estado.tablier}</span>
               <span className="tablier__numero num">
-                {aCarregar ? '·' : numero}
+                {aCarregar ? '--' : numero}
                 <span className="so-leitores">{numero === 1 ? ' veículo' : ' veículos'}</span>
               </span>
             </span>

@@ -70,7 +70,7 @@ export default function Veiculos() {
                   <Matricula valor={v.matricula} />
                   <span className="linha-veiculo__texto">
                     <span className="linha-veiculo__titulo">{descreverVeiculo(v)}</span>
-                    <span className="linha-veiculo__sub">{nomeTipo(v.tipo)} · {v.cliente.nome}</span>
+                    <span className="linha-veiculo__sub">{nomeTipo(v.tipo)} de {v.cliente.nome}</span>
                   </span>
                   {v.folhaAtiva ? <EstadoFolha estado={v.folhaAtiva.estado} /> : <span className="linha-veiculo__fora">Fora da oficina</span>}
                 </Link>
