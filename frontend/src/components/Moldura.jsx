@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { Gauge, ClockCounterClockwise, Users, Car, UsersThree, Gear, SignOut, Moon, Sun } from './icones';
+import { SignOut, Moon, Sun } from './icones';
 import { useSessao } from '../context/SessaoContext';
 import { useBloqueioPorInatividade } from '../lib/useBloqueioPorInatividade';
 import { alternarTema, temaAtual } from '../lib/tema';
-import { nomeCargo } from '../lib/formatar';
 import { Marca } from './Marca';
 
 const MINUTOS_ATE_BLOQUEAR = 5;
@@ -28,14 +27,14 @@ export function Moldura() {
   useBloqueioPorInatividade(noTablet, MINUTOS_ATE_BLOQUEAR, terminar);
 
   const separadores = [
-    { para: '/', nome: 'Oficina', icone: Gauge, fim: true },
-    { para: '/folhas', nome: 'Histórico', icone: ClockCounterClockwise, fim: true },
-    { para: '/clientes', nome: 'Clientes', icone: Users },
-    { para: '/veiculos', nome: 'Veículos', icone: Car },
+    { para: '/', nome: 'Oficina', fim: true },
+    { para: '/folhas', nome: 'Histórico', fim: true },
+    { para: '/clientes', nome: 'Clientes' },
+    { para: '/veiculos', nome: 'Veículos' },
     ...(gestor && !noTablet
       ? [
-        { para: '/equipa', nome: 'Equipa', icone: UsersThree },
-        { para: '/definicoes', nome: 'Definições', icone: Gear },
+        { para: '/equipa', nome: 'Equipa' },
+        { para: '/definicoes', nome: 'Definições' },
       ]
       : []),
   ];
@@ -53,7 +52,7 @@ export function Moldura() {
           <div className="topo__quem">
             <span className="topo__pessoa">
               <span className="topo__nome">{colaborador.nome}</span>
-              <span className="topo__cargo">{nomeCargo(colaborador.cargo)}{noTablet ? ' · no tablet' : ''}</span>
+              {noTablet && <span className="topo__cargo">no tablet da oficina</span>}
             </span>
             <button
               type="button"
@@ -72,9 +71,8 @@ export function Moldura() {
         </div>
 
         <nav className="separadores" aria-label="Secções">
-          {separadores.map(({ para, nome, icone: Icone, fim }) => (
+          {separadores.map(({ para, nome, fim }) => (
             <NavLink key={para} to={para} end={fim} className="separadores__item">
-              <Icone size={20} aria-hidden="true" />
               {nome}
             </NavLink>
           ))}

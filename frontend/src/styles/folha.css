@@ -37,10 +37,25 @@
   }
 }
 
+/* os dados da entrada em caixas, como os campos impressos de uma folha de
+   obra em papel: a etiqueta pequena no canto e o valor por baixo */
 .folha__factos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--e-3) var(--e-8);
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr) minmax(0, 1fr);
+  border: 1px solid var(--linha);
+  border-radius: var(--r-painel);
+  background: var(--superficie);
+}
+.folha__factos > div {
+  display: grid;
+  align-content: start;
+  gap: var(--e-1);
+  min-width: 0;
+  padding: var(--e-3) var(--e-4);
+  border-left: 1px solid var(--linha);
+}
+.folha__factos > div:first-child {
+  border-left: 0;
 }
 .folha__factos dt {
   font-size: var(--t-legenda);
@@ -54,6 +69,20 @@
   gap: var(--e-1) var(--e-3);
   font-weight: 500;
 }
+@media (max-width: 760px) {
+  .folha__factos {
+    grid-template-columns: 1fr 1fr;
+  }
+  .folha__factos > div:first-child {
+    grid-column: 1 / -1;
+  }
+  .folha__factos > div:nth-child(2) {
+    border-left: 0;
+  }
+  .folha__factos > div + div {
+    border-top: 1px solid var(--linha);
+  }
+}
 .folha__factos dd a {
   color: var(--tinta);
   font-weight: 600;
@@ -65,7 +94,7 @@
   min-height: var(--toque);
   padding: 0 var(--e-3);
   border: 1px solid var(--linha);
-  border-radius: 999px;
+  border-radius: var(--r-controlo);
   background: var(--superficie);
   text-decoration: none;
 }
@@ -141,9 +170,21 @@
 }
 .folha__lado {
   display: grid;
-  gap: var(--e-5);
+  gap: var(--e-6);
   position: sticky;
   top: 140px;
+}
+/* a folha é uma só: as linhas ficam no papel; as contas e as notas vão ao
+   lado, sem caixa, separadas por uma linha */
+.folha__lado > .painel {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+.folha__lado > .painel + .painel {
+  padding-top: var(--e-6);
+  border-top: 1px solid var(--linha);
 }
 
 /* tabela de linhas */
@@ -280,6 +321,12 @@
   .folha__lado {
     position: static;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    padding-top: var(--e-5);
+    border-top: 1px solid var(--linha);
+  }
+  .folha__lado > .painel + .painel {
+    padding-top: 0;
+    border-top: 0;
   }
 }
 

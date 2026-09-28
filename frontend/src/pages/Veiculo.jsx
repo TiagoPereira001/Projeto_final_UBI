@@ -49,8 +49,9 @@ export default function Veiculo() {
         <Matricula valor={v.matricula} tamanho="grande" />
         <div>
           <h1 className="cabecalho__titulo">{descreverVeiculo(v)}</h1>
+          <p className="ficha-veiculo__sub">{nomeTipo(v.tipo)}{v.ano ? ` de ${v.ano}` : ''}</p>
           <p className="ficha-veiculo__sub">
-            {nomeTipo(v.tipo)}{v.ano ? ` de ${v.ano}` : ''} · <Link to={`/clientes/${v.cliente.id}`}>{v.cliente.nome}</Link>
+            Cliente: <Link to={`/clientes/${v.cliente.id}`}>{v.cliente.nome}</Link>
           </p>
         </div>
         <div className="ficha-veiculo__acoes">

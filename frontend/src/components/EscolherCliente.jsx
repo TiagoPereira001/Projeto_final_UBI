@@ -24,7 +24,7 @@ export function EscolherCliente({ valor, aoMudar, erro }) {
         <div>
           <span className="campo__etiqueta">Cliente</span>
           <p className="escolher-cliente__nome">{valor.nome}</p>
-          <p className="escolher-cliente__detalhe num">{valor.telefone}{valor.nif ? ` · NIF ${valor.nif}` : ''}</p>
+          <p className="escolher-cliente__detalhe num">{valor.telefone}{valor.nif ? `, NIF ${valor.nif}` : ''}</p>
         </div>
         <Botao variante="fantasma" onClick={() => aoMudar(null)}>Trocar</Botao>
       </div>
