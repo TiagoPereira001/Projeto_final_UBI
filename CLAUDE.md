@@ -102,6 +102,16 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - Resolve sozinho: container de outra cópia ou o `dr_oficina_sql` antigo, `.env` incompleto, password fraca (recomeça), password diferente da do primeiro arranque (pede APAGAR). Deteta-os nos registos do SQL Server: `Password did not match` e `Password validation failed` (não serve procurar só `Login failed for user 'sa'`, que também aparece num arranque normal).
   - Testado em Linux, num terminal simulado, em oito cenários; o `shellcheck` passa e a sintaxe foi verificada com o bash 3.2 (o do macOS). Os passos próprios do macOS (`open -a Docker`, o Finder, o Gatekeeper) não se testaram aqui.
   - O `docker-compose.yml` passou a arrancar a API com `exec`: recebe o sinal do `docker stop` e para em 0 s. O SQL Server continua a ser parado à força ao fim de 10 s (o `launch_sqlservr.sh` da imagem não passa o sinal).
+- Reauditoria de 28/09/2026 (secção 14 de `docs/auditoria.md`), a pedido do autor, que voltou a enviar o mesmo guião de auditoria:
+  - todos os scripts repetidos sobre a versão nova: mesmos resultados na API e no browser, 0 violações axe;
+  - achados novos e corrigidos: QA-005 (a data do histórico transbordava 39 px a 390 px, vinha do redesenho), SEC-009 (`criar-env.js` criava o `.env` legível por todos: agora 600), REL-005 (uma cópia restaurada noutro servidor deixava a API sem entrar: o `db:setup` religa o utilizador órfão), REL-006 (o registo de transações crescia sem limite em modo FULL: o `db:setup` cria as bases novas em SIMPLE);
+  - SEC-010 (o container da API recebe a password do `sa`) fica aberto no compose local e resolvido na proposta de produção; os achados de 27/09 continuam todos abertos.
+- Infraestrutura e publicação em `docs/infraestrutura.md`, a pedido do autor (guião de arquitetura de cloud e DevOps). **A Bancada continua sem estar publicada.** Proposta validada numa cópia em `localhost`, com o SQL Server Express e o Caddy a sério:
+  - `docker-compose.prod.yml` e `infra/` (Caddyfile, `deploy.sh`, `backup.sh`, `restaurar.sh`, `restauro-teste.sh`, `fumo.sh`), ainda não em uso;
+  - medido: cópia verificada, comprimida e cifrada em 2,7 s (1,9 MB); simulacro de perda total recuperado em 17 s com dados idênticos; primeira publicação em 42 s; publicação normal 9 s (1,7 s sem resposta); retrocesso automático; a Express corre os 52 testes;
+  - a edição Developer (omissão da imagem) só serve para desenvolver: em produção, Express. Na Express não há compressão de cópias, TDE, cópias cifradas nem SQL Agent (testado);
+  - RPO e RTO estão por definir com o cliente (perguntas na secção 15). Não há preços nem servidor reais: NÃO VERIFICADO;
+  - o CI ganhou um terceiro trabalho (shellcheck, `docker compose config` e construção da imagem).
 - Este trabalho entrou no `dev` por PRs do ramo `claude/ecstatic-lamport-81qsk8`: o #1 (plataforma, interface, testes e documentação), o #2 (documento das ferramentas), o #3 (auditoria), o #4 e o #7 (memória), o #5 (licença e aviso), o #8 (revisão de código) e o do guia de arranque. A 27/09/2026 o `dev` passou para o `main` pelo PR #6, com o merge feito pelo autor. O que entrou no `dev` depois disso (do #7 em diante) só aparece na página do GitHub quando o `dev` voltar a passar para o `main`, e isso tem de ser pedido ao autor.
 
 **Por fazer** (sugestões, nada disto existe):
@@ -114,6 +124,7 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 7. Integração com programas de faturação certificados; política de privacidade e contratos RGPD.
 8. Atualizar as capturas do relatório (`Relatorio/Anexos/ecras/`) para a interface revista a 28/09/2026 e recompilar o PDF.
 9. Corrigir os achados da auditoria (secção 10 de `docs/auditoria.md`, primeiro REL-001 e REL-003) e da revisão de código (secção 14 de `docs/revisao-codigo.md`, primeiro BUG-01 e BUG-02), e passar os percursos no browser para testes E2E no CI.
+10. Publicar a sério, seguindo `docs/infraestrutura.md`: servidor, domínio, certificado, cron das cópias, cópia fora do servidor e guardar a chave privada do `age`. Antes, migrações da base de dados e a resposta do cliente sobre RPO e RTO.
 
 ## Registo
 
@@ -138,3 +149,6 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - no Mac do autor, o `db:setup` dava `Login failed for user 'sa'`: o volume `sql_dados` de junho/julho (mesmo nome no compose antigo) guardava a password antiga do `sa`. Solução: `docker compose down -v` e `docker rm -f dr_oficina_sql`;
   - interface revista com o plugin `frontend-design` (anthropics/claude-code), a pedido do autor;
   - `Iniciar Bancada.command`: arranque com duplo clique no macOS, para testes.
+- **28 e 29/09/2026**:
+  - o autor enviou de novo o guião de auditoria (igual ao anterior, por isso reauditoria) e um guião novo de arquitetura de cloud e DevOps;
+  - reauditoria e `docs/infraestrutura.md` (ver o Estado atual), com os scripts e o compose de produção validados numa cópia.

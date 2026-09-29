@@ -46,6 +46,14 @@ coverage/
 *.lol
 
 # ==============================
+# 4b. Cópias de segurança da base de dados (têm dados pessoais: nunca no git)
+# ==============================
+copias/
+*.bak
+*.trn
+*.age
+
+# ==============================
 # 5. Editores e Sistema Operativo
 # ==============================
 .vscode/
