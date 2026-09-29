@@ -28,11 +28,13 @@ Projeto final de licenciatura (Informática Web, Móvel e na Nuvem, UBI) do Tiag
 ├── Iniciar Bancada.command    arranque para testes com duplo clique no macOS (bash 3.2, tudo em containers)
 ├── docker-compose.yml         SQL Server (e, com --profile app, a app completa)
 ├── Dockerfile                 imagem de produção: API + frontend compilado
+├── docker-compose.prod.yml    PROPOSTA de instalação num servidor (Caddy + API + SQL Server Express); ainda não está em uso
+├── infra/                     PROPOSTA: Caddyfile e scripts (deploy, backup, restaurar, restauro-teste, fumo). Ver docs/infraestrutura.md
 ├── .env.example               todas as variáveis de ambiente, explicadas
-├── .github/workflows/ci.yml   CI: testes da API contra SQL Server + lint e build do frontend
+├── .github/workflows/ci.yml   CI: testes da API contra SQL Server, lint e build do frontend, e validação dos scripts, do compose e da imagem
 ├── .claude/skills/            skills de design (impeccable, taste-skill) para agentes
 ├── .impeccable/surfaces/      contrato de direção visual do ecrã principal
-├── docs/                      análise de segurança, performance e viabilidade; auditoria (auditoria.md + scripts); revisão de código e dívida técnica (revisao-codigo.md + provas); imagens (o aviso do README gera-se com imagens/gerar-aviso.mjs)
+├── docs/                      análise de segurança, performance e viabilidade; auditoria (auditoria.md + scripts, com a reauditoria de 28/09 na secção 14); infraestrutura e publicação (infraestrutura.md); revisão de código e dívida técnica (revisao-codigo.md + provas); imagens (o aviso do README gera-se com imagens/gerar-aviso.mjs)
 ├── Relatorio/                 relatório e documento das ferramentas em LaTeX (.tex + .pdf) e anexos
 ├── backend/                   API REST (Node.js 22 + Express 5 + SQL Server)
 │   ├── server.js              arranque do servidor e encerramento limpo
@@ -52,7 +54,7 @@ Projeto final de licenciatura (Informática Web, Móvel e na Nuvem, UBI) do Tiag
 │   │   └── erros.js           respostas de erro em JSON, sem detalhes internos
 │   ├── routes/                uma rota por recurso (ver tabela "API" abaixo)
 │   ├── scripts/criar-env.js   cria o .env com passwords e JWT_SECRET aleatórios (nunca substitui um que exista)
-│   ├── scripts/db-setup.js    cria a BD, as tabelas e o login da API (permissões mínimas)
+│   ├── scripts/db-setup.js    cria a BD (em modo SIMPLE), as tabelas e o login da API (permissões mínimas); volta a ligar o utilizador órfão de uma cópia restaurada
 │   ├── scripts/seed.js        Duarte & Raposo com dados de demonstração FICTÍCIOS
 │   └── test/                  testes node:test contra SQL Server real
 └── frontend/                  React 19 + Vite 8 (PWA)

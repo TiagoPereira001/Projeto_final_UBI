@@ -1,7 +1,7 @@
 name: CI
 
 # corre em cada push para main/dev e em cada pull request.
-# um PR só deve ser aceite com os dois trabalhos a verde.
+# um PR só deve ser aceite com os três trabalhos a verde.
 on:
   push:
     branches: [main, dev]
@@ -75,3 +75,25 @@ jobs:
       - run: npm audit --omit=dev --audit-level=high
       - run: npm run lint
       - run: npm run build
+
+  infraestrutura:
+    name: Infraestrutura (scripts, compose e imagem)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Scripts de shell
+        run: shellcheck -x infra/*.sh "Iniciar Bancada.command"
+
+      # o compose exige as variáveis para aceitar o ficheiro: usam-se valores
+      # gerados na hora (nada escrito no repositório) e só para validar
+      - name: Ficheiros do Docker Compose
+        run: |
+          export DB_ADMIN_PASSWORD="$(openssl rand -hex 12)" DB_PASSWORD="$(openssl rand -hex 12)"
+          export JWT_SECRET="$(openssl rand -hex 24)" DOMINIO=bancada.exemplo.pt
+          docker compose -f docker-compose.yml config -q
+          docker compose -f docker-compose.prod.yml config -q
+
+      - name: A imagem da aplicação constrói-se
+        run: docker build -t bancada-app:ci .

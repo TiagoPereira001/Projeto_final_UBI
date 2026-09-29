@@ -42,5 +42,6 @@ for (const [nome, valor] of Object.entries(valores)) {
     texto = texto.replace(linha, `${nome}=${valor}$1`);
 }
 
-fs.writeFileSync(destino, texto);
+// só o dono do ficheiro o pode ler (600): tem as passwords da base de dados
+fs.writeFileSync(destino, texto, { mode: 0o600 });
 console.log('Criei o .env com passwords e um JWT_SECRET novos, só para este computador.');

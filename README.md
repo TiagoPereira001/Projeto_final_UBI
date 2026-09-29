@@ -462,14 +462,15 @@ Dica: procura nesta página (`Cmd + F` no Mac, `Ctrl + F` no Windows) um pedaço
 | [`AI.md`](AI.md) | mapa do código para agentes de IA (e pessoas): regras que não se podem partir, API, comandos |
 | [`CLAUDE.md`](CLAUDE.md) | memória do projeto para o Claude Code: decisões tomadas, preferências, estado atual |
 | [`docs/analise.md`](docs/analise.md) | análise de segurança, desempenho e viabilidade |
-| [`docs/auditoria.md`](docs/auditoria.md) | auditoria de qualidade, segurança, desempenho e acessibilidade (27/09/2026), com os scripts para a repetir |
+| [`docs/auditoria.md`](docs/auditoria.md) | auditoria de qualidade, segurança, desempenho e acessibilidade (27/09/2026, repetida a 28/09/2026 na secção 14), com os scripts para a repetir |
+| [`docs/infraestrutura.md`](docs/infraestrutura.md) | infraestrutura e publicação: proposta validada numa cópia (HTTPS, SQL Server Express, cópias de segurança, restauro, retrocesso). A Bancada ainda não está publicada |
 | [`docs/revisao-codigo.md`](docs/revisao-codigo.md) | revisão de código e dívida técnica (27/09/2026): bugs encontrados, plano de refatoração por fases e exemplos validados, com as provas |
 | [`Relatorio/`](Relatorio/) | relatório do projeto e documento das ferramentas usadas (e porquê), em LaTeX, com os PDF compilados |
 
 ## Fluxo de trabalho
 
 - **Ramos:** `main` é a versão estável, `dev` é a integração, e cada tarefa tem o seu ramo, que entra no `dev` por pull request.
-- **CI:** em cada pull request, o GitHub Actions corre os testes da API contra um SQL Server e o lint + build do frontend, e a GitGuardian procura segredos. Um PR só entra com tudo verde.
+- **CI:** em cada pull request, o GitHub Actions corre os testes da API contra um SQL Server o lint + build do frontend, e valida os scripts, os ficheiros do Docker Compose e a construção da imagem. A GitGuardian procura segredos. Um PR só entra com tudo verde.
 - **Antes de enviar:** `npm test` no backend e `npm run lint && npm run build` no frontend.
 
 ## Estrutura
@@ -478,7 +479,8 @@ Dica: procura nesta página (`Cmd + F` no Mac, `Ctrl + F` no Windows) um pedaço
 .
 ├── backend/            API REST (rotas, middleware, validação, scripts da BD, testes)
 ├── frontend/           React + Vite (PWA): páginas, componentes, estilos
-├── docs/               análise de segurança, desempenho e viabilidade; imagens
+├── docs/               análise de segurança, desempenho e viabilidade; auditoria; infraestrutura; imagens
+├── infra/              proposta de publicação num servidor: Caddyfile e scripts (ainda não em uso)
 ├── Relatorio/          relatório e documento das ferramentas, em LaTeX, e anexos
 ├── .github/workflows/  integração contínua
 ├── PRODUCT.md          o produto
@@ -489,6 +491,7 @@ Dica: procura nesta página (`Cmd + F` no Mac, `Ctrl + F` no Windows) um pedaço
 ├── LICENSE             todos os direitos reservados
 ├── Iniciar Bancada.command   arranque com duplo clique no Mac (tudo em containers)
 ├── docker-compose.yml
+├── docker-compose.prod.yml   proposta para um servidor (ainda não em uso)
 └── Dockerfile
 ```
 

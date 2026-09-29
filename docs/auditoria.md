@@ -8,12 +8,15 @@ Esta auditoria foi feita pelo Claude Code (assistente de programação com IA), 
 
 Tudo o que aqui aparece como resultado foi **medido**. O que não foi possível medir está marcado como **NÃO VERIFICADO**, com o teste exato que falta fazer. Os scripts usados estão em [`docs/auditoria/scripts/`](auditoria/scripts/), prontos a repetir.
 
+> **Atualizada a 28 de setembro de 2026.** O autor voltou a enviar o mesmo guião depois de a interface ter sido redesenhada e de entrar o lançador para o Mac. Os testes todos foram repetidos sobre a versão nova: os resultados, quatro achados novos (já corrigidos) e um por corrigir estão na [secção 14](#14-reauditoria-de-28092026).
+
 ## Como ler este documento
 
 1. O [resumo](#2-resumo) diz o essencial em meia página.
 2. Os [achados](#4-achados) têm o formato pedido: severidade, evidência, impacto, recomendação e como validar a correção. Os principais trazem também uma caixa **Para aprender**: o conceito por trás, porque acontece e como o reconhecer noutro projeto.
 3. As secções 5 a 9 têm os números (desempenho, acessibilidade, fiabilidade, automação).
 4. A secção [13](#13-para-aprenderes-com-esta-auditoria) tem exercícios para fazeres sozinho e as perguntas que um júri pode fazer.
+5. A secção [14](#14-reauditoria-de-28092026) é a reauditoria de 28/09: o que mudou desde a primeira e o estado de cada achado.
 
 Cada achado diz também de que **tipo** é, porque não são todos iguais:
 - **bug**: o comportamento está errado;
@@ -735,3 +738,141 @@ Para cada uma, o sítio onde está a resposta. A explicação deve ser tua.
 | E se a base de dados for abaixo a meio do dia? | testes E01 a E03 |
 | Porque é que o PIN chega para trabalhar mas não para gerir a equipa? | `exigirEntradaComPassword`; teste R02 |
 | O que falta para pôr isto online? | [SEC-007](#sec-007) e a secção 12 |
+
+---
+
+## 14. Reauditoria de 28/09/2026
+
+**Porquê.** A 28/09 o autor enviou outra vez o mesmo guião de auditoria técnica (igual byte a byte ao de 27/09). Desde o commit `7856129` mudaram três coisas:
+- a interface foi redesenhada (PR #10);
+- entrou o lançador `Iniciar Bancada.command` (PR #11);
+- entraram o `criar-env.js` (PR #9) e o `exec` no arranque da API no `docker-compose.yml`.
+
+A API não mudou (só o `db-setup.js`, nesta reauditoria). Em vez de refazer o documento, repeti **todos** os scripts da auditoria sobre a versão nova, com as mesmas versões das ferramentas (Playwright 1.63.0, axe-core 4.13.0, Lighthouse 12.8.2), e revi à mão o código novo. Também li os registos do SQL Server e testei uma cópia de segurança e o restauro, para o documento de infraestrutura ([`docs/infraestrutura.md`](infraestrutura.md)). Foi aí que apareceram o [REL-005](#rel-005) e o [REL-006](#rel-006).
+
+**Versão testada:** ramo `dev` no commit `b185a60`, mais as correções desta reauditoria. Mesma máquina (container com 4 CPUs), mesma forma de correr (API em modo produção a servir o frontend compilado).
+
+### 14.1 Resultados, lado a lado
+
+| Conjunto | 27/09 | 28/09 |
+|---|---|---|
+| API: funcional, segurança, isolamento, concorrência e contas (`api-funcional.mjs`, 58 verificações) | 50 passam, 8 informativas | **igual**, verificação a verificação |
+| Falhas e limites (`api-falhas.mjs`, 5) | 4 passam, 1 informativa (E02) | **igual** (SQL Server parado: 503/500; recupera sozinha em 6 s) |
+| XSS, teclado, PIN, bloqueio do tablet, consola (`auditoria-browser.mjs`) | passam | **passam** |
+| axe (WCAG 2.2 AA), 13 ecrãs, temas claro e escuro | 0 violações | **0 violações** |
+| Transbordo em 390, 820, 1180 e 1440 px | só o caso artificial de [QA-003](#qa-003) | um transbordo **novo**, do redesenho ([QA-005](#qa-005)), corrigido; depois da correção, só QA-003 |
+| Alvos de toque no tablet | [A11Y-001](#a11y-001) | igual |
+| Sem rede ao abrir ([REL-003](#rel-003)) | falha | falha (por corrigir) |
+| Ficheiro JS em falta ([REL-001](#rel-001), [REL-002](#rel-002)) | falha | falha (por corrigir) |
+| Interação no tablet, CPU 4x mais lento (`interacoes.mjs`) | máximo 104 ms, CLS 0,034 | máximo **80 ms**, CLS **0,023** |
+| JavaScript no arranque (gzip) | 121,4 KB | **119,7 KB** (saíram 6 ícones) |
+| CSS principal (gzip) | 8,4 KB | 8,5 KB |
+| `npm audit` (API e frontend, com e sem dependências de desenvolvimento) | 0 | **0** |
+
+**Lighthouse** (três corridas por cenário; a variação entre corridas é grande no TBT):
+
+| Cenário | 27/09 | 28/09 |
+|---|---|---|
+| Entrada, telemóvel | FCP 2,5 s, LCP 2,6 s, TBT 220 ms | FCP 1,9 a 2,2 s, LCP 1,9 a 2,3 s, TBT 30 a 80 ms |
+| Entrada, computador | FCP 0,5 s, LCP 0,6 s, TBT 0 | FCP 0,6 s, LCP 0,6 s, TBT 0 (uma corrida) |
+| Quadro, tablet com sessão | FCP 1,9 s, LCP 3,2 s, TBT 80 ms, CLS 0,027 | FCP 1,9 s, LCP 3,1 a 3,2 s, TBT 70 a 200 ms, CLS 0,029 a 0,088 |
+
+O CLS do quadro chegou a 0,088 numa das três corridas: continua abaixo de 0,1 (o limite do "bom"), mas é o valor a vigiar. [PERF-003](#perf-003) mantém-se: a lista aparece aos 3,1 a 3,2 s com rede lenta simulada.
+
+**Carga com 5 anos de dados** (`carga.mjs`, a mesma oficina fictícia): mesma ordem de grandeza. Por exemplo, com 10 em simultâneo, o quadro teve p50 de 238 ms (antes 251 ms) e o histórico, página 1, 695 ms (antes 607 ms). Com 50 em simultâneo: 1055 ms e 3323 ms (antes 1125 ms e 2884 ms). Continua sem erros nem pedidos perdidos. As consultas não mudaram, por isso [PERF-001](#perf-001) e [PERF-002](#perf-002) continuam abertos.
+
+### 14.2 Achados novos
+
+#### QA-005
+**A data do histórico transbordava 39 px no telemóvel**
+
+| | |
+|---|---|
+| Severidade | BAIXA · bug · confirmado (RSP1) · **CORRIGIDO** nesta reauditoria |
+| Local | `frontend/src/styles/gestao.css`, `.linha-historico__estado` (a 600 px ou menos) |
+| Descrição | O redesenho de 28/09 pôs a data de entrada ("entrou a 24/09/2026") ao lado do estado. A 390 px, "A aguardar peças" e a data não cabem na mesma linha, e a página passava a ter scroll na horizontal. |
+| Evidência | `auditoria-browser.mjs`: `390px /folhas +39px span.linha-historico__data`. |
+| Correção | O estado e a data ficam lado a lado se couberem; senão a data passa para baixo (`flex-wrap`). |
+| Validação | `auditoria-browser.mjs` outra vez: o `/folhas` a 390 px já não aparece no RSP1 (só fica o caso artificial de [QA-003](#qa-003)). |
+
+#### SEC-009
+**O `criar-env.js` gravava o `.env` legível por todos os utilizadores do computador**
+
+| | |
+|---|---|
+| Severidade | BAIXA · preventiva · confirmado · **CORRIGIDO** nesta reauditoria |
+| Local | `backend/scripts/criar-env.js` |
+| Descrição | O `.env` tem as passwords da base de dados e o `JWT_SECRET`. Era criado com as permissões por omissão (644 com o `umask` habitual): num servidor com mais contas, qualquer uma o lia. |
+| Correção | O ficheiro passa a ser criado com o modo 600 (só o dono o lê). |
+| Validação | numa pasta de teste, com `umask 022`: `stat -c %a .env` dá `600`. |
+
+#### REL-005
+**Uma cópia de segurança restaurada noutro servidor deixava a API sem acesso à base de dados**
+
+| | |
+|---|---|
+| Severidade | MÉDIA · bug · confirmado · **CORRIGIDO** nesta reauditoria |
+| Local | `backend/scripts/db-setup.js` |
+| Descrição | Numa cópia de segurança vai o utilizador `bancada_app` da base de dados, ligado ao login do servidor onde foi feita. Restaurada num servidor novo, esse utilizador fica "órfão". O `db:setup` criava o login, via que o utilizador já existia e não mexia nele: a API ficava sem conseguir entrar, apesar de a cópia estar perfeita. É o caso de quem perdeu o servidor e está a recuperar: o pior momento para descobrir isto. |
+| Evidência | Cópia da BD de carga (24 MB), restaurada num segundo SQL Server criado de raiz, seguida do `db:setup`: `Login failed for user 'bancada_app'`. |
+| Correção | Se o utilizador já existe, o `db:setup` volta a ligá-lo ao login do servidor onde corre (`ALTER USER ... WITH LOGIN`). |
+| Validação | No servidor novo: `db:setup` e a API entra e lê as 12 032 folhas. No servidor original: `db:setup` sem erros e `/api/saude` a 200. Os 52 testes passam. |
+
+#### REL-006
+**O registo de transações cresce sem limite depois da primeira cópia completa**
+
+| | |
+|---|---|
+| Severidade | BAIXA hoje (uso local) · MÉDIA numa instalação online · defeito de configuração · confirmado · **CORRIGIDO** nesta reauditoria |
+| Local | `backend/scripts/db-setup.js`: a base criada herdava o modelo de recuperação da base `model`, que é FULL |
+| Descrição | Em FULL, depois da primeira cópia completa, o SQL Server guarda o registo de transações até haver uma cópia **do registo**. Sem elas, o ficheiro só cresce, até encher o disco e a base parar. Quem faz cópias completas regularmente (o que o [documento de infraestrutura](infraestrutura.md) recomenda) cai nisto sem dar por isso. |
+| Evidência | Numa cópia da base de carga, em FULL e depois de uma cópia completa, cada passagem de 70 mil linhas alteradas somou cerca de 21 MB ao registo usado (2, 23, 43, 64, 85 e 106 MB) e o ficheiro passou de 72 para 200 MB alocados, sempre com `log_reuse_wait_desc = LOG_BACKUP`. Só o `BACKUP LOG` libertou o espaço usado (o ficheiro fica com o tamanho que já tinha). Nota: um `UPDATE` que não muda valores não gera registo, por isso a primeira tentativa (`SET Quantidade = Quantidade`) não mostrou nada e foi repetida com alterações reais. |
+| Correção | O `db:setup` cria a base nova em `SIMPLE`. Só na criação: uma base que já existe não é alterada, para não desfazer a escolha de quem passou a FULL de propósito (com cópias do registo, para restaurar até um instante). |
+| Validação | `db:setup` numa base nova: `SIMPLE`. Passada a FULL e com outro `db:setup`: continua FULL. `db:setup --reset`: volta a SIMPLE. Os 52 testes passam (28 s). |
+
+#### SEC-010
+**O container da API recebe a password do `sa`**
+
+| | |
+|---|---|
+| Severidade | BAIXA hoje (só local) · MÉDIA numa instalação online · decisão de desenho · confirmado · **ABERTO** no `docker-compose.yml` local; **resolvido na proposta de produção** (ver Validação) |
+| Local | `docker-compose.yml`, serviço `app`: `DB_ADMIN_PASSWORD` no `environment`, porque o `command` corre o `db-setup.js` antes da API |
+| Descrição | A API nunca usa o `sa` (entra como `bancada_app`, só com permissões de dados), mas o processo que fica a correr tem a password do administrador nas variáveis de ambiente. Se alguém conseguisse executar código na API, ficava com o servidor inteiro. É o contrário do mínimo privilégio que o resto do projeto segue. |
+| Recomendação | Numa instalação online, correr o `db:setup` como um passo à parte da publicação e tirar o `DB_ADMIN_PASSWORD` do serviço que fica a correr. Localmente pode ficar como está: o lançador e o modo "tudo em containers" dependem disso para arrancar com um só comando. |
+| Validação | Feita numa cópia, com o [`docker-compose.prod.yml`](../docker-compose.prod.yml) proposto: o serviço `app` não recebe o `DB_ADMIN_PASSWORD` (`docker exec ... env | grep -c '^DB_ADMIN'` dá 0), o passo `setup` (`docker compose --profile setup run --rm setup`, que só existe enquanto corre) cria e atualiza a BD, e a API arranca e responde. O `docker-compose.yml` local não mudou. |
+
+### 14.3 O código novo, revisto à mão
+
+- **`Iniciar Bancada.command`**:
+  - mostra a password do gestor e os PINs só no Terminal, como o `db:seed`;
+  - as cópias `.env.antigo-*` e `.env.fraco-*` que cria estão fora do git (`git check-ignore` confirma, pela regra `.env.*`);
+  - só abre `http://localhost:3000`, e as portas continuam presas a `127.0.0.1`;
+  - tira containers com nomes fixos (`bancada_sql`, `bancada_app`, `dr_oficina_sql`) que sejam de outra pasta, sem apagar os volumes. É intencional e está explicado no próprio script. Informativo.
+- **`criar-env.js`**: passwords e `JWT_SECRET` com `crypto.randomBytes`; nunca substitui um `.env` existente. A permissão era o único problema ([SEC-009](#sec-009)).
+- **`docker-compose.yml`**: com o `exec`, a API passa a receber o sinal do `docker stop` e para em 0 s, com código 0, em vez de ser morta ao fim de 10 s. O SQL Server continua a ser morto ao fim de 10 s: o `launch_sqlservr.sh` da imagem da Microsoft corre o servidor em segundo plano e não lhe passa o sinal. Informativo: o registo de transações garante os dados, mas o arranque seguinte faz a recuperação.
+
+### 14.4 Estado dos achados de 27/09
+
+Nenhum foi corrigido: o código da API e as partes da interface onde estão não mudaram. Os que têm teste automático foram confirmados de novo.
+
+| Achado | Estado a 28/09 | Como se sabe |
+|---|---|---|
+| [REL-001](#rel-001), [REL-002](#rel-002) | aberto | `chunk.mjs`: o mesmo ecrã "Unexpected Application Error!" e o 200 com HTML para o JS em falta |
+| [REL-003](#rel-003) | aberto | O01: sem rede aparece o ecrã de entrada |
+| [REL-004](#rel-004) | aberto | E02: 500 com a BD em baixo |
+| [PERF-001](#perf-001), [PERF-002](#perf-002) | aberto | `carga.mjs`: mesma ordem de grandeza (14.1) |
+| [PERF-003](#perf-003) | aberto | Lighthouse: LCP de 3,1 a 3,2 s no quadro |
+| [SEC-001](#sec-001) a [SEC-004](#sec-004), [SEC-008](#sec-008) | aberto | `api-funcional.mjs`: o mesmo resultado em todas as verificações |
+| [SEC-005](#sec-005), [SEC-006](#sec-006) | aberto | `app.js` e o CI sem alterações |
+| [SEC-007](#sec-007) | aberto (NÃO VERIFICADO) | continua a não haver instalação online; o plano está em [`docs/infraestrutura.md`](infraestrutura.md) |
+| [A11Y-001](#a11y-001) | aberto | T01: logótipo 122 × 36, remover 46 × 48 |
+| [QA-001](#qa-001), [QA-002](#qa-002), [QA-004](#qa-004) | aberto | M06, e código sem alterações |
+| [QA-003](#qa-003) | aberto | RSP1: o mesmo +12 px com o nome artificial |
+| [AUT-001](#aut-001), [AUT-002](#aut-002) | aberto | continua sem testes do frontend no repositório |
+
+A ordem da [secção 10](#10-prioridades-de-correção) mantém-se. Numa instalação online, [SEC-010](#sec-010) junta-se a [SEC-007](#sec-007).
+
+### 14.5 O que não foi verificado nesta reauditoria
+
+- O lançador no macOS real (`open -a Docker`, o duplo clique no Finder, o aviso de segurança do macOS): só foi testado em Linux, num terminal simulado.
+- Tudo o que já estava na [secção 12](#12-o-que-não-foi-verificado): Safari e Firefox, tablet real, leitor de ecrã, instalação online.

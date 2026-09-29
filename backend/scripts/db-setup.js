@@ -90,6 +90,12 @@ async function main() {
     if (!existe) {
         console.log(`A criar a base de dados ${nomeBd}...`);
         await master.request().batch(`CREATE DATABASE [${nomeBd}]`);
+        // uma base nova sai em FULL (herda da "model"). Em FULL, depois da
+        // primeira cópia completa, o registo de transações só se liberta com
+        // cópias do registo: sem elas o ficheiro cresce sem parar. Com cópias
+        // completas frequentes (docs/infraestrutura.md) o certo é SIMPLE. Só
+        // se aplica a uma base nova: quem já escolheu FULL não é desfeito
+        await master.request().batch(`ALTER DATABASE [${nomeBd}] SET RECOVERY SIMPLE`);
     }
 
     // login da API. A password não pode ir como parâmetro num CREATE LOGIN,
@@ -116,6 +122,11 @@ async function main() {
     await bd.request().batch(`
         IF NOT EXISTS (SELECT 1 FROM sys.database_principals WHERE name = N'${utilizadorApp}')
             CREATE USER [${utilizadorApp}] FOR LOGIN [${utilizadorApp}];
+        ELSE
+            -- uma cópia de segurança restaurada noutro servidor traz o utilizador
+            -- ligado ao login do servidor antigo ("órfão"), e a API deixava de
+            -- conseguir entrar. Isto volta a ligá-lo ao login deste servidor
+            ALTER USER [${utilizadorApp}] WITH LOGIN = [${utilizadorApp}];
 
         ALTER ROLE db_datareader ADD MEMBER [${utilizadorApp}];
         ALTER ROLE db_datawriter ADD MEMBER [${utilizadorApp}];
