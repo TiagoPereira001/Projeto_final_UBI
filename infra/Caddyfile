@@ -1,0 +1,26 @@
+# Caddy: recebe os pedidos da internet, trata do HTTPS e passa-os à API.
+#
+# Com um domínio a sério (DOMINIO=bancada.exemplo.pt, com o DNS a apontar para
+# este servidor e as portas 80 e 443 abertas), o Caddy pede e renova sozinho o
+# certificado (Let's Encrypt). Com DOMINIO=localhost usa um certificado da sua
+# própria autoridade local: serve para testar num computador.
+
+{$DOMINIO} {
+	reverse_proxy app:3000
+
+	# registo de acessos (a API não tem um). Sem dados pessoais: a pesquisa (?q=)
+	# leva nomes, NIF e matrículas, por isso sai do endereço antes de o registo
+	# ser escrito. Os cookies e cabeçalhos de autorização o Caddy já não os
+	# regista por omissão.
+	log {
+		output stdout
+		format filter {
+			wrap json
+			fields {
+				request>uri query {
+					delete q
+				}
+			}
+		}
+	}
+}

@@ -304,12 +304,15 @@
   .linha-historico__texto { grid-area: texto; }
   .linha-historico__valor { grid-area: valor; }
   .linha-historico__numero { grid-area: numero; }
+  /* o estado e a data lado a lado, se couberem; senão a data passa para baixo
+     (a 390 px, "A aguardar peças" e a data não cabem na mesma linha) */
   .linha-historico__estado {
     grid-area: estado;
-    grid-auto-flow: column;
-    justify-content: start;
+    display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: var(--e-3);
+    gap: 2px var(--e-3);
+    min-width: 0;
   }
 
   .linha-simples {

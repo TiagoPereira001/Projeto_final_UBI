@@ -1,2 +1,5 @@
 # o lançador do macOS tem de ter fins de linha LF, mesmo que seja gravado no Windows
 *.command text eol=lf
+# os scripts do servidor correm em Linux: fins de linha LF
+*.sh text eol=lf
+infra/Caddyfile text eol=lf

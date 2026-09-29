@@ -1,0 +1,136 @@
+# Bancada: instalação num servidor (PROPOSTA, ainda não está em uso)
+#
+# O que é: o docker-compose.yml da raiz serve para desenvolver e para testar num
+# computador. Este serve para um servidor com um domínio e HTTPS. O passo a passo
+# e o porquê de cada escolha estão em docs/infraestrutura.md.
+#
+# Diferenças para o de desenvolvimento:
+#   - SQL Server Express (gratuito em produção). A edição Developer, que é a
+#     omissão da imagem, só se pode usar para desenvolver e testar
+#   - nenhuma porta da base de dados nem da API é publicada: só o Caddy (80 e
+#     443) recebe pedidos da internet
+#   - HTTPS automático pelo Caddy, e a API passa a confiar num proxy (TRUST_PROXY)
+#   - o container da API NÃO recebe a password do administrador da BD (SEC-010):
+#     a base de dados prepara-se num passo à parte, o serviço "setup"
+#   - registos com rotação (senão crescem até encher o disco)
+#
+# Ficheiro .env na raiz do servidor (criar com: node backend/scripts/criar-env.js),
+# mais estas duas linhas:
+#   COMPOSE_FILE=docker-compose.prod.yml
+#   DOMINIO=bancada.exemplo.pt
+# (o COMPOSE_FILE faz com que "docker compose" use sempre este ficheiro no
+# servidor, e nunca o de desenvolvimento por engano)
+#
+# Uso: infra/deploy.sh (publica), infra/backup.sh (cópia de segurança)
+
+name: bancada
+
+x-registos: &registos
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  db:
+    # versão fixa (em 28/09/2026 é a mesma imagem que "2022-latest"): a base de
+    # dados não muda de versão sozinha quando se volta a construir. Subir de
+    # versão é uma decisão, com cópia de segurança feita antes
+    image: mcr.microsoft.com/mssql/server:2022-CU27-ubuntu-22.04
+    platform: linux/amd64 # o SQL Server não tem imagem ARM: o servidor tem de ser x86-64
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Express
+      MSSQL_SA_PASSWORD: ${DB_ADMIN_PASSWORD:?Define DB_ADMIN_PASSWORD no .env}
+    # sem "ports": só os outros serviços deste compose chegam ao SQL Server
+    volumes:
+      - sql_dados:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    logging: *registos
+
+  # prepara a base de dados (cria-a se não existir, ajusta o login e as
+  # permissões da API). Corre uma vez por publicação e volta a desligar-se:
+  #   docker compose --profile setup run --rm setup
+  setup:
+    profiles: ["setup"]
+    image: bancada-app:atual
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DB_HOST: db
+      DB_ENCRYPT: "true"
+      DB_ADMIN_PASSWORD: ${DB_ADMIN_PASSWORD:?Define DB_ADMIN_PASSWORD no .env}
+      DB_PASSWORD: ${DB_PASSWORD:?Define DB_PASSWORD no .env}
+    command: ["node", "backend/scripts/db-setup.js"]
+    restart: "no"
+    logging: *registos
+
+  app:
+    build: .
+    image: bancada-app:atual
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DB_HOST: db
+      # a ligação à BD vai cifrada (a BD gera um certificado próprio, por isso
+      # o DB_TRUST_CERT fica no valor por omissão, true)
+      DB_ENCRYPT: "true"
+      DB_PASSWORD: ${DB_PASSWORD:?Define DB_PASSWORD no .env}
+      JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET no .env}
+      COOKIE_SECURE: "true"
+      # a origem pública, com https: se estiver errada, todos os pedidos que
+      # gravam dados são recusados (403). O infra/fumo.sh verifica-o
+      APP_ORIGINS: https://${DOMINIO:?Define DOMINIO no .env}
+      # um proxy à frente (o Caddy): sem isto o limite de tentativas de login
+      # contava toda a gente como o mesmo IP
+      TRUST_PROXY: "1"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/saude').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    # a API não precisa de escrever no disco nem de nenhuma permissão especial
+    # do Linux: assim, quem conseguisse executar código nela ficava com menos
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    # sem "ports": só o Caddy chega à API
+    logging: *registos
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - app
+    environment:
+      DOMINIO: ${DOMINIO:?Define DOMINIO no .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/Caddyfile:/etc/caddy/Caddyfile:ro
+      # o certificado e a chave: se este volume se perder, o Caddy pede outro
+      - caddy_dados:/data
+      - caddy_config:/config
+    logging: *registos
+
+volumes:
+  sql_dados:
+  caddy_dados:
+  caddy_config:
