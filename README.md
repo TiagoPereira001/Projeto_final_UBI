@@ -35,7 +35,7 @@ O projeto nasceu na oficina **Duarte & Raposo** (Canhoso, Covilhã), especializa
 
 A descrição completa do produto (utilizadores, percurso de um carro pela oficina, o que existe e o que ainda não existe) está no [`PRODUCT.md`](PRODUCT.md).
 
-Para a experimentares no teu computador (macOS ou Windows), segue o guia [Como pôr a Bancada a funcionar](#como-pôr-a-bancada-a-funcionar).
+**Para a experimentares:** num Mac, faz duplo clique em [`Iniciar Bancada.command`](#no-mac-com-um-duplo-clique) (só precisas do Docker Desktop). No Windows, ou se queres mexer no código, segue o guia [Como pôr a Bancada a funcionar](#como-pôr-a-bancada-a-funcionar).
 
 ## Funcionalidades
 
@@ -72,12 +72,16 @@ A Bancada **não emite faturas**: em Portugal, isso exige software certificado p
 - interface completa para tablet, computador e telemóvel;
 - 52 testes automáticos contra um SQL Server real;
 - integração contínua no GitHub;
+- arranque para testes com um duplo clique no Mac (`Iniciar Bancada.command`);
+- auditoria de qualidade, segurança, desempenho e acessibilidade (repetida a 28/09/2026 sobre a versão atual) e revisão de código, com as provas e os scripts para as repetir;
+- proposta de publicação num servidor (HTTPS, cópias de segurança cifradas, restauro, retrocesso), validada numa cópia em `localhost`;
 - documentação e relatório.
 
 **Ainda não feito:**
 - instalação na oficina e testes com os mecânicos;
-- versão online com HTTPS;
-- migrações da base de dados e cópias de segurança;
+- versão online: a proposta está pronta ([`docs/infraestrutura.md`](docs/infraestrutura.md)), mas falta servidor, domínio e certificado;
+- migrações da base de dados e cópias de segurança a correr (os scripts existem, ainda não estão em uso);
+- correção dos achados abertos da auditoria e da revisão de código;
 - integração com programas de faturação.
 
 A lista completa está no [`docs/analise.md`](docs/analise.md).
@@ -89,8 +93,8 @@ A lista completa está no [`docs/analise.md`](docs/analise.md).
 | Frontend | React 19 + Vite 8, React Router 7, PWA (vite-plugin-pwa), CSS próprio com tokens, fontes Barlow self-hosted |
 | Backend | Node.js 22, Express 5, JWT em cookies httpOnly, bcrypt, helmet, express-rate-limit |
 | Base de dados | SQL Server 2022 (Docker), modelo relacional normalizado |
-| Qualidade | 52 testes com `node:test` contra SQL Server real, GitHub Actions, oxlint, GitGuardian |
-| Infraestrutura | Docker Compose; imagem única com a API a servir o frontend (mesma origem) |
+| Qualidade | 52 testes com `node:test` contra SQL Server real, GitHub Actions (testes, lint e build, e validação dos scripts, do compose e da imagem), oxlint, GitGuardian |
+| Infraestrutura | Docker Compose; imagem única com a API a servir o frontend (mesma origem). Proposta para um servidor: Caddy (HTTPS), SQL Server Express, `infra/` (ainda não em uso) |
 
 ## Segurança
 
@@ -118,11 +122,19 @@ Seis tabelas: `Oficina`, `Colaborador`, `Cliente`, `Veiculo`, `Folha_Obra` e `Li
 
 Este guia leva-te de um computador sem nada instalado até à Bancada aberta no browser, com dados de demonstração (clientes, veículos e folhas fictícios). Serve para **macOS** e para **Windows**. Não precisas de saber programar: basta copiar os comandos, um de cada vez, e confirmar que aparece o que o guia diz. Se alguma coisa correr mal, procura a mensagem de erro em [Problemas comuns](#problemas-comuns).
 
+Qual caminho escolher:
+
+| Se tens... | e queres... | Faz |
+|---|---|---|
+| um **Mac** | só experimentar a Bancada | [duplo clique em `Iniciar Bancada.command`](#no-mac-com-um-duplo-clique): só precisas do Docker Desktop |
+| um **Windows** | só experimentar a Bancada | o [passo a passo](#passo-a-passo-primeira-vez) com a [alternativa tudo em containers](#alternativa-tudo-em-containers) (ainda não há um script de duplo clique para o Windows) |
+| um Mac ou um Windows | mexer no código | o [início rápido](#início-rápido-para-quem-já-tem-docker-desktop-nodejs-22-e-git) ou o passo a passo |
+
 A primeira vez demora mais, porque há programas para instalar e a base de dados para descarregar. Da segunda vez em diante é muito mais rápido: ver [Da próxima vez](#da-próxima-vez).
 
 ### No Mac, com um duplo clique
 
-Para experimentar a Bancada num Mac só precisas do **Docker Desktop**. Não é preciso instalar o Node.js nem escrever comandos.
+Para experimentar a Bancada num Mac só precisas do **Docker Desktop**. Não é preciso instalar o Node.js nem escrever comandos. É a forma mais simples de a testar, e serve as vezes que quiseres: da segunda vez em diante, é só outro duplo clique. É só para testes no teu computador (não publica nada na internet).
 
 1. Instala o Docker Desktop (passo 1, no macOS) e descarrega o projeto (passo 2).
 2. Abre a pasta do projeto no Finder e faz duplo clique em **`Iniciar Bancada.command`**.
@@ -349,7 +361,9 @@ Para experimentar o **modo bancada** (o tablet partilhado dos mecânicos): *Defi
 
 ### Da próxima vez
 
-Com o Docker Desktop aberto (e a dizer Engine running):
+**No Mac com o duplo clique:** faz outra vez duplo clique em `Iniciar Bancada.command`. Não é preciso mais nada.
+
+No resto dos casos, com o Docker Desktop aberto (e a dizer Engine running):
 
 1. Terminal 1, na pasta do projeto:
 
@@ -375,6 +389,8 @@ Não é preciso repetir o `npm install`, o `db:setup` nem o `db:seed`.
 **Para ir buscar a versão mais recente do projeto:** na pasta do projeto, `git pull`, e depois `npm install` outra vez nas pastas `backend` e `frontend`.
 
 ### Alternativa: tudo em containers
+
+(No Mac, o `Iniciar Bancada.command` faz tudo isto por ti, incluindo o `.env`.)
 
 Em vez dos passos 5 e 6, o Docker pode correr também a API e a interface já compilada. Serve para experimentar a Bancada sem instalar o Node.js, mas as alterações ao código só aparecem depois de voltar a construir tudo. Precisas na mesma do `.env` do passo 3 (sem Node.js, cria-o à mão). Não uses este modo ao mesmo tempo que os passos 5 e 6: a porta 3000 é a mesma. No Mac, o [`Iniciar Bancada.command`](#no-mac-com-um-duplo-clique) faz isto tudo com um duplo clique.
 
