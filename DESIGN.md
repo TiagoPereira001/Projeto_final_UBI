@@ -371,7 +371,7 @@ Os pictogramas das luzes estão numa grelha de 32 × 32 e usam formas cheias com
 ## Components
 
 ### Buttons
-- **Shape:** cantos suaves (10 px). 48 px de altura, 56 px no tamanho grande.
+- **Shape:** cantos de 6 px (`controlo`: os botões são peças de ferramenta). 48 px de altura, 56 px no tamanho grande.
 - **Primary:** fundo âmbar e texto quase preto, em peso 600. Uma por ecrã. Pode levar a "luz indicadora" de 10 px à esquerda, que pisca enquanto espera pela API, fica verde se correu bem e vermelha se falhou.
 - **Hover / Focus:** o hover só existe em dispositivos com rato (`@media (hover: hover)`). Premir desce o botão 1 px. O foco é um contorno de 2 px em `foco`, afastado 2 px.
 - **Secondary / Ghost:** o secundário tem fundo `superficie-2` e contorno `linha`. O fantasma não tem fundo e o texto é `tinta-2`. É o fantasma que se usa em ações repetidas numa lista, como remover uma linha.
@@ -390,12 +390,12 @@ Os pictogramas das luzes estão numa grelha de 32 × 32 e usam formas cheias com
 - **Uma caixa por ecrã, quando possível.** Na folha de obra, só as linhas ficam em papel; as contas e as notas vão ao lado sem caixa, separadas por uma linha. Os dados da entrada (cliente, entrada, aberto por) ficam em caixas como os campos impressos de uma folha de obra em papel: a etiqueta pequena no canto e o valor por baixo.
 
 ### Inputs / Fields
-- **Style:** fundo `superficie-2`, contorno de 1 px em `linha-forte`, cantos de 10 px, 48 px de altura (56 px na pesquisa do quadro). A etiqueta fica sempre por cima do campo, em Label. O placeholder nunca substitui a etiqueta.
+- **Style:** fundo `superficie-2`, contorno de 1 px em `linha-forte`, cantos de 6 px, 48 px de altura (56 px na pesquisa do quadro). A etiqueta fica sempre por cima do campo, em Label. O placeholder nunca substitui a etiqueta.
 - **Focus:** contorno em `foco` e um anel de 3 px em `foco` a 28%.
 - **Error / Disabled:** contorno `erro` e a mensagem por baixo em `erro`, com peso 500. O erro geral do formulário aparece num bloco no fim, antes do botão.
 
 ### Navigation
-- **Barra de topo:** sempre grafite, 64 px. À esquerda a marca e o nome da oficina, à direita o nome de quem está a trabalhar, o botão de tema e Sair. No tablet partilhado aparece "no tablet da oficina" por baixo do nome, e Sair passa a "Terminar", com contorno âmbar.
+- **Barra de topo:** sempre grafite, 64 px. À esquerda a marca e o nome da oficina, à direita o nome de quem está a trabalhar, o botão de tema e o de sair. No tablet partilhado aparece "no tablet da oficina" por baixo do nome, e Sair passa a "Sair do tablet". Os dois botões são neutros (contorno `painel-linha`, texto `painel-tinta`, fundo `painel-2` ao passar o rato ou ao premir): o âmbar é da ação principal do ecrã, e um botão de sair com contorno âmbar a competir com ela era o que mais ruído fazia (Regra da Voz Única). Com 520 px ou menos o botão de sair fica só com o ícone (o nome fica em `aria-label`), porque com o texto a barra transbordava (43 px a 390 px no tablet, 22 px a 360 px no computador). A 320 px ainda transborda 28 px: não está tratado.
 - **Separadores:** Oficina, Histórico, Clientes e Veículos, mais Equipa e Definições para o gestor. Ficam numa faixa `superficie` com 52 px de altura, só com o nome, em Tab (a letra das placas). O ativo fica com o texto em `tinta` e a barra âmbar de 3 px por baixo. Em ecrãs estreitos a faixa faz scroll na horizontal.
 - **Ecrãs de entrada** (Entrar e Registar): uma faixa grafite em cima, com a marca e uma frase a dizer o que é a Bancada à esquerda e as quatro luzes do tablier à direita, que fazem o autoteste de quando se roda a chave. O formulário fica por baixo, na superfície de trabalho, alinhado pela mesma aresta da marca. Não há lema de marketing nem ecrã dividido ao meio.
 - **Ecrã de descanso da bancada** (`/bancada`): é o que o tablet mostra quase o dia todo, por isso diz o estado da oficina antes de pedir quem vai trabalhar. Por ordem: o tablier grande e só de leitura, "Quem vai trabalhar?" (2.25rem, um degrau abaixo) e os nomes. O bloco fica no meio do ecrã (com muitos nomes, começa no topo e desce). O intervalo entre o tablier e o título (48 px) é maior do que o resto: são dois grupos, o que se lê e o que se toca. Só mostra números (a API devolve as contagens por estado da oficina do dispositivo, sem dados de clientes nem de veículos); para tocar numa folha continua a ser preciso o PIN. Atualiza a cada 20 s. No passo do PIN o tablier desaparece.

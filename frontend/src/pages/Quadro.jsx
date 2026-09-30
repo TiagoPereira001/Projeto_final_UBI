@@ -105,10 +105,8 @@ export default function Quadro() {
         )}
 
         {itens && itens.length === 0 && (
-          <Vazio
-            titulo="A oficina está vazia."
-            acao={<Botao variante="primario" para="/entrada" icone={Plus}>Dar entrada a um veículo</Botao>}
-          >
+          // sem botão aqui: a "Nova entrada" está mesmo por cima, e dois botões âmbar a fazer o mesmo eram dois a falar
+          <Vazio titulo="A oficina está vazia.">
             Quando um veículo entrar, aparece aqui com a luz do estado em que está.
           </Vazio>
         )}
