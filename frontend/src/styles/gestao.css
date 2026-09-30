@@ -1,7 +1,11 @@
 /* Páginas de gestão: histórico, clientes, veículos, equipa, definições */
 
+/* uma só coluna que nunca passa da largura do ecrã: sem isto, a coluna
+   automática crescia até ao conteúdo mais largo e as Definições passavam o
+   ecrã 21 px a 360 px */
 .gestao {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--e-5);
 }
 .gestao .cabecalho {
@@ -286,6 +290,12 @@
 .tablet-oficina p {
   color: var(--tinta-2);
   max-width: 56ch;
+}
+/* a 320 px o botão de texto mais comprido ("Usar este dispositivo como
+   bancada") não cabe numa linha e passava o ecrã: parte-se em duas */
+.tablet-oficina .botao {
+  white-space: normal;
+  text-align: center;
 }
 .tablet-oficina__estado {
   color: var(--sucesso) !important;

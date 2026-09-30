@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Phone, Plus, Trash, LockKey } from '../components/icones';
 import { api } from '../lib/api';
 import { useRecurso } from '../lib/useRecurso';
+import { useTitulo } from '../lib/useTitulo';
 import {
   CATEGORIAS, ESTADOS, ESTADOS_ATIVOS, categoria, dataHora, descreverVeiculo, euros, nomeEstado, numero, quilometros,
   tempoDesde,
@@ -22,12 +23,13 @@ import '../styles/folha.css';
 export default function Folha() {
   const { id } = useParams();
   const folha = useRecurso(`/folhas-obra/${id}`, { intervalo: 30000 });
+  useTitulo(folha.dados ? `Folha nº ${folha.dados.numero}, ${folha.dados.veiculo.matricula}` : 'Folha de obra');
 
   if (folha.aCarregar) return <Esqueleto linhas={5} altura={64} />;
   if (folha.erro && !folha.dados) {
     if (folha.erro.status === 404) {
       return (
-        <Vazio titulo="Esta folha não existe." acao={<Botao para="/">Voltar ao quadro</Botao>}>
+        <Vazio pagina titulo="Esta folha não existe." acao={<Botao para="/">Voltar ao quadro</Botao>}>
           Pode ter sido o número errado, ou pertencer a outra oficina.
         </Vazio>
       );

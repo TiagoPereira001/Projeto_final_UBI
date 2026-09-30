@@ -14,13 +14,32 @@ export function Esqueleto({ linhas = 4, altura = 72 }) {
   );
 }
 
-export function Vazio({ titulo, children, acao }) {
+// `pagina`: o vazio é a página toda (endereço que não existe, folha que não
+// existe) e não há outro título: o título passa a ser o h1, para a página não
+// ficar sem nenhum
+export function Vazio({ titulo, children, acao, pagina = false }) {
+  const Titulo = pagina ? 'h1' : 'p';
   return (
     <div className="vazio">
-      <p className="vazio__titulo">{titulo}</p>
+      <Titulo className="vazio__titulo">{titulo}</Titulo>
       {children && <p className="vazio__texto">{children}</p>}
       {acao}
     </div>
+  );
+}
+
+// os números que se veem já não são de agora: o último pedido falhou (o Wi-Fi
+// da oficina). Diz de quando são, em vez de os continuar a afirmar. Quem o usa
+// esbate também o que mostra (ver `antigo` no Tablier)
+export function SemLigacao({ desde, className }) {
+  const minutos = Math.floor((Date.now() - desde) / 60000);
+  let quanto = `${minutos} min`;
+  if (minutos < 1) quanto = 'menos de 1 min';
+  else if (minutos >= 60) quanto = `${Math.floor(minutos / 60)} h`;
+  return (
+    <p className={className} role="status">
+      Sem ligação ao servidor. Estes números são de há {quanto}.
+    </p>
   );
 }
 

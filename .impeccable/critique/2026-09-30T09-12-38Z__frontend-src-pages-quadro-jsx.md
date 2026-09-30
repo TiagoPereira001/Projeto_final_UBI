@@ -10,6 +10,7 @@ target_fingerprint: "sha256:b4f34ad5ab13f8e2e36908ad69ffa8d45cf9428154489dc71032
 target_path: /home/user/Projeto_final_UBI/frontend/src/pages/Quadro.jsx
 timestamp: 2026-09-30T09-12-38Z
 slug: frontend-src-pages-quadro-jsx
+closed: true
 ---
 # Crítica de design: Quadro da oficina e percurso do tablet
 

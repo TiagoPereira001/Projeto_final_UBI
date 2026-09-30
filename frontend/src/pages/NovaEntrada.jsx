@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Plus, CaretRight } from '../components/icones';
 import { api } from '../lib/api';
 import { useRecurso } from '../lib/useRecurso';
+import { useTitulo } from '../lib/useTitulo';
 import { useAtraso } from '../lib/useAtraso';
 import { descreverVeiculo, matricula as formatarMatricula } from '../lib/formatar';
 import { useAvisos } from '../context/AvisosContext';
@@ -19,6 +20,7 @@ import '../styles/entrada-veiculo.css';
 // 2. só se for novo: o veículo e o dono
 // 3. os quilómetros e o que o cliente pediu
 export default function NovaEntrada() {
+  useTitulo('Nova entrada');
   const navegar = useNavigate();
   const { mostrar } = useAvisos();
   // vindo da ficha de um veículo ("Dar entrada"), salta logo para o último passo

@@ -1,13 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from '../components/icones';
 import { useSessao } from '../context/SessaoContext';
 import { useRecurso } from '../lib/useRecurso';
+import { useTitulo } from '../lib/useTitulo';
 import { nomeCargo } from '../lib/formatar';
 import { Marca } from '../components/Marca';
 import { Tablier } from '../components/Tablier';
 import { TecladoPin } from '../components/TecladoPin';
 import { Arranque } from '../components/Protegida';
+import { SemLigacao } from '../components/Situacoes';
 import '../styles/entrada.css';
 
 // o ecrã de descanso do tablet partilhado: "Quem vai trabalhar?".
@@ -22,15 +24,10 @@ export default function Bancada() {
   const { colaborador, bancada, aCarregar, entrarComPin } = useSessao();
   const navegar = useNavigate();
   const lista = useRecurso(bancada ? '/auth/bancada' : null, { intervalo: 20000 });
-  // quando chegaram os últimos números: se a ligação falhar, o tablier diz
-  // que os números já não são de agora, em vez de continuar a afirmá-los
-  const ultimaLeitura = useRef(Date.now());
-  useEffect(() => {
-    if (lista.dados) ultimaLeitura.current = Date.now();
-  }, [lista.dados]);
   const [escolhido, setEscolhido] = useState(null);
   const [erro, setErro] = useState(null);
   const [aTrabalhar, setATrabalhar] = useState(false);
+  useTitulo(escolhido ? `PIN de ${escolhido.nome}` : 'Quem vai trabalhar?');
 
   if (aCarregar) return <Arranque />;
   if (colaborador) return <Navigate to="/" replace />;
@@ -50,8 +47,9 @@ export default function Bancada() {
   }
 
   const colaboradores = lista.dados?.colaboradores ?? [];
+  // se a ligação falhar, o tablier diz que os números já não são de agora,
+  // em vez de continuar a afirmá-los
   const semLigacao = Boolean(lista.erro && lista.dados);
-  const minutosSemLigacao = Math.floor((Date.now() - ultimaLeitura.current) / 60000);
 
   return (
     <div className="bancada">
@@ -73,11 +71,7 @@ export default function Bancada() {
                   aCarregar={lista.aCarregar}
                   antigo={semLigacao}
                 />
-                {semLigacao && (
-                  <p className="bancada__nota" role="status">
-                    Sem ligação ao servidor. Estes números são de há {minutosSemLigacao < 1 ? 'menos de 1' : minutosSemLigacao} min.
-                  </p>
-                )}
+                {semLigacao && <SemLigacao className="bancada__nota" desde={lista.atualizadoEm} />}
               </div>
             )}
             <h1 className="bancada__titulo bancada__titulo--escolha">Quem vai trabalhar?</h1>
@@ -104,7 +98,11 @@ export default function Bancada() {
               <ArrowLeft size={22} weight="bold" aria-hidden="true" /> Não sou eu
             </button>
             <h1 className="bancada__titulo">{escolhido.nome}</h1>
-            <p className="bancada__instrucao">Escreve o teu PIN</p>
+            {/* a instrução e a resposta ao PIN partilham o mesmo sítio: o teclado não se mexe quando aparece o erro */}
+            <div className="bancada__mensagem">
+              <p className="bancada__instrucao" data-escondida={Boolean(erro)}>Escreve o teu PIN</p>
+              <p className="bancada__erro" role="alert">{erro}</p>
+            </div>
             <TecladoPin aoSubmeter={entrar} aTrabalhar={aTrabalhar} erro={erro} />
           </div>
         )}
