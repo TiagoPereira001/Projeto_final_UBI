@@ -18,6 +18,8 @@ import '../styles/quadro.css';
 export default function Quadro() {
   const { colaborador } = useSessao();
   const gestor = colaborador.cargo === 'gestor';
+  // no tablet partilhado (modo bancada) o quadro lê-se de pé, a 1 ou 2 m
+  const noTablet = colaborador.via === 'pin';
   const folhas = useRecurso('/folhas-obra?estado=ativas&ordem=antigas&porPagina=200', { intervalo: 20000, memoria: true });
   const resumo = useRecurso(
     gestor ? `/folhas-obra/resumo?desde=${encodeURIComponent(inicioDoMes())}` : null,
@@ -46,7 +48,13 @@ export default function Quadro() {
     <div className="quadro">
       <h1 className="so-leitores">Quadro da oficina</h1>
 
-      <Tablier contagens={contagens} aCarregar={folhas.aCarregar} filtro={filtro} aoEscolher={setFiltro} />
+      <Tablier
+        contagens={contagens}
+        aCarregar={folhas.aCarregar}
+        filtro={filtro}
+        aoEscolher={setFiltro}
+        aDistancia={noTablet}
+      />
 
       {gestor && resumo.dados && (
         <p className="quadro__contas num">

@@ -40,7 +40,7 @@ A descrição completa do produto (utilizadores, percurso de um carro pela ofici
 ## Funcionalidades
 
 - **Quadro da oficina** com um "tablier": uma luz por estado (abertas, em curso, a aguardar peças, prontas), acesa quando há veículos nesse estado, como as luzes do painel de um carro. Tocar numa luz filtra a lista.
-- **Tablet partilhado (modo bancada):** o tablet fica na oficina e cada mecânico entra com o seu nome e PIN. O que regista fica em nome dele, e a sessão termina sozinha se o tablet ficar parado.
+- **Tablet partilhado (modo bancada):** o tablet fica na oficina e cada mecânico entra com o seu nome e PIN. O que regista fica em nome dele, e a sessão termina sozinha se o tablet ficar parado (com um aviso antes). Feito para se ler de pé, a 1 ou 2 m: parado, mostra o estado da oficina em ponto grande, e o tablier do quadro também é maior do que no computador.
 - **Nova entrada** a partir da matrícula. Se o veículo já cá esteve, aparece logo; se for novo, regista-se o veículo e o dono no mesmo passo.
 - **Folha de obra:**
   - estado da reparação, escolhido com um toque (entregar pede um segundo, porque fecha a folha);

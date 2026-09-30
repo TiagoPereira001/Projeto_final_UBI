@@ -18,11 +18,14 @@ let chaveTestada = null;
 // leitura por baixo do nome. Tocar numa luz filtra a lista; tocar outra vez
 // tira o filtro.
 //
-// duas variantes, para o ecrã de descanso do tablet (ninguém entrou ainda):
+// variantes, para o tablet da oficina:
 // - `somenteLeitura`: as luzes não são botões (não há lista para filtrar) e
 //   não há autoteste (ainda ninguém "rodou a chave");
 // - `grande`: as luzes e as leituras crescem, para se lerem de longe;
-// - `antigo`: os números já não são de agora (falhou a ligação): esbatem-se.
+// - `antigo`: os números já não são de agora (falhou a ligação): esbatem-se;
+// - `aDistancia`: o quadro do tablet partilhado (modo bancada), que se lê de
+//   pé a 1 ou 2 m. As luzes e as leituras sobem um degrau (menos do que na
+//   `grande`, para a lista de baixo ainda caber), só com 761 px ou mais.
 //
 // dois momentos de luz, como num carro:
 // - ao rodar a chave (alguém entrou), todas as luzes acendem por um instante
@@ -30,7 +33,7 @@ let chaveTestada = null;
 // - quando um estado passa de 0 para 1 ou mais, a luz acende com um cintilar.
 export function Tablier({
   contagens, filtro, aoEscolher, aCarregar = false,
-  somenteLeitura = false, grande = false, antigo = false,
+  somenteLeitura = false, grande = false, antigo = false, aDistancia = false,
 }) {
   const { ligadoEm } = useSessao();
   const pronto = Boolean(contagens);
@@ -68,7 +71,7 @@ export function Tablier({
 
   return (
     <div
-      className={`tablier${grande ? ' tablier--grande' : ''}${somenteLeitura ? ' tablier--leitura' : ''}`}
+      className={`tablier${grande ? ' tablier--grande' : ''}${somenteLeitura ? ' tablier--leitura' : ''}${aDistancia ? ' tablier--distancia' : ''}`}
       data-autoteste={autoteste}
       data-antigo={antigo}
       role="group"
