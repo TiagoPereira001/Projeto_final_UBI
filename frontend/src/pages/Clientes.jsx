@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MagnifyingGlass, Plus } from '../components/icones';
 import { useRecurso } from '../lib/useRecurso';
+import { useTitulo } from '../lib/useTitulo';
 import { useAtraso } from '../lib/useAtraso';
 import { useAvisos } from '../context/AvisosContext';
 import { Botao } from '../components/Botao';
@@ -13,6 +14,7 @@ import '../styles/gestao.css';
 const POR_PAGINA = 30;
 
 export default function Clientes() {
+  useTitulo('Clientes');
   const navegar = useNavigate();
   const { mostrar } = useAvisos();
   const [pesquisa, setPesquisa] = useState('');

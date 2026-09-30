@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useSessao } from '../context/SessaoContext';
 import { useAvisos } from '../context/AvisosContext';
+import { useTitulo } from '../lib/useTitulo';
 import { Botao } from '../components/Botao';
 import { Texto } from '../components/Campo';
 import { ErroFormulario } from '../components/Situacoes';
@@ -10,6 +11,7 @@ import '../styles/entrada.css';
 
 // registo público: qualquer oficina cria a sua conta sozinha
 export default function Registar() {
+  useTitulo('Registar a oficina');
   const { colaborador, registar } = useSessao();
   const { mostrar } = useAvisos();
   const navegar = useNavigate();

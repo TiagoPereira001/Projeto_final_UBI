@@ -4,7 +4,10 @@ import { Backspace, ArrowRight } from './icones';
 const DIGITOS = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 // teclado numérico grande para o PIN: teclas de 72 px para dedos com luvas.
-// Também funciona com o teclado físico (números, apagar e Enter)
+// Também funciona com o teclado físico (números, apagar e Enter).
+// O `erro` só faz o visor abanar: a mensagem escreve-se fora daqui, no sítio da
+// instrução (ver Bancada). Aparecer entre o visor e as teclas empurrava-as, e o
+// dedo já ia a caminho da tecla seguinte
 export function TecladoPin({ aoSubmeter, aTrabalhar = false, erro, maximo = 6 }) {
   const [pin, setPin] = useState('');
 
@@ -32,7 +35,6 @@ export function TecladoPin({ aoSubmeter, aTrabalhar = false, erro, maximo = 6 })
           <span key={i} className="teclado-pin__ponto" data-cheio={i < pin.length} aria-hidden="true" />
         ))}
       </div>
-      {erro && <p className="teclado-pin__erro" role="alert">{erro}</p>}
 
       <div className="teclado-pin__teclas">
         {DIGITOS.map((d) => (

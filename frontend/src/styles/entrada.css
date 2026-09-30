@@ -216,6 +216,12 @@
 .bancada__ligacao:focus-visible {
   outline-color: var(--ambar);
 }
+/* a 320 px o nome da marca já não cabe ao lado do resto (passava o ecrã 4 px) */
+@media (max-width: 359px) {
+  .bancada__topo .marca__nome {
+    display: none;
+  }
+}
 
 .bancada__centro {
   flex: 1;
@@ -336,8 +342,27 @@
     border-color: var(--linha-forte);
   }
 }
-.bancada__instrucao {
+/* a instrução e a resposta ao PIN partilham o mesmo sítio, uma por cima da
+   outra: quando aparece "PIN incorreto" o teclado não se mexe (o dedo já ia a
+   caminho da tecla seguinte). A que não se vê guarda o lugar */
+.bancada__mensagem {
+  display: grid;
+  justify-items: center;
   margin-bottom: var(--e-3);
-  color: var(--tinta-2);
   font-size: var(--t-corpo-g);
+  text-align: center;
+  text-wrap: balance;
+}
+.bancada__mensagem > p {
+  grid-area: 1 / 1;
+}
+.bancada__instrucao {
+  color: var(--tinta-2);
+}
+.bancada__instrucao[data-escondida='true'] {
+  visibility: hidden;
+}
+.bancada__erro {
+  color: var(--erro);
+  font-weight: 500;
 }

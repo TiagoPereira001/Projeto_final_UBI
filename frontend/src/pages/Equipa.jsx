@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Plus, PencilSimple } from '../components/icones';
 import { api } from '../lib/api';
 import { useRecurso } from '../lib/useRecurso';
+import { useTitulo } from '../lib/useTitulo';
 import { CARGOS, nomeCargo } from '../lib/formatar';
 import { useSessao } from '../context/SessaoContext';
 import { useAvisos } from '../context/AvisosContext';
@@ -14,6 +15,7 @@ import '../styles/gestao.css';
 // - PIN: no tablet partilhado da oficina (modo bancada)
 // - email e password: no seu telemóvel ou computador (os gestores, sempre)
 export default function Equipa() {
+  useTitulo('Equipa');
   const { colaborador: eu } = useSessao();
   const { mostrar } = useAvisos();
   const equipa = useRecurso('/colaboradores');

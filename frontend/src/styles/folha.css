@@ -87,6 +87,13 @@
   color: var(--tinta);
   font-weight: 600;
 }
+/* o nome do cliente leva à ficha dele: 48 px de altura como o telefone ao
+   lado (a linha já a tem, por isso nada se mexe) */
+.folha__factos dd > a:not(.folha__telefone) {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque);
+}
 .folha__telefone {
   display: inline-flex;
   align-items: center;

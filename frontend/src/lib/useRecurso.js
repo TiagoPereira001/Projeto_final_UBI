@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { api } from './api';
 
-// a última resposta dos recursos pedidos com `memoria`, para o ecrã aparecer
-// completo logo ao voltar a ele (e atualizar por trás). Limpa-se sempre que a
-// sessão muda: num tablet partilhado, quem entra a seguir nunca vê o que ficou
-// da sessão anterior
+// a última resposta dos recursos pedidos com `memoria` (e quando chegou), para
+// o ecrã aparecer completo logo ao voltar a ele (e atualizar por trás). Limpa-se
+// sempre que a sessão muda: num tablet partilhado, quem entra a seguir nunca vê
+// o que ficou da sessão anterior
 const memoria = new Map();
 
 export function limparMemoriaRecursos() {
@@ -16,11 +16,18 @@ export function limparMemoriaRecursos() {
 //   O tablet da oficina fica ligado o dia todo; assim vê o que os colegas
 //   mudam noutros dispositivos sem ninguém ter de atualizar a página.
 // - `memoria`: mostra logo a última resposta que se teve (ver acima).
-// - enquanto atualiza, mantém os dados antigos no ecrã (sem piscar).
+// - enquanto atualiza, mantém os dados antigos no ecrã (sem piscar). Se o
+//   pedido seguinte falhar, ficam os dados e o `erro`: `atualizadoEm` (ms) diz
+//   de quando são, para o ecrã não os afirmar como se fossem de agora.
 export function useRecurso(caminho, { intervalo = 0, memoria: comMemoria = false } = {}) {
   const [estado, setEstado] = useState(() => {
     const guardado = comMemoria && caminho ? memoria.get(caminho) : undefined;
-    return { dados: guardado ?? null, erro: null, aCarregar: Boolean(caminho) && !guardado };
+    return {
+      dados: guardado?.dados ?? null,
+      atualizadoEm: guardado?.em ?? null,
+      erro: null,
+      aCarregar: Boolean(caminho) && !guardado,
+    };
   });
   const pedidoAtual = useRef(null);
 
@@ -31,8 +38,9 @@ export function useRecurso(caminho, { intervalo = 0, memoria: comMemoria = false
     pedidoAtual.current = controlo;
     try {
       const dados = await api.get(caminho, { sinal: controlo.signal });
-      if (comMemoria) memoria.set(caminho, dados);
-      setEstado({ dados, erro: null, aCarregar: false });
+      const atualizadoEm = Date.now();
+      if (comMemoria) memoria.set(caminho, { dados, em: atualizadoEm });
+      setEstado({ dados, atualizadoEm, erro: null, aCarregar: false });
     } catch (erro) {
       if (erro.name === 'AbortError') return;
       setEstado((anterior) => ({ ...anterior, erro, aCarregar: false }));
@@ -69,6 +77,7 @@ export function useRecurso(caminho, { intervalo = 0, memoria: comMemoria = false
     setEstado((anterior) => ({
       ...anterior,
       dados: typeof atualizar === 'function' ? atualizar(anterior.dados) : atualizar,
+      atualizadoEm: Date.now(),
     }));
   }, []);
 

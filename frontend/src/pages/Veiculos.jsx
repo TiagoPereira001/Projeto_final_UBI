@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { MagnifyingGlass, Plus } from '../components/icones';
 import { useRecurso } from '../lib/useRecurso';
+import { useTitulo } from '../lib/useTitulo';
 import { useAtraso } from '../lib/useAtraso';
 import { descreverVeiculo, nomeTipo } from '../lib/formatar';
 import { useAvisos } from '../context/AvisosContext';
@@ -17,6 +18,7 @@ import '../styles/entrada-veiculo.css';
 const POR_PAGINA = 30;
 
 export default function Veiculos() {
+  useTitulo('Veículos');
   const navegar = useNavigate();
   const { mostrar } = useAvisos();
   const [pesquisa, setPesquisa] = useState('');

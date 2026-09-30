@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { DeviceTablet } from '../components/icones';
 import { api } from '../lib/api';
 import { useRecurso } from '../lib/useRecurso';
+import { useTitulo } from '../lib/useTitulo';
 import { useSessao } from '../context/SessaoContext';
 import { useAvisos } from '../context/AvisosContext';
 import { Botao, BotaoConfirmar } from '../components/Botao';
@@ -12,6 +13,7 @@ import '../styles/gestao.css';
 
 export default function Definicoes() {
   const oficina = useRecurso('/oficinas/atual');
+  useTitulo('Definições');
   if (oficina.aCarregar) return <Esqueleto linhas={3} altura={80} />;
   if (oficina.erro && !oficina.dados) return <ErroCarregar erro={oficina.erro} aoTentar={oficina.recarregar} />;
 
