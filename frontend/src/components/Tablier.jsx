@@ -18,11 +18,20 @@ let chaveTestada = null;
 // leitura por baixo do nome. Tocar numa luz filtra a lista; tocar outra vez
 // tira o filtro.
 //
+// duas variantes, para o ecrã de descanso do tablet (ninguém entrou ainda):
+// - `somenteLeitura`: as luzes não são botões (não há lista para filtrar) e
+//   não há autoteste (ainda ninguém "rodou a chave");
+// - `grande`: as luzes e as leituras crescem, para se lerem de longe;
+// - `antigo`: os números já não são de agora (falhou a ligação): esbatem-se.
+//
 // dois momentos de luz, como num carro:
 // - ao rodar a chave (alguém entrou), todas as luzes acendem por um instante
 //   e ficam só as que têm veículos: o "autoteste";
 // - quando um estado passa de 0 para 1 ou mais, a luz acende com um cintilar.
-export function Tablier({ contagens, filtro, aoEscolher, aCarregar = false }) {
+export function Tablier({
+  contagens, filtro, aoEscolher, aCarregar = false,
+  somenteLeitura = false, grande = false, antigo = false,
+}) {
   const { ligadoEm } = useSessao();
   const pronto = Boolean(contagens);
   const anteriores = useRef(null);
@@ -30,7 +39,7 @@ export function Tablier({ contagens, filtro, aoEscolher, aCarregar = false }) {
   const [autoteste, setAutoteste] = useState(false);
 
   useEffect(() => {
-    if (!pronto || chaveTestada === ligadoEm || Date.now() - ligadoEm > JANELA_DA_CHAVE) return undefined;
+    if (somenteLeitura || !pronto || chaveTestada === ligadoEm || Date.now() - ligadoEm > JANELA_DA_CHAVE) return undefined;
     setAutoteste(true);
     const relogio = setTimeout(() => {
       chaveTestada = ligadoEm;
@@ -40,7 +49,7 @@ export function Tablier({ contagens, filtro, aoEscolher, aCarregar = false }) {
       clearTimeout(relogio);
       setAutoteste(false);
     };
-  }, [pronto, ligadoEm]);
+  }, [pronto, ligadoEm, somenteLeitura]);
 
   useEffect(() => {
     if (!contagens) return undefined;
@@ -59,24 +68,27 @@ export function Tablier({ contagens, filtro, aoEscolher, aCarregar = false }) {
 
   return (
     <div
-      className="tablier"
+      className={`tablier${grande ? ' tablier--grande' : ''}${somenteLeitura ? ' tablier--leitura' : ''}`}
       data-autoteste={autoteste}
+      data-antigo={antigo}
       role="group"
-      aria-label="Estado da oficina: toca numa luz para filtrar"
+      aria-label={somenteLeitura ? 'Estado da oficina' : 'Estado da oficina: toca numa luz para filtrar'}
     >
       {ESTADOS_ATIVOS.map((estado, ordem) => {
         const numero = contagens?.[estado.codigo] ?? 0;
         const ativa = filtro === estado.codigo;
+        const Luz = somenteLeitura ? 'div' : 'button';
+        const aoToque = somenteLeitura
+          ? {}
+          : { type: 'button', 'aria-pressed': ativa, onClick: () => aoEscolher(ativa ? null : estado.codigo) };
         return (
-          <button
+          <Luz
             key={estado.codigo}
-            type="button"
             className={`tablier__luz tablier__luz--${estado.codigo}`}
             data-acesa={numero > 0 && !aCarregar}
             data-a-acender={aAcender.includes(estado.codigo)}
-            aria-pressed={ativa}
-            onClick={() => aoEscolher(ativa ? null : estado.codigo)}
             style={{ '--ordem': ordem }}
+            {...aoToque}
           >
             <SimboloEstado estado={estado.codigo} tamanho={60} className="tablier__simbolo" />
             <span className="tablier__leitura">
@@ -86,7 +98,7 @@ export function Tablier({ contagens, filtro, aoEscolher, aCarregar = false }) {
                 <span className="so-leitores">{numero === 1 ? ' veículo' : ' veículos'}</span>
               </span>
             </span>
-          </button>
+          </Luz>
         );
       })}
     </div>

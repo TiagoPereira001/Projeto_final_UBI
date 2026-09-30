@@ -67,7 +67,7 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - 6 tabelas com chaves estrangeiras compostas por oficina;
   - sessões em cookies `httpOnly`, modo bancada com PIN, registo público;
   - login da API sem permissão de `DELETE`.
-- 52 testes automáticos (`node:test`) contra SQL Server real, incluindo o isolamento entre oficinas. CI no GitHub Actions.
+- 54 testes automáticos (`node:test`) contra SQL Server real, incluindo o isolamento entre oficinas. CI no GitHub Actions.
 - Frontend novo (React 19, Vite 8, PWA):
   - quadro com o tablier, modo bancada, nova entrada pela matrícula, folha de obra;
   - histórico, clientes, veículos, equipa e definições;
@@ -112,6 +112,9 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - a edição Developer (omissão da imagem) só serve para desenvolver: em produção, Express. Na Express não há compressão de cópias, TDE, cópias cifradas nem SQL Agent (testado);
   - RPO e RTO estão por definir com o cliente (perguntas na secção 15). Não há preços nem servidor reais: NÃO VERIFICADO;
   - o CI ganhou um terceiro trabalho (shellcheck, `docker compose config` e construção da imagem).
+- Crítica de design do Quadro com a impeccable (30/09/2026), a pedido do autor: nota 28/40, dois P1 e três P2. O arquivo está em `.impeccable/critique/`. O autor escolheu começar pelos dois P1, disse que o tablet fica na parede ou na bancada a 1 a 2 m (por isso o tablier maior passa a P1) e que "Terminar" passa a neutro (a Regra da Voz Única vence).
+  - **Feito (`layout`):** o ecrã de descanso (`/bancada`) mostra o tablier grande e só de leitura por cima de "Quem vai trabalhar?", com o bloco centrado; sem ligação, os números esbatem-se e dizem de quando são. O `GET /api/auth/bancada` devolve também `porEstado` (só as contagens da oficina do dispositivo; 2 testes novos, 54 no total). Na sessão do tablet, aviso 30 s antes do bloqueio por inatividade ("Ainda estás aí?", botão neutro "Continuar"; tocar ou carregar numa tecla também continua). O Tablier ganhou `somenteLeitura`, `grande` e `antigo`; as medidas passaram a variáveis CSS (`--tablier-simbolo`, `--tablier-nome`, `--tablier-numero`). Verificado no browser em dois temas e quatro larguras, e com o relógio simulado para o aviso.
+  - **Por fazer da crítica:** `harden` ("Entregue" com dois toques, afastado dos outros estados e com a `ajuda` visível), `adapt` (o tablier do Quadro com símbolo de 80 px, número de 48 px e nome de 20 px em toque com 1024 px ou mais, e um teste a 1,5 m no tablet montado), `quieter` ("Terminar" neutro e a chamar-se "Sair do tablet"; corrigir o DESIGN.md: linhas 302 e 398 contradizem-se, e as linhas 374 e 393 dizem 10 px nos botões e campos contra 6 px no código) e os P2 fora do âmbito (um só âmbar nos outros ecrãs, gravação automática das notas). Visto de passagem e não tratado: a 390 px a barra de topo do tablet corta o botão "Terminar".
 - Este trabalho entrou no `dev` por PRs do ramo `claude/ecstatic-lamport-81qsk8`: o #1 (plataforma, interface, testes e documentação), o #2 (documento das ferramentas), o #3 (auditoria), o #4 e o #7 (memória), o #5 (licença e aviso), o #8 (revisão de código) e o do guia de arranque. A 27/09/2026 o `dev` passou para o `main` pelo PR #6, com o merge feito pelo autor. O que entrou no `dev` depois disso (do #7 em diante) só aparece na página do GitHub quando o `dev` voltar a passar para o `main`, e isso tem de ser pedido ao autor.
 
 **Por fazer** (sugestões, nada disto existe):
@@ -152,3 +155,5 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 - **28 e 29/09/2026**:
   - o autor enviou de novo o guião de auditoria (igual ao anterior, por isso reauditoria) e um guião novo de arquitetura de cloud e DevOps;
   - reauditoria e `docs/infraestrutura.md` (ver o Estado atual), com os scripts e o compose de produção validados numa cópia.
+- **30/09/2026**:
+  - crítica de design do Quadro com a impeccable (28/40) e primeiro passo do plano, o `layout` do ecrã de descanso da bancada com o aviso antes do bloqueio (ver o Estado atual).

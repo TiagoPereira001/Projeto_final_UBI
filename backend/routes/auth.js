@@ -4,6 +4,7 @@ const { ErroHttp } = require('../lib/erros');
 const { Validador } = require('../lib/validar');
 const { confere } = require('../lib/credenciais');
 const sessao = require('../lib/sessao');
+const { ESTADOS_ATIVOS } = require('../lib/estados');
 const {
     exigirSessao, exigirCargo, exigirEntradaComPassword, carregarColaborador,
 } = require('../middleware/auth');
@@ -123,7 +124,10 @@ function criarRouterAuth(limitadores) {
         res.status(204).end();
     });
 
-    // GET /api/auth/bancada: quem pode entrar neste tablet (só nome e cargo)
+    // GET /api/auth/bancada: o que o tablet mostra em repouso, antes de alguém
+    // entrar. Quem pode entrar (só nome e cargo) e o tablier da oficina: quantas
+    // folhas há em cada estado. Só números, nunca dados de clientes nem de
+    // veículos, e só da oficina a que este dispositivo pertence
     router.get('/bancada', async (req, res) => {
         const bancada = await dispositivoValido(req, res);
         if (!bancada) {
@@ -131,18 +135,33 @@ function criarRouterAuth(limitadores) {
         }
 
         const pool = await getPool();
-        const resultado = await pool.request()
-            .input('oficina', sql.Int, bancada.oficinaId)
-            .query(`
-                SELECT ID_Colaborador AS id, Nome AS nome, Cargo AS cargo
-                FROM Colaborador
-                WHERE ID_Oficina = @oficina AND Ativo = 1 AND PIN_Hash IS NOT NULL
-                ORDER BY Nome
-            `);
+        const [pessoas, folhas] = await Promise.all([
+            pool.request()
+                .input('oficina', sql.Int, bancada.oficinaId)
+                .query(`
+                    SELECT ID_Colaborador AS id, Nome AS nome, Cargo AS cargo
+                    FROM Colaborador
+                    WHERE ID_Oficina = @oficina AND Ativo = 1 AND PIN_Hash IS NOT NULL
+                    ORDER BY Nome
+                `),
+            pool.request()
+                .input('oficina', sql.Int, bancada.oficinaId)
+                .query(`
+                    SELECT Estado AS estado, COUNT(*) AS folhas
+                    FROM Folha_Obra
+                    WHERE ID_Oficina = @oficina AND Estado <> 'entregue'
+                    GROUP BY Estado
+                `),
+        ]);
+
+        // todos os estados aparecem, mesmo os que não têm nenhuma folha (a 0)
+        const porEstado = Object.fromEntries(ESTADOS_ATIVOS.map((e) => [e, 0]));
+        for (const { estado, folhas: n } of folhas.recordset) porEstado[estado] = n;
 
         res.json({
             oficina: { id: bancada.oficinaId, nome: bancada.oficinaNome },
-            colaboradores: resultado.recordset,
+            colaboradores: pessoas.recordset,
+            porEstado,
         });
     });
 
