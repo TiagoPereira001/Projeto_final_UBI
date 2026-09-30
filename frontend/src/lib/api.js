@@ -15,19 +15,38 @@ export class ErroApi extends Error {
   }
 }
 
-async function pedido(caminho, { metodo = 'GET', corpo, sinal } = {}) {
+// `tempoLimite` (ms) é opcional: desiste do pedido se o servidor não responder a
+// tempo. Sem ele, uma ligação a meio (o Wi-Fi da oficina) deixa o ecrã à espera
+// durante minutos. Só o pedem os gestos em que ficar pendurado bloqueia alguém
+async function pedido(caminho, { metodo = 'GET', corpo, sinal, tempoLimite } = {}) {
   const opcoes = { method: metodo, credentials: 'same-origin', signal: sinal };
   if (corpo !== undefined) {
     opcoes.headers = { 'Content-Type': 'application/json' };
     opcoes.body = JSON.stringify(corpo);
   }
 
+  let esgotou = false;
+  let relogio;
+  if (tempoLimite) {
+    const controlo = new AbortController();
+    if (sinal?.aborted) controlo.abort();
+    else sinal?.addEventListener('abort', () => controlo.abort(), { once: true });
+    relogio = setTimeout(() => {
+      esgotou = true;
+      controlo.abort();
+    }, tempoLimite);
+    opcoes.signal = controlo.signal;
+  }
+
   let resposta;
   try {
     resposta = await fetch(`/api${caminho}`, opcoes);
   } catch (err) {
+    if (esgotou) throw new ErroApi('O servidor demorou a responder. Tenta outra vez.', 0);
     if (err.name === 'AbortError') throw err;
     throw new ErroApi('Sem ligação ao servidor. Confirma a internet e tenta outra vez.', 0);
+  } finally {
+    clearTimeout(relogio);
   }
 
   if (resposta.status === 204) return null;
@@ -48,6 +67,6 @@ export const api = {
   get: (caminho, opcoes) => pedido(caminho, opcoes),
   post: (caminho, corpo) => pedido(caminho, { metodo: 'POST', corpo: corpo ?? {} }),
   put: (caminho, corpo) => pedido(caminho, { metodo: 'PUT', corpo }),
-  patch: (caminho, corpo) => pedido(caminho, { metodo: 'PATCH', corpo }),
+  patch: (caminho, corpo, opcoes) => pedido(caminho, { metodo: 'PATCH', corpo, ...opcoes }),
   apagar: (caminho) => pedido(caminho, { metodo: 'DELETE' }),
 };

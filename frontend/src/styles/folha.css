@@ -104,11 +104,30 @@
   }
 }
 
-/* seletor de estado: cinco botões, cada um com o pictograma do estado */
+/* seletor de estado: os quatro estados de trabalho juntos e "Entregue" à parte,
+   com uma linha e um intervalo maior pelo meio. Entregue fecha a folha, e nada
+   o deve confundir com um vizinho ao lado. Cada botão leva o pictograma do estado */
 .seletor-estado {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 4fr) minmax(0, 1fr);
+  gap: var(--e-8);
+}
+.seletor-estado__trabalho {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--e-2);
+}
+.seletor-estado__saida {
+  position: relative;
+  display: grid;
+}
+.seletor-estado__saida::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--e-8) / -2);
+  border-left: 1px solid var(--linha);
 }
 .seletor-estado__opcao {
   display: inline-flex;
@@ -116,7 +135,7 @@
   justify-content: center;
   gap: var(--e-2);
   min-height: var(--toque-g);
-  padding: 0 var(--e-3);
+  padding: var(--e-1) var(--e-3);
   border: 1px solid var(--linha);
   border-radius: var(--r-controlo);
   background: var(--superficie);
@@ -126,29 +145,64 @@
   transition: background var(--dur-rapida) var(--curva), border-color var(--dur-rapida) var(--curva), color var(--dur-rapida) var(--curva);
 }
 @media (hover: hover) {
-  .seletor-estado__opcao:hover:not(:disabled) {
+  .seletor-estado__opcao:hover:not(:disabled, [data-pergunta]) {
     border-color: var(--linha-forte);
     color: var(--tinta);
   }
 }
-.seletor-estado__opcao[aria-checked='true'] {
+.seletor-estado__opcao[aria-pressed='true'] {
   border-color: var(--cor-estado);
   background: color-mix(in srgb, var(--cor-estado) 14%, var(--superficie));
   color: var(--tinta);
   box-shadow: inset 0 0 0 1px var(--cor-estado);
 }
+/* o nome e, por baixo, o que acontece ao tocar (só onde ajuda a não errar) */
+.seletor-estado__texto {
+  display: grid;
+  min-width: 0;
+  text-align: left;
+  line-height: 1.2;
+}
+.seletor-estado__nota {
+  font-size: var(--t-legenda);
+  font-weight: 500;
+  color: var(--tinta-3);
+}
 /* apagado nos estados que não são o atual; aceso, na cor do estado, no atual */
 .seletor-estado__simbolo {
+  flex: none;
   color: color-mix(in srgb, var(--linha-forte) 60%, var(--superficie));
   transition: color var(--dur-rapida) var(--curva);
 }
-.seletor-estado__opcao[aria-checked='true'] .seletor-estado__simbolo {
+.seletor-estado__opcao[aria-pressed='true'] .seletor-estado__simbolo {
   color: var(--cor-estado);
+}
+/* a pergunta ("Entregar mesmo?"): o botão inverte-se, e de longe lê-se que já
+   não é o que era. Não é vermelho (entregar não destrói nada) nem âmbar (o âmbar
+   é da ação principal do ecrã) */
+.seletor-estado__opcao[data-pergunta] {
+  border-color: var(--tinta);
+  background: var(--tinta);
+  color: var(--superficie);
+  box-shadow: none;
+}
+.seletor-estado__opcao[data-pergunta] .seletor-estado__simbolo,
+.seletor-estado__opcao[data-pergunta] .seletor-estado__nota {
+  color: inherit;
+}
+.seletor-estado__opcao[data-pergunta] .seletor-estado__nome {
+  font-size: var(--t-corpo-g);
+}
+/* a gravar: o botão tocado fica com o contorno do seu estado, sem se apagar */
+.seletor-estado__opcao[aria-busy='true'] {
+  border-color: var(--cor-estado);
+  color: var(--tinta);
+  cursor: progress;
 }
 .seletor-estado__opcao:disabled {
   cursor: not-allowed;
 }
-.seletor-estado__opcao:disabled:not([aria-checked='true']) {
+.seletor-estado__opcao:disabled:not([aria-pressed='true']) {
   opacity: 0.5;
 }
 
@@ -308,9 +362,25 @@
   justify-self: start;
 }
 
+/* sem largura para os cinco em fila, "Entregue" desce para uma fila só dele,
+   com a linha por cima em vez de ao lado */
 @media (max-width: 1100px) {
   .seletor-estado {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--e-6);
+  }
+  .seletor-estado__saida::before {
+    top: calc(var(--e-6) / -2);
+    right: 0;
+    bottom: auto;
+    left: 0;
+    border-left: 0;
+    border-top: 1px solid var(--linha);
+  }
+}
+@media (max-width: 760px) {
+  .seletor-estado__trabalho {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -331,9 +401,6 @@
 }
 
 @media (max-width: 600px) {
-  .seletor-estado {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
   .nova-linha__numeros {
     grid-template-columns: 1fr 1fr;
   }

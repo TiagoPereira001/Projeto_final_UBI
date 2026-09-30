@@ -74,7 +74,8 @@ O percurso de um carro pela oficina, na Bancada:
    - Tocar numa luz filtra a lista.
 4. **Pronta.** Liga-se ao cliente: o telefone está na folha.
 5. **Entregue.**
-   - A folha fecha: só um gestor a pode reabrir.
+   - Entregar pede um segundo toque no botão, para não fechar uma folha por engano.
+   - A folha fecha: só um gestor a pode reabrir, e também com dois toques (reabrir limpa a data de entrega).
    - A fatura é emitida no programa de faturação da oficina, com os totais da Bancada.
 6. **Gestão**, no computador:
    - valores do mês;

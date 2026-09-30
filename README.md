@@ -43,7 +43,7 @@ A descrição completa do produto (utilizadores, percurso de um carro pela ofici
 - **Tablet partilhado (modo bancada):** o tablet fica na oficina e cada mecânico entra com o seu nome e PIN. O que regista fica em nome dele, e a sessão termina sozinha se o tablet ficar parado.
 - **Nova entrada** a partir da matrícula. Se o veículo já cá esteve, aparece logo; se for novo, regista-se o veículo e o dono no mesmo passo.
 - **Folha de obra:**
-  - estado da reparação, escolhido com um toque;
+  - estado da reparação, escolhido com um toque (entregar pede um segundo, porque fecha a folha);
   - peças, mão de obra (em horas) e outros custos, com os totais e o IVA calculados ao cêntimo;
   - observações e conselhos para o cliente (manutenção preventiva);
   - uma folha entregue fica fechada.

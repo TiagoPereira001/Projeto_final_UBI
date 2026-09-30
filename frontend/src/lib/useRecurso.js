@@ -60,8 +60,12 @@ export function useRecurso(caminho, { intervalo = 0, memoria: comMemoria = false
     };
   }, [intervalo, carregar]);
 
-  // para atualizar o ecrã logo com a resposta de uma alteração (sem novo pedido)
+  // para atualizar o ecrã logo com a resposta de uma alteração (sem novo pedido).
+  // Um pedido que já vá a caminho (a atualização de 30 em 30 s) foi feito antes
+  // desta alteração e traria os dados de antes: deita-se fora, senão a folha
+  // que acabou de ser entregue voltava a aparecer aberta até à volta seguinte
   const definirDados = useCallback((atualizar) => {
+    pedidoAtual.current?.abort();
     setEstado((anterior) => ({
       ...anterior,
       dados: typeof atualizar === 'function' ? atualizar(anterior.dados) : atualizar,
