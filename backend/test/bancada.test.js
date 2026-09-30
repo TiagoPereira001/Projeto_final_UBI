@@ -45,6 +45,42 @@ test('ativar a bancada termina a sessão do gestor e mostra só nomes', async ()
     assert.ok(quem.dados.colaboradores.some((c) => c.id === paulo.id));
 });
 
+test('o ecrã de descanso mostra quantas folhas há em cada estado, só números', async () => {
+    const oficinaNova = await novaOficina(servidor, 'Tablier');
+    const gestor = oficinaNova.gestor;
+    const aberta = (await novaFolha(gestor)).folha;
+    const emCurso = (await novaFolha(gestor)).folha;
+    const outraEmCurso = (await novaFolha(gestor)).folha;
+    const entregue = (await novaFolha(gestor)).folha;
+    assert.equal((await gestor.patch(`/folhas-obra/${emCurso.id}`, { estado: 'em_curso' })).status, 200);
+    assert.equal((await gestor.patch(`/folhas-obra/${outraEmCurso.id}`, { estado: 'em_curso' })).status, 200);
+    assert.equal((await gestor.patch(`/folhas-obra/${entregue.id}`, { estado: 'entregue' })).status, 200);
+    assert.equal(aberta.estado, 'aberta');
+
+    const tablet = servidor.cliente();
+    await tablet.post('/auth/entrar', { email: oficinaNova.email, password: oficinaNova.password });
+    assert.equal((await tablet.post('/auth/bancada')).status, 204);
+
+    const quem = await tablet.get('/auth/bancada');
+    assert.equal(quem.status, 200);
+    // todos os estados que estão na oficina, mesmo os que estão a 0; as entregues não contam
+    assert.deepEqual(quem.dados.porEstado, { aberta: 1, em_curso: 2, aguarda_pecas: 0, concluida: 0 });
+    // e mais nada: nenhum dado de folhas, clientes ou veículos
+    assert.deepEqual(Object.keys(quem.dados).sort(), ['colaboradores', 'oficina', 'porEstado']);
+});
+
+test('o tablet só conta as folhas da sua oficina', async () => {
+    const vizinha = await novaOficina(servidor, 'Vizinha');
+    await novaFolha(vizinha.gestor);
+    await novaFolha(vizinha.gestor);
+
+    const tablet = await novoTablet();
+    const doTablet = (await tablet.get('/auth/bancada')).dados.porEstado;
+    // é o mesmo que o gestor desta oficina vê: as duas folhas da vizinha não entram
+    const doGestor = (await oficina.gestor.get('/folhas-obra/resumo')).dados.porEstado;
+    assert.deepEqual(doTablet, doGestor);
+});
+
 test('entrar com PIN: o trabalho fica em nome de quem entrou', async () => {
     const tablet = await novoTablet();
     const entrar = await tablet.post('/auth/bancada/entrar', { colaboradorId: paulo.id, pin: '2580' });

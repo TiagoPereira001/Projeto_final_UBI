@@ -229,6 +229,36 @@
   font-size: clamp(2rem, 4vw, 2.75rem);
   text-align: center;
 }
+/* o ecrã de descanso fica no meio do ecrã: com pouca coisa (três nomes) não
+   fica colado ao topo com o resto vazio; com muita (muitos nomes), começa no
+   topo e desce. O passo do PIN não usa isto: ocupa o ecrã de cima a baixo */
+.bancada__descanso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--e-6);
+  width: 100%;
+  margin-block: auto;
+}
+/* por baixo do tablier, "Quem vai trabalhar?" é a segunda coisa a ler: um
+   degrau abaixo. O nome de quem escreve o PIN continua grande */
+.bancada__titulo--escolha {
+  font-size: clamp(1.75rem, 3.2vw, 2.25rem);
+}
+/* o estado da oficina, à frente de tudo, com o mesmo comprimento dos nomes.
+   O intervalo até ao título é maior do que o resto: são dois grupos (o que
+   se lê e o que se toca) */
+.bancada__estado {
+  display: grid;
+  gap: var(--e-3);
+  width: min(100%, 1100px);
+  margin-bottom: var(--e-6);
+}
+.bancada__nota {
+  text-align: center;
+  color: var(--tinta-2);
+  font-size: var(--t-corpo);
+}
 .bancada__aviso {
   max-width: 48ch;
   text-align: center;
