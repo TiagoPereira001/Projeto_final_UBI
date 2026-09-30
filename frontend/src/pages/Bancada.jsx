@@ -12,7 +12,7 @@ import '../styles/entrada.css';
 
 // o ecrã de descanso do tablet partilhado: "Quem vai trabalhar?".
 // Cada mecânico toca no seu nome e escreve o PIN. Tudo o que fizer a seguir
-// fica registado em nome dele, até tocar em Terminar (ou ficar parado).
+// fica registado em nome dele, até tocar em "Sair do tablet" (ou ficar parado).
 //
 // É o ecrã que o tablet mais mostra (fica assim quase o dia todo), por isso
 // também diz o estado da oficina: o tablier grande, só de leitura, por cima

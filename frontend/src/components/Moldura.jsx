@@ -69,9 +69,14 @@ export function Moldura() {
             >
               {tema === 'escuro' ? <Sun size={22} aria-hidden="true" /> : <Moon size={22} aria-hidden="true" />}
             </button>
-            <button type="button" className={`topo__sair ${noTablet ? 'topo__sair--tablet' : ''}`} onClick={terminar}>
+            <button
+              type="button"
+              className="topo__sair"
+              onClick={terminar}
+              aria-label={noTablet ? 'Sair do tablet' : 'Sair'}
+            >
               <SignOut size={20} weight="bold" aria-hidden="true" />
-              {noTablet ? 'Terminar' : 'Sair'}
+              <span className="topo__sair-texto">{noTablet ? 'Sair do tablet' : 'Sair'}</span>
             </button>
           </div>
         </div>
