@@ -66,7 +66,7 @@ Projeto final de licenciatura (Informática Web, Móvel e na Nuvem, UBI) do Tiag
         ├── main.jsx, App.jsx  entrada e rotas (páginas de gestão carregadas à parte)
         ├── context/           SessaoContext (sessão/bancada), AvisosContext (toasts)
         ├── lib/               api.js, formatar.js (nomes PT dos códigos), hooks
-        ├── components/        Tablier (normal, grande e só de leitura), Luzes (pictogramas dos estados), Matricula, Botao, Campo, Moldura, AvisoBloqueio, TecladoPin...
+        ├── components/        Tablier (normal, a distância, grande e só de leitura), Luzes (pictogramas dos estados), Matricula, Botao, Campo, Moldura, AvisoBloqueio, TecladoPin...
         ├── pages/             um ficheiro por ecrã
         └── styles/            tokens.css (fonte de verdade das cores), base, componentes, páginas
 ```

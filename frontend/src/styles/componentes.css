@@ -747,6 +747,13 @@
     background: #1b1e22;
   }
 }
+/* o toque também responde enquanto o dedo está no ecrã (no tablet não há hover) */
+button.tablier__luz:active {
+  background: #15171a;
+}
+button.tablier__luz[aria-pressed='true']:active {
+  background: #1b1e22;
+}
 
 /* ecrã de descanso do tablet: o tablier lê-se de longe e não se toca.
    As luzes não são botões, por isso não há mão nem realce ao passar */
@@ -800,6 +807,64 @@
   }
   .tablier--grande .tablier__luz:nth-child(n + 3) {
     border-top: 1px solid var(--painel-linha);
+  }
+}
+
+/* o tablier a distância: no tablet partilhado (modo bancada) o quadro lê-se de
+   pé, a 1 ou 2 m, e a lista de baixo tem de continuar a caber. A luz, o nome e
+   a leitura sobem um degrau, menos do que na `grande`.
+   A conta faz-se para um tablet de 10,9": 1 px CSS são 0,19 mm, por isso o
+   número de 52 px tem 36 px de altura de maiúscula, 7 mm, que a 1,5 m são 16
+   minutos de arco (o de 24 px eram 7). O símbolo de 80 px são 35 minutos.
+   Não vale para o telemóvel: nunca está a 1 m */
+@media (min-width: 761px) {
+  /* ao alto: duas luzes por linha */
+  .tablier--distancia {
+    --tablier-simbolo: 72px;
+    --tablier-nome: 1.25rem;
+    --tablier-numero: 2.75rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tablier--distancia .tablier__luz {
+    min-height: 0;
+    padding: var(--e-4);
+    gap: var(--e-5);
+  }
+  .tablier--distancia .tablier__nome {
+    min-height: 0;
+  }
+  .tablier--distancia .tablier__numero {
+    min-width: 4.75rem;
+    margin-top: var(--e-2);
+    padding: 7px 12px 5px;
+    border-radius: 4px;
+  }
+  .tablier--distancia .tablier__luz:nth-child(3) {
+    border-left: 0;
+  }
+  .tablier--distancia .tablier__luz:nth-child(n + 3) {
+    border-top: 1px solid var(--painel-linha);
+  }
+}
+@media (min-width: 1024px) {
+  /* deitado: as quatro em fila. "Aguardam peças" parte-se em duas linhas nas
+     larguras mais estreitas, por isso todos os nomes reservam duas linhas
+     (encostados em baixo) e os quatro números ficam na mesma linha de base */
+  .tablier--distancia {
+    --tablier-simbolo: 80px;
+    --tablier-numero: 3.25rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .tablier--distancia .tablier__nome {
+    display: flex;
+    align-items: flex-end;
+    min-height: 2.4em;
+  }
+  .tablier--distancia .tablier__luz:nth-child(3) {
+    border-left: 1px solid var(--painel-linha);
+  }
+  .tablier--distancia .tablier__luz:nth-child(n + 3) {
+    border-top: 0;
   }
 }
 
