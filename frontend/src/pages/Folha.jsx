@@ -1,16 +1,17 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Phone, Plus, Trash, LockKey } from '../components/icones';
 import { api } from '../lib/api';
 import { useRecurso } from '../lib/useRecurso';
 import {
-  CATEGORIAS, ESTADOS, categoria, dataHora, descreverVeiculo, euros, nomeEstado, numero, quilometros, tempoDesde,
+  CATEGORIAS, ESTADOS, ESTADOS_ATIVOS, categoria, dataHora, descreverVeiculo, euros, nomeEstado, numero, quilometros,
+  tempoDesde,
 } from '../lib/formatar';
 import { useSessao } from '../context/SessaoContext';
 import { useAvisos } from '../context/AvisosContext';
 import { Matricula } from '../components/Matricula';
 import { SimboloEstado } from '../components/Luzes';
-import { Botao, BotaoConfirmar } from '../components/Botao';
+import { Botao, BotaoConfirmar, TEMPO_CONFIRMACAO } from '../components/Botao';
 import { AreaTexto, Segmentos, Texto } from '../components/Campo';
 import { ErroCarregar, ErroFormulario, Esqueleto, Vazio } from '../components/Situacoes';
 import '../styles/folha.css';
@@ -33,26 +34,31 @@ export default function Folha() {
     }
     return <ErroCarregar erro={folha.erro} aoTentar={folha.recarregar} />;
   }
-  return <FolhaAberta folha={folha.dados} definir={folha.definirDados} />;
+  return <FolhaAberta folha={folha.dados} definir={folha.definirDados} recarregar={folha.recarregar} />;
 }
 
-function FolhaAberta({ folha, definir }) {
+function FolhaAberta({ folha, definir, recarregar }) {
   const { colaborador } = useSessao();
   const { mostrar } = useAvisos();
   const fechada = folha.estado === 'entregue';
   const gestor = colaborador.cargo === 'gestor';
-  const [aMudarEstado, setAMudarEstado] = useState(false);
+  const [aMudarPara, setAMudarPara] = useState(null);
 
   async function mudarEstado(estado) {
-    if (estado === folha.estado) return;
-    setAMudarEstado(true);
+    if (estado === folha.estado || aMudarPara) return;
+    setAMudarPara(estado);
     try {
-      definir(await api.patch(`/folhas-obra/${folha.id}`, { estado }));
+      // 15 s: o seletor fica bloqueado enquanto espera, não pode ser para sempre
+      definir(await api.patch(`/folhas-obra/${folha.id}`, { estado }, { tempoLimite: 15000 }));
       mostrar(estado === 'entregue' ? 'Folha entregue e fechada.' : `Estado: ${nomeEstado(estado)}.`);
     } catch (err) {
-      mostrar(err.message, { tipo: 'erro' });
+      // o erro fica 8 s (no tablet lê-se a 1 ou 2 m) e a folha volta a pedir-se:
+      // um colega pode tê-la entregue noutro dispositivo, ou a resposta perdeu-se
+      // depois de a mudança ter chegado ao servidor. Assim o ecrã diz a verdade
+      mostrar(err.message, { tipo: 'erro', duracao: 8000 });
+      recarregar();
     } finally {
-      setAMudarEstado(false);
+      setAMudarPara(null);
     }
   }
 
@@ -108,7 +114,9 @@ function FolhaAberta({ folha, definir }) {
       <SeletorEstado
         atual={folha.estado}
         aoMudar={mudarEstado}
-        desativado={aMudarEstado || (fechada && !gestor)}
+        aGravar={aMudarPara}
+        gestor={gestor}
+        bloqueado={fechada && !gestor}
       />
       {fechada && (
         <p className="folha__fechada">
@@ -187,28 +195,119 @@ function FolhaAberta({ folha, definir }) {
   );
 }
 
+const ENTREGUE = ESTADOS.find((e) => e.codigo === 'entregue');
+
 // o estado escolhe-se com um toque. Cada opção tem o pictograma do estado,
-// como no tablier: aceso no estado atual, apagado nos outros
-function SeletorEstado({ atual, aoMudar, desativado }) {
+// como no tablier: aceso no estado atual, apagado nos outros.
+//
+// Os quatro estados de trabalho ficam juntos e "Entregue" fica à parte, com a
+// consequência à vista (num tablet não há rato para passar por cima). Entregar
+// pede um segundo toque, porque fecha a folha e só um gestor a pode reabrir;
+// reabrir também, porque apaga a data de entrega. A pergunta caduca ao fim de
+// 4 s (como as outras confirmações), com Escape, se o foco sair do seletor ou
+// se a folha mudar entretanto
+function SeletorEstado({ atual, aoMudar, aGravar, gestor, bloqueado }) {
+  const grupo = useRef(null);
+  const [pedido, setPedido] = useState(null);
+  // a pergunta só vale para a folha no estado em que foi feita
+  const aPerguntar = pedido && pedido.desde === atual ? pedido.codigo : null;
+
+  useEffect(() => {
+    if (!pedido) return undefined;
+    const relogio = setTimeout(() => setPedido(null), TEMPO_CONFIRMACAO);
+    return () => clearTimeout(relogio);
+  }, [pedido]);
+
+  function tocar(codigo) {
+    if (aGravar || codigo === atual) return;
+    if (codigo === 'entregue' || atual === 'entregue') {
+      if (aPerguntar !== codigo) {
+        setPedido({ codigo, desde: atual, em: Date.now() });
+        return;
+      }
+      // um toque duplo sem querer (luvas, dedos sujos) não conta como resposta:
+      // ler a pergunta leva mais do que isto
+      if (Date.now() - pedido.em < 400) return;
+    }
+    setPedido(null);
+    aoMudar(codigo);
+  }
+
+  function aoTeclar(ev) {
+    if (ev.key === 'Escape' && aPerguntar) setPedido(null);
+  }
+
+  function aoSairDoFoco(ev) {
+    if (!grupo.current?.contains(ev.relatedTarget)) setPedido(null);
+  }
+
+  const opcao = (estado) => (
+    <OpcaoEstado
+      key={estado.codigo}
+      estado={estado}
+      atual={atual}
+      aPerguntar={aPerguntar}
+      aGravar={aGravar}
+      gestor={gestor}
+      desativada={bloqueado || Boolean(aGravar && aGravar !== estado.codigo)}
+      aoTocar={tocar}
+      aoTeclar={aoTeclar}
+    />
+  );
+
   return (
-    <div className="seletor-estado" role="radiogroup" aria-label="Estado da reparação">
-      {ESTADOS.map((estado) => (
-        <button
-          key={estado.codigo}
-          type="button"
-          role="radio"
-          aria-checked={atual === estado.codigo}
-          className={`seletor-estado__opcao estado--${estado.codigo}`}
-          disabled={desativado}
-          onClick={() => aoMudar(estado.codigo)}
-          title={estado.ajuda}
-        >
-          <SimboloEstado estado={estado.codigo} tamanho={26} className="seletor-estado__simbolo" />
-          {estado.nome}
-        </button>
-      ))}
+    <div className="seletor-estado" role="group" aria-label="Estado da reparação" ref={grupo} onBlur={aoSairDoFoco}>
+      <div className="seletor-estado__trabalho">{ESTADOS_ATIVOS.map(opcao)}</div>
+      <div className="seletor-estado__saida">{opcao(ENTREGUE)}</div>
+      <p className="so-leitores" role="status">{anunciar({ aGravar, aPerguntar, gestor })}</p>
     </div>
   );
+}
+
+function OpcaoEstado({ estado, atual, aPerguntar, aGravar, gestor, desativada, aoTocar, aoTeclar }) {
+  const { nome, nota } = textoDaOpcao(estado, { atual, aPerguntar, aGravar, gestor });
+  return (
+    <button
+      type="button"
+      aria-pressed={atual === estado.codigo}
+      aria-busy={aGravar === estado.codigo || undefined}
+      className={`seletor-estado__opcao estado--${estado.codigo}`}
+      data-pergunta={aPerguntar === estado.codigo || undefined}
+      disabled={desativada}
+      onClick={() => aoTocar(estado.codigo)}
+      onKeyDown={aoTeclar}
+      title={nota ? undefined : estado.ajuda}
+    >
+      <SimboloEstado estado={estado.codigo} tamanho={26} className="seletor-estado__simbolo" />
+      <span className="seletor-estado__texto">
+        <span className="seletor-estado__nome">{nome}</span>
+        {nota && <span className="seletor-estado__nota">{nota}</span>}
+      </span>
+    </button>
+  );
+}
+
+// o que cada opção diz: o nome do estado e, onde ajuda a não errar, o que
+// acontece ao tocar (em "Entregue" sempre; nas outras só na pergunta)
+function textoDaOpcao(estado, { atual, aPerguntar, aGravar, gestor }) {
+  if (aGravar === estado.codigo) return { nome: 'A gravar...' };
+  if (aPerguntar === estado.codigo) {
+    return estado.codigo === 'entregue'
+      ? { nome: 'Entregar mesmo?', nota: gestor ? 'Podes reabrir depois' : 'Só um gestor reabre' }
+      : { nome: 'Reabrir mesmo?', nota: 'Apaga a data de entrega' };
+  }
+  if (estado.codigo === 'entregue' && atual !== 'entregue') return { nome: estado.nome, nota: 'Fecha a folha' };
+  return { nome: estado.nome };
+}
+
+// a mesma pergunta para quem usa um leitor de ecrã, que não vê o botão mudar
+function anunciar({ aGravar, aPerguntar, gestor }) {
+  if (aGravar) return 'A gravar o estado.';
+  if (aPerguntar === 'entregue') {
+    return `Toca outra vez em Entregue para fechar a folha. ${gestor ? 'Podes reabri-la depois.' : 'Só um gestor a pode reabrir.'}`;
+  }
+  if (aPerguntar) return `Toca outra vez em ${nomeEstado(aPerguntar)} para reabrir a folha. A data de entrega apaga-se.`;
+  return '';
 }
 
 // adicionar uma linha: depois de adicionar, o cursor volta à descrição para a
