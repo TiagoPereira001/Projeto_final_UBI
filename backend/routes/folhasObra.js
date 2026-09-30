@@ -3,9 +3,8 @@ const { sql, getPool, emTransacao } = require('../db');
 const { ErroHttp, naoEncontrado, idDoUrl } = require('../lib/erros');
 const { Validador, escaparLike, normalizarMatricula, paginacao } = require('../lib/validar');
 const { exigirSessao, exigirCargo } = require('../middleware/auth');
+const { ESTADOS, ESTADOS_ATIVOS } = require('../lib/estados');
 
-const ESTADOS = ['aberta', 'em_curso', 'aguarda_pecas', 'concluida', 'entregue'];
-const ESTADOS_ATIVOS = ESTADOS.filter((e) => e !== 'entregue');
 const CATEGORIAS = ['peca', 'mao_de_obra', 'outro'];
 const MAX_LINHAS_NA_CRIACAO = 50;
 

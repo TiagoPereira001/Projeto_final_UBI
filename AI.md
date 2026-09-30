@@ -66,7 +66,7 @@ Projeto final de licenciatura (Informática Web, Móvel e na Nuvem, UBI) do Tiag
         ├── main.jsx, App.jsx  entrada e rotas (páginas de gestão carregadas à parte)
         ├── context/           SessaoContext (sessão/bancada), AvisosContext (toasts)
         ├── lib/               api.js, formatar.js (nomes PT dos códigos), hooks
-        ├── components/        Tablier, Luzes (pictogramas dos estados), Matricula, Botao, Campo, Moldura, TecladoPin...
+        ├── components/        Tablier (normal, grande e só de leitura), Luzes (pictogramas dos estados), Matricula, Botao, Campo, Moldura, AvisoBloqueio, TecladoPin...
         ├── pages/             um ficheiro por ecrã
         └── styles/            tokens.css (fonte de verdade das cores), base, componentes, páginas
 ```
@@ -82,7 +82,7 @@ browser ──> /api/*  ──> helmet (CSP) ─> rate limit ─> JSON ─> cook
 
 - **Mesma origem**: em produção a API serve o frontend; em desenvolvimento o Vite reencaminha `/api` para a porta 3000. Não há CORS e os cookies `SameSite=Strict` funcionam.
 - **Sessão**: JWT (HS256, com audiência e emissor) num cookie `httpOnly`. Em cada pedido, `exigirSessao` volta a ler o colaborador na BD, por isso desativar uma conta ou mudar a password corta as sessões logo (campo `Versao_Sessao`).
-- **Modo bancada**: um gestor transforma um dispositivo no tablet da oficina (cookie `bancada_dispositivo`). Os mecânicos entram só com nome e PIN; a sessão via PIN não pode gerir contas nem definições.
+- **Modo bancada**: um gestor transforma um dispositivo no tablet da oficina (cookie `bancada_dispositivo`). Em repouso, o tablet mostra o tablier (o `GET /auth/bancada` devolve também `porEstado`, só as contagens da oficina do dispositivo) e os nomes de quem tem PIN; a sessão via PIN termina aos 5 min de inatividade, com aviso aos 30 s. Os mecânicos entram só com nome e PIN; a sessão via PIN não pode gerir contas nem definições.
 
 ## Regras que não se podem partir
 
@@ -125,7 +125,7 @@ cd backend && npm run dev            # API em http://localhost:3000
 cd frontend && npm install && npm run dev   # app em http://localhost:5173
 
 # verificações (as mesmas do CI)
-cd backend && npm test               # 52 testes contra SQL Server (BD Bancada_Teste)
+cd backend && npm test               # 54 testes contra SQL Server (BD Bancada_Teste)
 cd frontend && npm run lint && npm run build
 
 # tudo em containers (produção local)

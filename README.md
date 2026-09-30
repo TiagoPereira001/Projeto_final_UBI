@@ -18,7 +18,7 @@
 
 <p align="center">
   <a href="https://github.com/TiagoPereira001/Projeto_final_UBI/actions/workflows/ci.yml?query=branch%3Adev"><img src="https://img.shields.io/github/actions/workflow/status/TiagoPereira001/Projeto_final_UBI/ci.yml?branch=dev&style=for-the-badge&label=CI%20(dev)" alt="CI"></a>
-  <img src="https://img.shields.io/badge/Testes-52-2ea44f?style=for-the-badge" alt="Testes">
+  <img src="https://img.shields.io/badge/Testes-54-2ea44f?style=for-the-badge" alt="Testes">
   <img src="https://img.shields.io/badge/Stack-React_%7C_Node.js_%7C_SQL_Server-blue?style=for-the-badge" alt="Stack">
   <img src="https://img.shields.io/badge/Docker-pronto-2496ED?style=for-the-badge&logo=docker" alt="Docker">
 </p>
@@ -70,7 +70,7 @@ A Bancada **não emite faturas**: em Portugal, isso exige software certificado p
 - API multi-oficina com sessões seguras e modo bancada;
 - base de dados com o isolamento entre oficinas garantido também pelas chaves estrangeiras;
 - interface completa para tablet, computador e telemóvel;
-- 52 testes automáticos contra um SQL Server real;
+- 54 testes automáticos contra um SQL Server real;
 - integração contínua no GitHub;
 - arranque para testes com um duplo clique no Mac (`Iniciar Bancada.command`);
 - auditoria de qualidade, segurança, desempenho e acessibilidade (repetida a 28/09/2026 sobre a versão atual) e revisão de código, com as provas e os scripts para as repetir;
@@ -93,7 +93,7 @@ A lista completa está no [`docs/analise.md`](docs/analise.md).
 | Frontend | React 19 + Vite 8, React Router 7, PWA (vite-plugin-pwa), CSS próprio com tokens, fontes Barlow self-hosted |
 | Backend | Node.js 22, Express 5, JWT em cookies httpOnly, bcrypt, helmet, express-rate-limit |
 | Base de dados | SQL Server 2022 (Docker), modelo relacional normalizado |
-| Qualidade | 52 testes com `node:test` contra SQL Server real, GitHub Actions (testes, lint e build, e validação dos scripts, do compose e da imagem), oxlint, GitGuardian |
+| Qualidade | 54 testes com `node:test` contra SQL Server real, GitHub Actions (testes, lint e build, e validação dos scripts, do compose e da imagem), oxlint, GitGuardian |
 | Infraestrutura | Docker Compose; imagem única com a API a servir o frontend (mesma origem). Proposta para um servidor: Caddy (HTTPS), SQL Server Express, `infra/` (ainda não em uso) |
 
 ## Segurança
@@ -414,7 +414,7 @@ Com a base de dados a correr (passo 4), na pasta `backend`:
 npm test
 ```
 
-No fim deve aparecer `# pass 52` e `# fail 0`. Os testes usam uma base de dados própria (`Bancada_Teste`) e nunca tocam na de desenvolvimento. Para verificar a interface, na pasta `frontend`: `npm run lint` e depois `npm run build`.
+No fim deve aparecer `# pass 54` e `# fail 0`. Os testes usam uma base de dados própria (`Bancada_Teste`) e nunca tocam na de desenvolvimento. Para verificar a interface, na pasta `frontend`: `npm run lint` e depois `npm run build`.
 
 ### Recomeçar do zero
 

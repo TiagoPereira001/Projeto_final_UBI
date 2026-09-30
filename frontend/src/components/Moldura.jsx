@@ -5,8 +5,11 @@ import { useSessao } from '../context/SessaoContext';
 import { useBloqueioPorInatividade } from '../lib/useBloqueioPorInatividade';
 import { alternarTema, temaAtual } from '../lib/tema';
 import { Marca } from './Marca';
+import { AvisoBloqueio } from './AvisoBloqueio';
 
 const MINUTOS_ATE_BLOQUEAR = 5;
+// nos últimos segundos, o tablet avisa antes de terminar a sessão
+const SEGUNDOS_DE_AVISO = 30;
 
 // o esqueleto de todas as páginas depois de entrar: barra de topo com a
 // oficina e quem está a trabalhar, separadores e o conteúdo
@@ -23,8 +26,11 @@ export function Moldura() {
   }
 
   // no tablet partilhado, se ninguém mexer durante uns minutos, a sessão
-  // termina sozinha: o próximo a chegar não trabalha em nome do anterior
-  useBloqueioPorInatividade(noTablet, MINUTOS_ATE_BLOQUEAR, terminar);
+  // termina sozinha: o próximo a chegar não trabalha em nome do anterior.
+  // Nos últimos segundos avisa, para quem só parou um instante poder continuar
+  const { restante, continuar } = useBloqueioPorInatividade(
+    noTablet, MINUTOS_ATE_BLOQUEAR, terminar, SEGUNDOS_DE_AVISO
+  );
 
   const separadores = [
     { para: '/', nome: 'Oficina', fim: true },
@@ -82,6 +88,10 @@ export function Moldura() {
       <main className="conteudo" id="conteudo" tabIndex={-1}>
         <Outlet />
       </main>
+
+      {restante !== null && (
+        <AvisoBloqueio segundos={restante} total={SEGUNDOS_DE_AVISO} aoContinuar={continuar} />
+      )}
     </div>
   );
 }
