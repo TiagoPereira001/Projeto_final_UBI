@@ -41,6 +41,10 @@ export function Botao({
   );
 }
 
+// quanto tempo uma pergunta de confirmação espera pelo segundo toque, antes de
+// voltar ao que era (as confirmações de fora deste ficheiro usam o mesmo tempo)
+export const TEMPO_CONFIRMACAO = 4000;
+
 // arquivar, remover...: o primeiro toque pede confirmação no próprio botão,
 // o segundo executa. Evita janelas modais para uma pergunta de sim/não
 export function BotaoConfirmar({ aoConfirmar, pergunta = 'Confirmar?', children, ...resto }) {
@@ -48,7 +52,7 @@ export function BotaoConfirmar({ aoConfirmar, pergunta = 'Confirmar?', children,
 
   useEffect(() => {
     if (!aPerguntar) return undefined;
-    const relogio = setTimeout(() => setAPerguntar(false), 4000);
+    const relogio = setTimeout(() => setAPerguntar(false), TEMPO_CONFIRMACAO);
     return () => clearTimeout(relogio);
   }, [aPerguntar]);
 

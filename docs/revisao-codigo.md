@@ -394,7 +394,7 @@ O que é novo:
 
 | Onde | O quê | Sugestão |
 |---|---|---|
-| `pages/Folha.jsx:192-212` (`SeletorEstado`) | `role="radiogroup"` e `role="radio"` em botões, sem navegação por setas. Quem usa um leitor de ecrã espera o comportamento de um grupo de rádios (setas, um só ponto de Tab) | ou implementar as setas com `tabIndex` móvel, ou usar botões com `aria-pressed` (como o tablier) |
+| `pages/Folha.jsx:192-212` (`SeletorEstado`) | `role="radiogroup"` e `role="radio"` em botões, sem navegação por setas. Quem usa um leitor de ecrã espera o comportamento de um grupo de rádios (setas, um só ponto de Tab) | ou implementar as setas com `tabIndex` móvel, ou usar botões com `aria-pressed` (como o tablier). **Resolvido a 30/09/2026**, no `harden` do seletor: passou a `role="group"` com botões `aria-pressed`. Continua por confirmar com um leitor de ecrã |
 | `components/EscolherCliente.jsx:73-86` | o erro "escolhe um cliente" não está ligado ao campo de pesquisa (sem `aria-describedby` nem `aria-invalid`), ao contrário do `Campo` | usar o `Campo`, ou ligar os ids à mão |
 | `components/Botao.jsx:46-71` (`BotaoConfirmar`) | o texto passa a "Remover?", mas a mudança pode não ser anunciada | `aria-live="polite"` numa região com a pergunta |
 | `context/AvisosContext.jsx:23` | os avisos de erro também são `role="status"` (educados) | `role="alert"` para o tipo `erro` |
