@@ -126,10 +126,17 @@
     border-color: var(--painel-aro);
   }
 }
-.topo__sair--tablet {
-  padding: 0 var(--e-5);
-  border-color: var(--ambar);
-  color: var(--ambar);
+/* sair é neutro, no computador e no tablet: o âmbar é da ação principal do
+   ecrã (Regra da Voz Única) e um botão de sair a competir com ela era o que
+   mais ruído fazia. No tablet não há hover: também responde ao dedo */
+.topo__sair {
+  padding: 0 var(--e-4);
+  white-space: nowrap;
+}
+.topo__icone:active,
+.topo__sair:active {
+  background: var(--painel-2);
+  border-color: var(--painel-aro);
 }
 .topo__icone:focus-visible,
 .topo__sair:focus-visible {
@@ -1265,6 +1272,17 @@ a.lista__item:focus-visible {
     margin-top: var(--e-1);
     padding: 5px 9px 4px;
     border-radius: 3px;
+  }
+}
+
+/* só o ícone (o botão tem o nome em aria-label): com o texto, a barra de topo
+   transbordava (43 px no tablet a 390 px, 22 px a 360 px no computador) */
+@media (max-width: 520px) {
+  .topo__sair {
+    padding: 0;
+  }
+  .topo__sair-texto {
+    display: none;
   }
 }
 
