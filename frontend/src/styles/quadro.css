@@ -5,6 +5,17 @@
   gap: var(--e-5);
 }
 
+/* o tablier e, se faltar a ligação, a nota que diz de quando são os números:
+   são um grupo, mais chegados do que o resto do quadro */
+.quadro__estado {
+  display: grid;
+  gap: var(--e-3);
+}
+.quadro__nota {
+  padding: 0 var(--e-1);
+  color: var(--tinta-2);
+}
+
 .quadro__contas {
   display: flex;
   flex-wrap: wrap;

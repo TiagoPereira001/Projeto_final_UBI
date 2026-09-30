@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { DeviceTablet } from '../components/icones';
 import { useSessao } from '../context/SessaoContext';
+import { useTitulo } from '../lib/useTitulo';
 import { Marca } from '../components/Marca';
 import { Botao } from '../components/Botao';
 import { Texto } from '../components/Campo';
@@ -38,6 +39,7 @@ export function PainelMarca() {
 }
 
 export default function Entrar() {
+  useTitulo('Entrar');
   const { colaborador, bancada, oficina, entrar } = useSessao();
   const navegar = useNavigate();
   const local = useLocation();

@@ -62,7 +62,12 @@
   border-bottom: 1px solid var(--painel-linha);
 }
 
+/* a marca é o caminho de volta ao quadro: com 48 px de altura como os
+   botões ao lado (a barra já tem 64, por isso nada se mexe) */
 .topo__marca {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque);
   text-decoration: none;
   border-radius: 8px;
 }
@@ -1169,11 +1174,6 @@ a.lista__item:focus-visible {
   25% { transform: translateX(-8px); }
   75% { transform: translateX(8px); }
 }
-.teclado-pin__erro {
-  text-align: center;
-  color: var(--erro);
-  font-weight: 500;
-}
 .teclado-pin__teclas {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1292,5 +1292,14 @@ a.lista__item:focus-visible {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+}
+
+/* a 320 px (a largura mínima que tem de caber sem scroll de lado) a barra de
+   topo passava o ecrã 28 px: já não há lugar para o nome da marca ao lado do
+   símbolo, que continua a ser a ligação de volta ao quadro */
+@media (max-width: 359px) {
+  .topo__marca .marca__nome {
+    display: none;
   }
 }
