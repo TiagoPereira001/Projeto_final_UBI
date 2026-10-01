@@ -84,7 +84,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Scripts de shell
-        run: shellcheck -x infra/*.sh "Iniciar Bancada.command"
+        run: shellcheck -x infra/*.sh "Iniciar Bancada.command" "Iniciar Bancada na oficina.command"
 
       # o compose exige as variáveis para aceitar o ficheiro: usam-se valores
       # gerados na hora (nada escrito no repositório) e só para validar

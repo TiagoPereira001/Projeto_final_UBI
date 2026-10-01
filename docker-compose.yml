@@ -7,6 +7,12 @@
 #   docker compose --profile app up -d --build
 #   -> http://localhost:3000
 #
+# só nos ensaios na oficina (um tablet a abrir a Bancada pelo Wi-Fi): o
+# lançador "Iniciar Bancada na oficina.command" define BANCADA_PUBLICAR_EM=0.0.0.0
+# e BANCADA_ORIGENS (com o endereço deste computador na rede). É uma exceção
+# de uma corrida: não pôr estas duas no .env, senão a Bancada ficava aberta à
+# rede sempre que arranca. Sem HTTPS, só com dados de demonstração.
+#
 # as passwords vêm do .env na raiz (ver .env.example). Nunca escrever aqui.
 
 services:
@@ -48,13 +54,14 @@ services:
       JWT_SECRET: ${JWT_SECRET:?Define JWT_SECRET no .env}
       # em http://localhost as cookies não podem ser "Secure"; atrás de HTTPS, apagar esta linha
       COOKIE_SECURE: "false"
-      APP_ORIGINS: http://localhost:3000
+      APP_ORIGINS: ${BANCADA_ORIGENS:-http://localhost:3000}
     # prepara a base de dados (não mexe no que já existe) e arranca a API.
     # O exec põe a API no lugar do sh: assim recebe o sinal de parar do
     # docker stop e desliga-se com calma, em vez de ser morta ao fim de 10 s
     command: ["sh", "-c", "node backend/scripts/db-setup.js && exec node backend/server.js"]
     ports:
-      - "127.0.0.1:3000:3000"
+      # só este computador, a não ser no ensaio na oficina (ver o topo)
+      - "${BANCADA_PUBLICAR_EM:-127.0.0.1}:3000:3000"
 
 volumes:
   sql_dados:
