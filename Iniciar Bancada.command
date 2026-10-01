@@ -12,12 +12,20 @@
 #   5. abre o browser em http://localhost:3000.
 # Para parar: Enter nesta janela, Ctrl + C, ou fechar a janela.
 #
+# Modo oficina (BANCADA_REDE=1, que é o que o "Iniciar Bancada na oficina.command"
+# faz): o tablet abre a Bancada pelo Wi-Fi, em http://<endereço deste computador>:3000.
+# É para o ensaio na oficina (docs/ensaio-oficina.md), só com dados de
+# demonstração: sem HTTPS, e enquanto a janela estiver aberta qualquer
+# dispositivo ligado à mesma rede lhe chega. Ao parar, o duplo clique normal
+# volta a deixá-la só neste computador.
+#
 # Também corre no Linux (aí o Docker tem de estar a correr antes).
 # Escrito para o bash 3.2, que é o que vem com o macOS.
 
 cd "$(dirname "$0")" || exit 1
 
 ENDERECO="http://localhost:3000"
+ENDERECO_REDE=''
 SISTEMA=$(uname)
 
 # o Docker Desktop pode instalar o comando docker em sítios que o Terminal
@@ -60,8 +68,13 @@ abrir() {
 
 compose() { docker compose --profile app "$@"; }
 
-printf '\033]0;Bancada\007'
-printf '\n%sBANCADA%s  versão de testes, com dados de demonstração fictícios\n' "$AMBAR$NEGRITO" "$FIM"
+if [ "${BANCADA_REDE:-}" = 1 ]; then
+    printf '\033]0;Bancada (modo oficina)\007'
+    printf '\n%sBANCADA%s  modo oficina: o tablet abre-a pelo Wi-Fi, só com dados de demonstração fictícios\n' "$AMBAR$NEGRITO" "$FIM"
+else
+    printf '\033]0;Bancada\007'
+    printf '\n%sBANCADA%s  versão de testes, com dados de demonstração fictícios\n' "$AMBAR$NEGRITO" "$FIM"
+fi
 
 # ---------------------------------------------------------------------------
 passo "1/5  Docker"
@@ -115,6 +128,54 @@ trap 'trap "" HUP; parar >/dev/null 2>&1; exit 0' HUP
 # ---------------------------------------------------------------------------
 passo "2/5  Configuração"
 
+# o endereço deste computador na rede local (Wi-Fi ou cabo), que é o que o
+# tablet vai escrever no browser. Vazio se não houver rede
+ip_da_rede() {
+    local ip='' iface
+    if [ "$SISTEMA" = Darwin ]; then
+        # a interface da rota por defeito, se for o Wi-Fi ou o cabo (en0, en1...)
+        # e não uma VPN
+        iface=$(route -n get default 2>/dev/null | awk '/interface:/ { print $2 }')
+        case "$iface" in
+            en[0-9]*) ip=$(ipconfig getifaddr "$iface" 2>/dev/null) ;;
+        esac
+        # sem rota por defeito (uma rede sem internet): as interfaces mais comuns
+        if [ -z "$ip" ]; then
+            for iface in en0 en1 en2 en3 en4; do
+                ip=$(ipconfig getifaddr "$iface" 2>/dev/null)
+                [ -n "$ip" ] && break
+            done
+        fi
+    else
+        ip=$(hostname -I 2>/dev/null | awk '{ print $1 }')
+    fi
+    # 169.254.x.x é o que o computador se atribui quando não há rede a sério
+    case "$ip" in 169.254.*) ip='' ;; esac
+    printf '%s' "$ip"
+}
+
+if [ "${BANCADA_REDE:-}" = 1 ]; then
+    ip=$(ip_da_rede)
+    [ -n "$ip" ] || falhar "Não encontrei o endereço deste computador na rede." \
+        "Liga o computador ao Wi-Fi da oficina (o mesmo do tablet, não a rede de convidados)" \
+        "e abre outra vez este ficheiro."
+    ENDERECO_REDE="http://$ip:3000"
+    # só vale para esta corrida (o compose lê-as do ambiente): nada disto fica
+    # escrito no .env, por isso o duplo clique normal volta a fechar a porta
+    BANCADA_PUBLICAR_EM=0.0.0.0
+    BANCADA_ORIGENS="$ENDERECO,$ENDERECO_REDE"
+    export BANCADA_PUBLICAR_EM BANCADA_ORIGENS
+    ok "Modo oficina: o tablet vai abrir a Bancada em $ENDERECO_REDE"
+    info "Só com dados de demonstração. Enquanto esta janela estiver aberta, qualquer"
+    info "dispositivo ligado a este Wi-Fi consegue abrir a Bancada, e sem HTTPS."
+    # impede que o Mac adormeça (e a Bancada desapareça do tablet) enquanto
+    # esta janela estiver aberta; o caffeinate termina quando o script termina
+    if [ "$SISTEMA" = Darwin ] && command -v caffeinate >/dev/null 2>&1; then
+        caffeinate -i -w $$ >/dev/null 2>&1 &
+        info "O Mac não vai adormecer enquanto esta janela estiver aberta (não feches a tampa)."
+    fi
+fi
+
 # corre o script do projeto num container com o Node, que é o mesmo que a
 # aplicação vai usar: assim não é preciso ter o Node.js instalado
 criar_env() {
@@ -142,6 +203,10 @@ fi
 
 # ---------------------------------------------------------------------------
 passo "3/5  Arrancar a Bancada"
+if [ -n "$ENDERECO_REDE" ]; then
+    info "Se o macOS perguntar se o Docker pode aceitar ligações da rede, escolhe Permitir:"
+    info "é isso que deixa o tablet entrar."
+fi
 
 # containers com o mesmo nome, mas de outra cópia do projeto (ou da primeira
 # versão, que se chamava dr_oficina_sql), ocupam o nome ou a porta. Tirá-los
@@ -248,6 +313,17 @@ esperar_api() {
 }
 esperar_api
 
+# no modo oficina, confirma que a Bancada também responde pelo endereço da
+# rede, que é o que o tablet vai usar (uma firewall pode estar a barrá-lo)
+if [ -n "$ENDERECO_REDE" ]; then
+    if curl -fs --max-time 5 "$ENDERECO_REDE/api/saude" >/dev/null 2>&1; then
+        ok "Confirmei que também responde em $ENDERECO_REDE."
+    else
+        info "Não consegui confirmar que responde em $ENDERECO_REDE. Se o tablet não abrir,"
+        info "vê a firewall do macOS (Definições do Sistema, Rede) e se o Docker pode aceitar ligações."
+    fi
+fi
+
 saida=$(docker exec bancada_app node backend/scripts/seed.js 2>&1)
 case "$saida" in
     *"Guarda estes dados"*) novos=1 ;;
@@ -285,6 +361,10 @@ fi
 # ---------------------------------------------------------------------------
 passo "5/5  Pronto"
 printf '\n  A Bancada está a correr em %s%s%s\n' "$NEGRITO" "$ENDERECO" "$FIM"
+if [ -n "$ENDERECO_REDE" ]; then
+    printf '  No tablet, abre o Chrome e escreve: %s%s%s\n' "$NEGRITO" "$ENDERECO_REDE" "$FIM"
+    info "Entra como gestor e, em Definições, escolhe «Usar este dispositivo como bancada»."
+fi
 if [ "$novos" = 1 ]; then
     printf '%s\n' "$saida" | sed -e '/^$/d' -e 's/^/  /'
     info "(São dados fictícios, só deste computador. Esta janela é o único sítio onde aparecem.)"

@@ -47,7 +47,8 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 ## Ambiente das sessões na nuvem
 
 - **SQL Server**: se o Docker não estiver a correr, arrancar com `nohup dockerd > /tmp/dockerd.log 2>&1 &`. Depois `docker compose up -d` (com o `.env`), ou um `docker run` da imagem `mcr.microsoft.com/mssql/server:2022-latest` em `127.0.0.1:1433`. Os testes só precisam de `DB_ADMIN_PASSWORD` e `DB_PASSWORD`: geram o seu próprio `JWT_SECRET` e recriam a BD `Bancada_Teste`.
-- **Parar a API**: `pkill -f '^node server\.js$'`. Um padrão mais largo mata a própria shell.
+- **Parar a API**: `pkill -f '^node server\.js$'`. Um padrão mais largo mata a própria shell. O mesmo vale para qualquer `pkill -f` ou `ps | grep`: se o padrão aparecer noutro sítio do mesmo comando (um caminho, um nome de script), a shell também o contém e morre (exit 144). Usar `ps -eo pid,args | grep '[p]adrão' | awk '{print $1}' | xargs -r kill` num comando só com isso. E a verificação de segurança recusa `rm` com `$VAR/...`: usar caminhos literais.
+- **`docker build` no sandbox**: o `npm ci` de dentro da imagem falha com `self-signed certificate in certificate chain` (os containers não confiam na CA do ambiente). Para testar o arranque a sério: copiar o projeto para o scratchpad e, só na cópia, copiar `/root/.ccr/ca-bundle.crt` para a raiz e acrescentar ao Dockerfile, a seguir a cada `FROM ... AS frontend` e `AS api`, `COPY ca-bundle.crt /ca-bundle.crt` e `ENV NODE_EXTRA_CA_CERTS=/ca-bundle.crt`. O Dockerfile do repositório não muda. O lançador testa-se num terminal simulado (`pty.fork()` em Python, a escrever o ecrã para um ficheiro e a carregar em Enter quando aparecer um ficheiro-sinal). Para a Bancada abrir por um IP que não é `localhost` (contexto inseguro, como o tablet), o Chromium precisa de `args: ['--no-proxy-server']`.
 - **Playwright**: lançar o Chromium com `executablePath: '/opt/pw-browsers/chromium'`. O limite de logins (8 em 15 min por IP e email) bloqueia percursos repetidos: reiniciar a API entre percursos.
 - **Relatório (LaTeX)**:
   - Instalar: `apt-get install texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-lang-portuguese texlive-fonts-recommended lmodern latexmk texlive-plain-generic`.
@@ -60,7 +61,7 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 - **`npm test` com 47 falhas `hookFailed`** (no `db-setup.js --reset`): ou o SQL Server está parado (o Docker não sobrevive ao reinício da sessão), ou a shell não tem o `DB_ADMIN_PASSWORD` e o `DB_PASSWORD` (não há `.env` no repositório).
 - **Capturas de ecrã**: as do relatório estão em `Relatorio/Anexos/ecras/` (@2x) e as do README em `docs/imagens/` (@1x). Todas usam os dados fictícios do `db:seed`.
 
-## Estado atual (30/09/2026)
+## Estado atual (01/10/2026)
 
 **Feito:**
 - Backend multi-oficina (Node 22, Express 5, SQL Server 2022):
@@ -102,6 +103,10 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - Resolve sozinho: container de outra cópia ou o `dr_oficina_sql` antigo, `.env` incompleto, password fraca (recomeça), password diferente da do primeiro arranque (pede APAGAR). Deteta-os nos registos do SQL Server: `Password did not match` e `Password validation failed` (não serve procurar só `Login failed for user 'sa'`, que também aparece num arranque normal).
   - Testado em Linux, num terminal simulado, em oito cenários; o `shellcheck` passa e a sintaxe foi verificada com o bash 3.2 (o do macOS). Os passos próprios do macOS (`open -a Docker`, o Finder, o Gatekeeper) não se testaram aqui.
   - O `docker-compose.yml` passou a arrancar a API com `exec`: recebe o sinal do `docker stop` e para em 0 s. O SQL Server continua a ser parado à força ao fim de 10 s (o `launch_sqlservr.sh` da imagem não passa o sinal).
+- Ensaio na oficina (01/10/2026), a pedido do autor, que quer começar por testar com os mecânicos da Duarte & Raposo, numa só oficina. O tablet deles é Android e o diagnóstico liga por Bluetooth (não mexe no Wi-Fi). **O ensaio ainda não se fez: o que está feito é a preparação.**
+  - `Iniciar Bancada na oficina.command`: o mesmo lançador em modo oficina (`BANCADA_REDE=1`). Descobre o endereço do Mac na rede, abre a porta 3000 à rede local só nessa corrida (`BANCADA_PUBLICAR_EM=0.0.0.0` e `BANCADA_ORIGENS`, no ambiente e nunca no `.env`; a base de dados fica em `127.0.0.1`), mostra o endereço para o tablet, avisa que não há HTTPS, confirma que responde pelo endereço da rede e pede ao Mac que não adormeça (`caffeinate`). O duplo clique normal volta a fechar a porta. Sem HTTPS o Chrome do tablet não instala a PWA: abre num separador.
+  - Guia do dia em `docs/ensaio-oficina.md`: preparar, montar, guião de 11 tarefas (a 0 é no papel) com o que cronometrar e ver, "já sei que...", perguntas finais e critérios (propostos, não uma regra) para passar ao piloto.
+  - Verificado no Linux, numa cópia do projeto: o lançador a arrancar em modo oficina, a Bancada a abrir pelo endereço da rede no Chromium (contexto inseguro, como o tablet) com o login do gestor, a ativação da bancada e o PIN, a origem da rede aceite e uma alheia recusada (12 verificações), a porta a voltar a fechar com o duplo clique normal e o erro quando não há endereço de rede. A deteção do endereço no macOS foi testada com `route` e `ipconfig` simulados. `shellcheck` limpo e sintaxe em bash 3.2. **Não verificado:** um Mac a sério (`route`, `ipconfig`, `caffeinate`, o pedido da firewall), o Docker Desktop e um tablet Android a sério.
 - Reauditoria de 28/09/2026 (secção 14 de `docs/auditoria.md`), a pedido do autor, que voltou a enviar o mesmo guião de auditoria:
   - todos os scripts repetidos sobre a versão nova: mesmos resultados na API e no browser, 0 violações axe;
   - achados novos e corrigidos: QA-005 (a data do histórico transbordava 39 px a 390 px, vinha do redesenho), SEC-009 (`criar-env.js` criava o `.env` legível por todos: agora 600), REL-005 (uma cópia restaurada noutro servidor deixava a API sem entrar: o `db:setup` religa o utilizador órfão), REL-006 (o registo de transações crescia sem limite em modo FULL: o `db:setup` cria as bases novas em SIMPLE);
@@ -130,7 +135,7 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 - Este trabalho entrou no `dev` por PRs do ramo `claude/ecstatic-lamport-81qsk8`: o #1 (plataforma, interface, testes e documentação), o #2 (documento das ferramentas), o #3 (auditoria), o #4 e o #7 (memória), o #5 (licença e aviso), o #8 (revisão de código) e o do guia de arranque. A 27/09/2026 o `dev` passou para o `main` pelo PR #6, com o merge feito pelo autor. O que entrou no `dev` depois disso (do #7 em diante) só aparece na página do GitHub quando o `dev` voltar a passar para o `main`, e isso tem de ser pedido ao autor.
 
 **Por fazer** (sugestões, nada disto existe):
-1. Testar com os mecânicos da Duarte & Raposo: medir o tempo de uma entrada e de uma peça no papel e no tablet.
+1. Testar com os mecânicos da Duarte & Raposo: medir o tempo de uma entrada e de uma peça no papel e no tablet. Preparado (guia em `docs/ensaio-oficina.md` e modo oficina no lançador); falta fazer o ensaio e, depois, o piloto.
 2. Publicar online: HTTPS, `COOKIE_SECURE=true`, ligação encriptada à BD e cópias de segurança.
 3. Sistema de migrações da base de dados (hoje o esquema recria-se do zero).
 4. Diagramas de casos de uso e de sequência para o relatório.
@@ -140,6 +145,7 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
 8. Atualizar as capturas do relatório (`Relatorio/Anexos/ecras/`) para a interface revista a 28/09/2026 e recompilar o PDF.
 9. Corrigir os achados da auditoria (secção 10 de `docs/auditoria.md`, primeiro REL-001 e REL-003) e da revisão de código (secção 14 de `docs/revisao-codigo.md`, primeiro BUG-01 e BUG-02), e passar os percursos no browser para testes E2E no CI.
 10. Publicar a sério, seguindo `docs/infraestrutura.md`: servidor, domínio, certificado, cron das cópias, cópia fora do servidor e guardar a chave privada do `age`. Antes, migrações da base de dados e a resposta do cliente sobre RPO e RTO.
+11. Impor o bloqueio por inatividade no servidor: os 5 minutos do tablet só existem no ecrã (`useBloqueioPorInatividade`) e a sessão por PIN dura 12 h no servidor. Se o Android descartar a página em segundo plano e a recarregar, a sessão continua em nome do mecânico anterior. Antes do piloto.
 
 ## Registo
 
@@ -173,3 +179,6 @@ Memória do projeto para o Claude Code. É carregado no início de cada sessão 
   - terceiro passo, o `adapt`: o tablier do quadro maior no tablet partilhado, para se ler a 1 ou 2 m (ver o Estado atual);
   - quarto passo, o `quieter`: "Sair do tablet" neutro, um só botão âmbar no quadro vazio e o `DESIGN.md` sem as incoerências (ver o Estado atual).
   - quinto e último passo, o `polish`: a mensagem do PIN que empurrava as teclas, o quadro sem ligação, o filtro que sobrevive à folha, os títulos das páginas, alvos de toque e os 320 px (ver o Estado atual).
+- **01/10/2026**:
+  - o autor perguntou como testar a Bancada a sério numa oficina (o tablet deles também serve para diagnóstico). Respondi com um percurso em três passos: ensaio com dados fictícios, piloto numa oficina com o papel em paralelo, e só depois decidir. Para o piloto faltam, entre outras coisas, servidor, cópias, migrações e os achados BUG-01, REL-001 e REL-003;
+  - o autor escolheu começar pelo ensaio: o tablet é Android e o diagnóstico liga por Bluetooth. Modo oficina no lançador e guia do ensaio (ver o Estado atual). O PR #18 (`polish`) já estava no `dev`.

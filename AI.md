@@ -26,6 +26,7 @@ Projeto final de licenciatura (Informática Web, Móvel e na Nuvem, UBI) do Tiag
 ├── README.md                  instalação e visão geral
 ├── LICENSE                    todos os direitos reservados ao autor (não é código aberto)
 ├── Iniciar Bancada.command    arranque para testes com duplo clique no macOS (bash 3.2, tudo em containers)
+├── Iniciar Bancada na oficina.command   o mesmo em "modo oficina" (BANCADA_REDE=1): o tablet abre a Bancada pelo Wi-Fi. Ver docs/ensaio-oficina.md
 ├── docker-compose.yml         SQL Server (e, com --profile app, a app completa)
 ├── Dockerfile                 imagem de produção: API + frontend compilado
 ├── docker-compose.prod.yml    PROPOSTA de instalação num servidor (Caddy + API + SQL Server Express); ainda não está em uso
@@ -96,6 +97,7 @@ browser ──> /api/*  ──> helmet (CSP) ─> rate limit ─> JSON ─> cook
 8. **Uma folha entregue fica fechada.** Só um gestor a reabre (mudando o estado); linhas e notas não se alteram enquanto está entregue.
 9. **Content-Security-Policy rigorosa.** Nada de scripts ou estilos inline, nem recursos externos (fontes, CDNs, imagens). Fontes e ícones são locais.
 10. **A Bancada não emite faturas.** Em Portugal a faturação exige software certificado pela AT. A app calcula totais e IVA; a fatura sai do programa de faturação da oficina. Não acrescentar "emitir fatura" sem essa certificação.
+11. **Nenhuma porta aberta à rede por omissão.** O `docker-compose.yml` só publica a API (3000) e a base de dados (1433) em `127.0.0.1`. A única exceção é o ensaio na oficina: o `Iniciar Bancada na oficina.command` define `BANCADA_PUBLICAR_EM=0.0.0.0` e `BANCADA_ORIGENS` só nessa corrida (sem HTTPS, só com dados fictícios). Nunca pôr estas variáveis no `.env`, e a porta da base de dados nunca sai de `127.0.0.1`.
 
 ## Convenções
 
@@ -132,6 +134,7 @@ cd frontend && npm run lint && npm run build
 # tudo em containers (produção local)
 docker compose --profile app up -d --build   # http://localhost:3000
 ./Iniciar\ Bancada.command                   # o mesmo, para testes: abre o Docker, cria o .env e os dados, abre o browser
+./Iniciar\ Bancada\ na\ oficina.command      # o mesmo, mas o tablet abre a Bancada pelo Wi-Fi (ensaio na oficina, só dados fictícios)
 ```
 
 Os testes precisam de um SQL Server a correr e das variáveis `DB_ADMIN_PASSWORD` e `DB_PASSWORD` (do `.env`). Usam uma base de dados própria, `Bancada_Teste`, apagada e recriada em cada ficheiro de testes.

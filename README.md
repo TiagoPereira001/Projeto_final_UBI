@@ -78,7 +78,7 @@ A Bancada **não emite faturas**: em Portugal, isso exige software certificado p
 - documentação e relatório.
 
 **Ainda não feito:**
-- instalação na oficina e testes com os mecânicos;
+- instalação na oficina e testes com os mecânicos (o guia do ensaio está pronto, em [`docs/ensaio-oficina.md`](docs/ensaio-oficina.md); o ensaio ainda não se fez);
 - versão online: a proposta está pronta ([`docs/infraestrutura.md`](docs/infraestrutura.md)), mas falta servidor, domínio e certificado;
 - migrações da base de dados e cópias de segurança a correr (os scripts existem, ainda não estão em uso);
 - correção dos achados abertos da auditoria e da revisão de código;
@@ -128,6 +128,7 @@ Qual caminho escolher:
 |---|---|---|
 | um **Mac** | só experimentar a Bancada | [duplo clique em `Iniciar Bancada.command`](#no-mac-com-um-duplo-clique): só precisas do Docker Desktop |
 | um **Windows** | só experimentar a Bancada | o [passo a passo](#passo-a-passo-primeira-vez) com a [alternativa tudo em containers](#alternativa-tudo-em-containers) (ainda não há um script de duplo clique para o Windows) |
+| um **Mac** e um **tablet Android** na oficina | o ensaio com os mecânicos (dados fictícios) | [duplo clique em `Iniciar Bancada na oficina.command`](#no-mac-para-o-ensaio-na-oficina) e o guia [`docs/ensaio-oficina.md`](docs/ensaio-oficina.md) |
 | um Mac ou um Windows | mexer no código | o [início rápido](#início-rápido-para-quem-já-tem-docker-desktop-nodejs-22-e-git) ou o passo a passo |
 
 A primeira vez demora mais, porque há programas para instalar e a base de dados para descarregar. Da segunda vez em diante é muito mais rápido: ver [Da próxima vez](#da-próxima-vez).
@@ -159,6 +160,15 @@ A janela também resolve sozinha os problemas mais comuns:
 > **Se o macOS não deixar abrir o ficheiro** ("programador não identificado"): acontece quando o projeto veio num ZIP descarregado pelo browser. Carrega com o botão direito no ficheiro, depois em *Abrir* e outra vez em *Abrir*. Nas versões mais recentes do macOS, vai a *Definições do Sistema* → *Privacidade e segurança*: mais abaixo aparece um botão para o abrir na mesma.
 >
 > **Se o duplo clique abrir o ficheiro num editor de texto** em vez de o correr: no Terminal, na pasta do projeto, escreve `chmod +x "Iniciar Bancada.command"` e tenta outra vez.
+
+### No Mac, para o ensaio na oficina
+
+Para um tablet (ou um telemóvel) abrir a Bancada pelo Wi-Fi, a partir do teu Mac, faz duplo clique em **`Iniciar Bancada na oficina.command`**. Faz o mesmo que o outro ficheiro, e mais isto:
+- descobre o endereço do Mac na rede e mostra-o (`http://192.168...:3000`), para o escreveres no Chrome do tablet;
+- abre a porta 3000 à rede local **só nessa corrida** (a base de dados continua só no Mac) e aceita esse endereço como origem dos pedidos;
+- pede ao Mac que não adormeça enquanto a janela estiver aberta.
+
+É só com os dados de demonstração e **sem HTTPS**: enquanto a janela estiver aberta, qualquer aparelho ligado ao mesmo Wi-Fi consegue abrir a Bancada (a janela avisa). Sem HTTPS o Chrome também não a instala como app: abre num separador. Ao parar, e no duplo clique normal, a porta volta a ficar só no Mac. O que se diz acima sobre o macOS não deixar abrir o ficheiro vale também para este. O guia do dia, com o guião para os mecânicos, está em [`docs/ensaio-oficina.md`](docs/ensaio-oficina.md).
 
 ### Início rápido (para quem já tem Docker Desktop, Node.js 22 e Git)
 
@@ -479,6 +489,7 @@ Dica: procura nesta página (`Cmd + F` no Mac, `Ctrl + F` no Windows) um pedaço
 | [`CLAUDE.md`](CLAUDE.md) | memória do projeto para o Claude Code: decisões tomadas, preferências, estado atual |
 | [`docs/analise.md`](docs/analise.md) | análise de segurança, desempenho e viabilidade |
 | [`docs/auditoria.md`](docs/auditoria.md) | auditoria de qualidade, segurança, desempenho e acessibilidade (27/09/2026, repetida a 28/09/2026 na secção 14), com os scripts para a repetir |
+| [`docs/ensaio-oficina.md`](docs/ensaio-oficina.md) | o plano do ensaio na oficina com os mecânicos (tablet Android, dados fictícios): preparar, montar, guião, o que anotar. Ainda não realizado |
 | [`docs/infraestrutura.md`](docs/infraestrutura.md) | infraestrutura e publicação: proposta validada numa cópia (HTTPS, SQL Server Express, cópias de segurança, restauro, retrocesso). A Bancada ainda não está publicada |
 | [`docs/revisao-codigo.md`](docs/revisao-codigo.md) | revisão de código e dívida técnica (27/09/2026): bugs encontrados, plano de refatoração por fases e exemplos validados, com as provas |
 | [`Relatorio/`](Relatorio/) | relatório do projeto e documento das ferramentas usadas (e porquê), em LaTeX, com os PDF compilados |
